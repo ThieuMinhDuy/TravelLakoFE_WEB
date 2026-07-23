@@ -1,102 +1,101 @@
-# Tài liệu 06: Design System & Quy chuẩn Giao diện (UI/UX)
+# Tài liệu 06: Design System & Quy chuẩn Giao diện (Modern Natural Travel)
 
-Tài liệu này định nghĩa hệ thống thiết kế (Design System), bao gồm mã màu chủ đạo, phông chữ, khoảng cách, quy chuẩn component UI và các thư viện giao diện được sử dụng trong dự án TravelLako cho cả Web và Mobile.
+Tài liệu này định nghĩa hệ thống thiết kế (Design System) của TravelLako dựa trên phong cách chủ đạo **"Modern Natural Travel"** — kết hợp sự tối giản tinh tế của **Apple**, tính chân thực du lịch của **Airbnb**, khoảng trắng thư thái của **Notion** và thông tin trực quan từ **Google Travel**.
 
 ---
 
-## 1. Hệ Màu Chủ Đạo (Color Palette)
+## 1. Bảng Màu "Modern Natural Travel" (Color Palette)
 
-Hệ màu của TravelLako được thiết kế nhằm mang lại cảm giác tươi mát của thiên nhiên, sự năng động của các chuyến đi và trải nghiệm hiện đại, cao cấp.
+Hệ màu mới loại bỏ hoàn toàn phong cách AI SaaS màu tím đậm hoặc các dải gradient gắt, tập trung vào trải nghiệm dịu mắt, hòa hợp thiên nhiên (biển, bầu trời, cây cỏ, đất cát).
 
-### A. Màu Chính (Primary Colors)
-Dành cho các thành phần quan trọng như Button chính, Header, Active state, và Brand Identity:
-*   **Ocean Blue (Xanh đại dương - Biển & Bầu trời tự do):** `#2563EB` (Tailwind `blue-600`)
-    *   *Light variant:* `#60A5FA` (Tailwind `blue-400`)
-    *   *Dark variant:* `#1D4ED8` (Tailwind `blue-700`) hoặc `#1E3A8A` (Tailwind `blue-900`)
-*   **Sunset Orange (Cam hoàng hôn - Năng động & Trải nghiệm):** `#F97316` (Tailwind `orange-500`)
-    *   *Light variant:* `#FB923C` (Tailwind `orange-400`)
-    *   *Dark variant:* `#C2410C` (Tailwind `orange-700`)
+### A. Màu Chính & Nhận Diện Thương Hiệu (Primary & Brand Palette)
 
-### B. Màu Phụ & Trung Tính (Secondary & Neutral Colors)
-Dành cho nền ứng dụng, viền, bóng và các đoạn văn bản:
-*   **Slate Dark (Chữ chính):** `#0F172A` (Tailwind `slate-900`)
-*   **Slate Muted (Chữ phụ):** `#64748B` (Tailwind `slate-500`)
-*   **Gray Background (Nền app):** `#F8FAFC` (Tailwind `slate-50`)
-*   **Border Gray (Đường viền):** `#E2E8F0` (Tailwind `slate-200`)
+| Loại màu | Token CSS | Hex Code | Cảm hứng / Mô tả | Ứng dụng |
+| :--- | :--- | :--- | :--- | :--- |
+| **Ocean Azure** | `--color-primary-600` | `#0369A1` | **Xanh đại dương sâu** (Sky-700) | Màu thương hiệu chính, Nút bấm CTA, Icon active |
+| **Soft Sky** | `--color-primary-50` | `#F0F9FF` | **Xanh bầu trời dịu** (Sky-50) | Nền thẻ active, Highlight nhẹ, State hover |
+| **Coastal Teal** | `--color-nature-600` | `#0D9488` | **Xanh ngọc / Cây cỏ** (Teal-600) | Tag địa điểm tự nhiên, Trạng thái an toàn |
+| **Sunset Sand** | `--color-sand-500` | `#D97706` | **Màu cát nắng bãi biển** (Amber-600) | *Dùng rất hạn chế*: Đánh giá sao ⭐, Nút thả tim Yêu thích |
+
+*Variants màu phụ phụ trợ*:
+*   **Ocean Azure Hover:** `#075985` (Tailwind `sky-800`)
+*   **Coastal Teal Light:** `#CCFBF1` (Tailwind `teal-100`)
+*   **Sunset Sand Light:** `#FEF3C7` (Tailwind `amber-100`)
+
+### B. Màu Phụ & Trung Tính (Backgrounds & Text Tokens)
+
+| Loại màu | Token CSS | Hex Code | Mô tả | Ứng dụng |
+| :--- | :--- | :--- | :--- | :--- |
+| **App Background** | `--color-bg-app` | `#FAFAFA` | **Off-White dịu mắt** | Nền toàn bộ màn hình (giảm lóa so với pure white) |
+| **Surface White** | `--color-bg-surface` | `#FFFFFF` | **Trắng tinh khiết** | Nền thẻ địa điểm (Card), Header, Bottom Navigation |
+| **Subtle Slate** | `--color-bg-subtle` | `#F1F5F9` | **Xám Slate nhạt** (Slate-100) | Nền thanh tìm kiếm, Tab chưa chọn |
+| **Primary Text** | `--color-text-main` | `#0F172A` | **Slate đậm** (Apple text) | Tiêu đề chính, Tên địa điểm (Độ tương phản 13.5:1) |
+| **Secondary Text** | `--color-text-sub` | `#475569` | **Slate trung tính** (Slate-600) | Mô tả khoảng cách, giá cả, thời gian |
+| **Subtle Border** | `--color-border` | `#E2E8F0` | **Viền xám siêu mảnh** | Đường phân cách 1px nhã nhặn |
 
 ### C. Màu Trạng Thái (Semantic Colors)
-*   **Success (Thành công/Check-in):** `#10B981` (Tailwind `emerald-500`)
-*   **Error (Thất bại/Lỗi):** `#EF4444` (Tailwind `red-500`)
-*   **Warning (Cảnh báo):** `#F59E0B` (Tailwind `amber-500`)
-*   **Info (Thông tin):** `#3B82F6` (Tailwind `blue-500`)
+*   **Success (Check-in / Thành công):** `#0D9488` (Coastal Teal)
+*   **Error (Thất bại / Cảnh báo lỗi):** `#EF4444` (Tailwind `red-500`)
+*   **Warning (Cảnh báo nhạ):** `#D97706` (Sunset Sand)
 
 ### D. Nguyên tắc Áp dụng Màu sắc (Color Usage Principles)
-Để đảm bảo giao diện đồng nhất, sạch sẽ và cao cấp, đội ngũ phát triển cần tuân thủ nghiêm ngặt các nguyên tắc áp dụng màu sắc sau:
-*   **Primary Blue (`#2563EB`):** Chỉ dành cho các tương tác và hành động chính (các nút CTA chính, liên kết điều hướng, trạng thái active).
-*   **Secondary Orange (`#F97316`):** Chỉ đóng vai trò là màu nhấn (Accent Color) tại một số điểm nhỏ. Dùng làm điểm nhấn cho rating, badge, icon nổi bật hoặc nút CTA phụ. Tuyệt đối **không lạm dụng** màu cam trên các vùng diện tích lớn để tránh gây rối mắt.
-*   **Nền ứng dụng (Background):** Luôn sử dụng màu xám nhẹ `#F8FAFC` để mang lại sự dịu mắt và thoải mái khi tương tác lâu dài.
-*   **Thẻ thông tin (Cards):** Luôn sử dụng nền màu trắng tinh (`#FFFFFF`) đặt trên nền background xám để tạo chiều sâu và phân tách khối thị giác rõ ràng.
-*   **Màu văn bản (Typography Color):**
-    *   *Chữ chính (Tiêu đề, nội dung chính):* Luôn dùng màu Slate đậm `#0F172A`.
-    *   *Chữ phụ (Mô tả phụ, nhãn phụ, thông tin thời gian):* Luôn dùng màu xám Slate `#64748B`.
-*   **Triết lý giao diện (Visual Philosophy):** Giữ giao diện sáng sủa (Clean & Light mode), tận dụng tối đa các khoảng trắng (White space) hợp lý để nội dung được phân tách tự nhiên, hạn chế tối đa việc sử dụng quá nhiều màu sắc phức tạp.
+*   **Ocean Azure (`#0369A1`):** Chỉ dành cho các tương tác hành động chính (nút CTA chính, tab active, liên kết điều hướng).
+*   **Sunset Sand (`#D97706`):** Đóng vai trò là màu nhấn Accent hạn chế. Tuyệt đối **không lạm dụng** trên diện tích lớn để tránh gây chói mắt.
+*   **Nền ứng dụng (App Background):** Sử dụng màu Off-White `#FAFAFA` giúp mắt thư thái khi lướt thông tin du lịch lâu dài.
+*   **Thẻ thông tin (Cards):** Nền trắng tinh khôi `#FFFFFF` đặt nổi trên nền `#FAFAFA` với đường viền mảnh `#E2E8F0` tạo chiều sâu gọn gàng.
+*   **Triết lý giao diện (Visual Philosophy):** Ưu tiên "Light, Minimal, Typographic". Hạn chế tối đa dải màu gradient gắt và giữ khoảng trống thở (whitespace) lớn chuẩn phong cách Notion & Apple.
 
 ---
 
 ## 2. Phông Chữ & Định Dạng (Typography)
 
 *   **Font Family chính:**
-    *   **Web:** `Outfit`, `Inter`, sans-serif (Ưu tiên import từ Google Fonts).
-    *   **Mobile:** Hệ thống Sans-Serif mặc định của hệ điều hành (San Francisco trên iOS, Roboto trên Android).
-*   **Cỡ chữ tiêu chuẩn (Font Sizes):**
-    *   `text-xs` (12px): Dành cho chú thích, nhãn phụ, ngày tháng.
-    *   `text-sm` (14px): Dữ liệu bảng, mô tả phụ, text phụ.
-    *   `text-base` (16px): Cỡ chữ mặc định cho body text, bài viết, input form.
-    *   `text-lg` (18px): Tên địa điểm nhỏ, sub-header.
+    *   **Headings (Tiêu đề):** `Outfit`, sans-serif (Nét chữ hiện đại, năng động).
+    *   **Body Text (Nội dung):** `Inter`, sans-serif (Sắc nét, chuẩn typographic Apple).
+    *   **Mobile App:** San Francisco (iOS) / Roboto (Android) hoặc Inter font.
+*   **C cỡ chữ tiêu chuẩn (Font Sizes):**
+    *   `text-xs` (12px): Chú thích, nhãn phụ, thời gian.
+    *   `text-sm` (14px): Dữ liệu chi tiết, mô tả phụ, giá tiền nhỏ.
+    *   `text-base` (16px): Nội dung chính body, bài viết, input form.
+    *   `text-lg` (18px): Tên địa điểm, sub-header.
     *   `text-xl` (20px): Tiêu đề card, tiêu đề bài viết.
-    *   `text-2xl` đến `text-4xl` (24px - 36px): Tiêu đề trang chính, tiêu đề lớn chào mừng.
+    *   `text-2xl` đến `text-4xl` (24px - 36px): Tiêu đề màn hình chính, hero banner.
 
 ---
 
 ## 3. Khoảng Cách & Bo Góc (Spacing & Border Radius)
 
-*   **Spacing Scale (padding/margin):** Sử dụng hệ số 4px của Tailwind:
-    *   `4px` (Tailwind `1`), `8px` (Tailwind `2`), `12px` (Tailwind `3`), `16px` (Tailwind `4` - Tiêu chuẩn cho khoảng cách giữa các khối), `24px` (Tailwind `6`), `32px` (Tailwind `8`).
+*   **Spacing Scale:** Chuẩn hệ số 4px của Tailwind: `4px`, `8px`, `12px`, `16px` (khoảng cách chuẩn), `24px`, `32px`.
 *   **Bo góc (Border Radius):**
-    *   Button & Input: `rounded-lg` (8px).
-    *   Cards & Modals: `rounded-xl` (12px) hoặc `rounded-2xl` (16px).
-    *   Avatar & Icons: `rounded-full` (9999px).
+    *   Button & Input: `rounded-xl` (12px).
+    *   Cards & Modals: `rounded-2xl` (16px) hoặc `rounded-3xl` (24px).
+    *   Pill badges & Status: `rounded-full` (9999px).
 
 ---
 
-## 4. Công Nghệ & Thư Viện Thiết Kế Giao Diện
+## 4. Công Nghệ & Thư Viện UI
 
-Để hiện thực hóa hệ thống thiết kế trên, các thư viện UI/UX sau được chỉ định sử dụng:
+### A. Web Frontend (`web/public/`)
+*   **Tailwind CSS**: Utility-first CSS với custom colors (`oceanBlue`, `softSky`, `coastalTeal`, `sunsetSand`).
+*   **Custom CSS Variables**: Định nghĩa sẵn tại `:root` trong `style.css` (`--color-primary-600`, `--color-primary-50`,...).
+*   **Lucide Icons**: Bộ SVG Icon tối giản, sắc nét.
+*   **Canvas Confetti**: Hoạt ảnh chúc mừng khi tạo chuyến đi thành công.
 
-### A. Dành cho Web Frontend (React + Vite)
-*   **`tailwindcss` & `postcss` & `autoprefixer`**: Hỗ trợ viết CSS trực tiếp qua Class (Utility-First), tối ưu hóa thiết kế responsive cho mọi màn hình (mobile, tablet, desktop).
-*   **`shadcn/ui`**: Bộ thư viện component không chứa sẵn style cố định (headless UI), được xây dựng trên nền Radix UI và Tailwind CSS. Dùng để triển khai các component phức tạp như: Modal (Dialog), Date Range Picker, Select, Carousel, Popover.
-*   **`lucide-react`**: Bộ thư viện Icon vector dạng SVG tối giản, nhẹ và sắc nét.
-*   **`framer-motion`**: Tạo hoạt ảnh mượt mà khi chuyển trang, hover các card địa điểm, hoặc mở rộng timeline lịch trình.
-*   **`sonner`**: Hiển thị popup thông báo (Toast notifications) như thông báo lỗi, lưu thành công, cảnh báo.
-
-### B. Dành cho Mobile App (React Native / Expo)
-*   **`nativewind`**: Cho phép viết Tailwind CSS trực tiếp trên các component React Native (`View`, `Text`, `TouchableOpacity`) giúp đồng bộ tư duy thiết kế giống như phiên bản Web.
-*   **`react-native-paper`**: Bộ component UI chuẩn Material Design dành cho di động, cung cấp các element native tối ưu hiệu năng như Appbar, Button, Card, Dialog.
-*   **`@expo/vector-icons`**: Tích hợp sẵn hàng ngàn icon từ Ionicons, FontAwesome, MaterialIcons để sử dụng trực tiếp trên di động.
+### B. Mobile App (Expo / React Native)
+*   **NativeWind**: Cấu hình bảng màu Tailwind tương thích chuẩn với nền tảng React Native.
 
 ---
 
-## 5. Quy Chuẩn Thành Phần Giao Diện (Component Specifications)
+## 5. Quy Chuẩn Thành Phần Giao Diện (Component Specs)
 
 ### A. Button (Nút bấm)
-*   **Primary Button:** Background Ocean Blue (`#2563EB`), chữ trắng, bo góc 8px. Hiệu ứng hover (Web): chuyển sang màu xanh đậm hơn (`#1D4ED8`).
-*   **Secondary Button:** Background Sunset Orange (`#F97316`), chữ trắng. Sử dụng cho các hành động khuyến khích chuyển đổi (như "Đặt tour ngay", "Xem lộ trình đề xuất").
-*   **Outline Button:** Viền xám nhạt (`#E2E8F0`), nền trong suốt, chữ đen Slate. Sử dụng cho các hành động phụ (như "Hủy", "Quay lại").
+*   **Primary Button:** Background Ocean Azure (`#0369A1`), chữ trắng, bo góc `rounded-xl` / `rounded-full`. Hover: Ocean Azure Dark (`#075985`).
+*   **Secondary Button:** Background Soft Sky (`#F0F9FF`), chữ Ocean Azure (`#0369A1`), viền nhạt.
+*   **Outline Button:** Viền xám mảnh (`#E2E8F0`), nền trắng, chữ Slate Dark (`#0F172A`).
 
-### B. Cards (Thẻ thông tin)
-Mọi card thông tin địa điểm (Tour Card, Hotel Card) phải tuân thủ:
-*   Bo góc: `rounded-xl` (12px).
-*   Bóng mờ (Shadow): Subtle shadow (`shadow-sm` hoặc `shadow-md` khi hover).
-*   Ảnh: Tỷ lệ `aspect-[4/3]` hoặc `aspect-video`, bo góc trên.
-*   Thông tin: Tên địa điểm (bold, Slate-900), Điểm rating (chữ Sunset Orange kèm icon sao), Giá tiền (Ocean Blue, bold).
+### B. Cards (Thẻ địa điểm & Chuyến đi)
+*   Nền: White Surface (`#FFFFFF`).
+*   Viền: `border border-borderGray` (`#E2E8F0`).
+*   Bo góc: `rounded-2xl` (16px).
+*   Đổ bóng: Soft Shadow (`shadow-sm`, nâng lên `shadow-md` khi hover).
+*   Gợi ý ảnh: Hover hiệu ứng phóng nhẹ (`transform scale-105`).
