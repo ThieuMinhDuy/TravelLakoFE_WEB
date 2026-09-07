@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TravelLako - Nền tảng lập kế hoạch du lịch thông minh Việt Nam</title>
   
-  <!-- Google Fonts: Outfit and Inter -->
+  <!-- Google Fonts: Be Vietnam Pro, Plus Jakarta Sans and Inter (100% Vietnamese Accent Support) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -47,8 +47,8 @@
             warningYellow: '#D97706',
           },
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            heading: ['Outfit', 'sans-serif'],
+            sans: ['"Be Vietnam Pro"', 'Inter', 'sans-serif'],
+            heading: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif'],
           }
         }
       }
@@ -72,16 +72,19 @@
       <div class="flex items-center justify-between h-16">
         
         <!-- Left: Logo -->
-        <div class="flex items-center gap-2 cursor-pointer" onclick="navigate('home')">
-          <img src="../src/assets/logo.webp" alt="TravelLako Logo" class="h-10 w-auto rounded-lg object-contain" onerror="this.src='https://placehold.co/120x40/2563eb/ffffff?text=TravelLako'">
+        <div class="flex items-center gap-2.5 cursor-pointer group" onclick="navigate('home')">
+          <div class="w-10 h-10 rounded-xl bg-oceanBlue flex items-center justify-center text-white shadow-md shadow-oceanBlue/20 group-hover:scale-105 transition-transform">
+            <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
+          </div>
           <span class="font-heading font-extrabold text-xl tracking-tight text-oceanBlue">TravelLako</span>
         </div>
 
         <!-- Middle: Menu Links (Clicking switches views) -->
-        <nav class="hidden md:flex space-x-1 font-medium text-sm">
-          <button data-page="home" onclick="navigate('home')" class="nav-link px-3 py-2 rounded-lg transition-all border-b-2 border-transparent text-slateMuted hover:text-oceanBlue">Khám phá</button>
-          <button data-page="search" onclick="navigate('search')" class="nav-link px-3 py-2 rounded-lg transition-all border-b-2 border-transparent text-slateMuted hover:text-oceanBlue">Điểm đến</button>
-          <button onclick="navigate('home'); setTimeout(() => { document.getElementById('blog-section').scrollIntoView({ behavior: 'smooth' }); }, 150);" class="px-3 py-2 rounded-lg transition-all text-slateMuted hover:text-oceanBlue">Cẩm nang</button>
+        <nav class="hidden md:flex items-center space-x-1 font-medium text-sm">
+          <button data-page="home" onclick="navigate('home')" class="nav-link px-3.5 py-2 rounded-xl transition-all border-b-2 border-transparent text-slateMuted hover:text-oceanBlue font-semibold">Khám phá</button>
+          <button data-page="search" onclick="navigate('search')" class="nav-link px-3.5 py-2 rounded-xl transition-all border-b-2 border-transparent text-slateMuted hover:text-oceanBlue font-semibold">Điểm đến</button>
+          <button data-page="blog" onclick="navigate('blog')" class="nav-link px-3.5 py-2 rounded-xl transition-all border-b-2 border-transparent text-slateMuted hover:text-oceanBlue font-semibold">Cẩm nang</button>
+          <button data-page="planner-list" onclick="navigate('planner-list')" class="nav-link px-3.5 py-2 rounded-xl transition-all border-b-2 border-transparent text-slateMuted hover:text-oceanBlue font-semibold">Lịch trình AI</button>
         </nav>
 
         <!-- Right: Auth / Avatar Dropdown -->
@@ -98,6 +101,8 @@
               <option value="diary">Màn 7: Nhật ký hành trình</option>
               <option value="profile">Màn 8: Hồ sơ cá nhân</option>
               <option value="saved">Màn 9: Địa điểm đã lưu</option>
+              <option value="blog">Màn 10: Cẩm nang</option>
+              <option value="planner-list">Màn 11: Lịch trình AI</option>
             </select>
           </div>
 
@@ -113,12 +118,15 @@
           </div>
 
           <!-- State: Registered (Logged In) -->
-          <div id="auth-registered" class="hidden flex items-center gap-3 relative">
+          <div id="auth-registered" class="hidden flex items-center gap-3.5 relative">
             <!-- Notification Bell -->
             <button onclick="showToast('Không có thông báo mới', 'success')" class="text-slateMuted hover:text-slateDark p-2 rounded-full transition-all relative hover:bg-grayBg">
               <i data-lucide="bell" class="w-5 h-5"></i>
               <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-sunsetOrange rounded-full"></span>
             </button>
+
+            <!-- Spacing divider -->
+            <div class="h-5 w-px bg-slate-200"></div>
 
             <!-- User Menu Trigger -->
             <div class="relative">
@@ -299,204 +307,523 @@
         </div>
       </div>
 
-      <!-- Top Destinations Grid -->
+      <!-- Top Destinations Grid (6 Cards Balanced Grid) -->
       <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="flex items-end justify-between mb-8">
-          <div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark font-heading">Điểm đến Phổ biến tại Việt Nam</h2>
-            <p class="text-slateMuted mt-1">Các thành phố được du khách yêu thích và ghé thăm nhiều nhất</p>
-          </div>
-          <button onclick="navigate('search')" class="text-oceanBlue hover:text-oceanBlueDark font-semibold text-sm flex items-center gap-1">
-            Xem tất cả <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </button>
+        <!-- Centered Header -->
+        <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
+          
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark font-heading">Điểm đến Phổ biến tại Việt Nam</h2>
+          <p class="text-slateMuted text-xs sm:text-sm">Các thành phố được du khách yêu thích và ghé thăm nhiều nhất</p>
         </div>
 
+        <!-- 6 Equal Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          
           <!-- Card 1: Hà Nội -->
-          <div onclick="searchByDestination('Hà Nội')" class="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <img src="https://images.unsplash.com/photo-1509060464153-44667396260f?w=600" alt="Hà Nội" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
-            <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
+          <div onclick="searchByDestination('Hà Nội')" class="group relative h-72 sm:h-80 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1509060464153-44667396260f?w=600" alt="Hà Nội" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-oceanBlue font-extrabold text-[11px] px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
+              <i data-lucide="flame" class="w-3.5 h-3.5 text-sunsetOrange fill-sunsetOrange"></i> HOT #1
+            </span>
+            <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between text-white">
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <h3 class="font-heading font-bold text-lg tracking-tight">Hà Nội</h3>
-                  <span class="flex items-center gap-0.5 text-[10px] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-amber-300 font-bold">
-                    <i data-lucide="star" class="w-3 h-3 fill-current text-amber-300"></i> 4.9
+                  <h3 class="font-heading font-extrabold text-xl tracking-tight">Hà Nội</h3>
+                  <span class="flex items-center gap-0.5 text-xs bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-amber-300 font-bold">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-300"></i> 4.9
                   </span>
                 </div>
-                <p class="text-xs text-white/70">120+ địa điểm khám phá</p>
+                <p class="text-xs text-white/80 font-medium">120+ địa điểm & 36 Phố Phường</p>
               </div>
-              <span class="px-3.5 py-1.5 bg-white text-slateDark font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1 group-hover:bg-oceanBlue group-hover:text-white">
-                Khám phá <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <span class="p-2.5 bg-white text-slateDark rounded-xl shadow transition-all group-hover:bg-oceanBlue group-hover:text-white">
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </span>
             </div>
           </div>
 
           <!-- Card 2: TP. Hồ Chí Minh -->
-          <div onclick="searchByDestination('TP. Hồ Chí Minh')" class="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600" alt="TP. HCM" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
-            <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
+          <div onclick="searchByDestination('TP. Hồ Chí Minh')" class="group relative h-72 sm:h-80 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=600" alt="TP. HCM" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between text-white">
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <h3 class="font-heading font-bold text-lg tracking-tight">TP. Hồ Chí Minh</h3>
-                  <span class="flex items-center gap-0.5 text-[10px] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-amber-300 font-bold">
-                    <i data-lucide="star" class="w-3 h-3 fill-current text-amber-300"></i> 4.8
+                  <h3 class="font-heading font-extrabold text-xl tracking-tight">TP. HCM</h3>
+                  <span class="flex items-center gap-0.5 text-xs bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-amber-300 font-bold">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-300"></i> 4.8
                   </span>
                 </div>
-                <p class="text-xs text-white/70">150+ địa điểm khám phá</p>
+                <p class="text-xs text-white/80 font-medium">150+ địa điểm sầm uất</p>
               </div>
-              <span class="px-3.5 py-1.5 bg-white text-slateDark font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1 group-hover:bg-oceanBlue group-hover:text-white">
-                Khám phá <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <span class="p-2.5 bg-white text-slateDark rounded-xl shadow transition-all group-hover:bg-oceanBlue group-hover:text-white">
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </span>
             </div>
           </div>
 
           <!-- Card 3: Đà Nẵng -->
-          <div onclick="searchByDestination('Đà Nẵng')" class="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=600" alt="Đà Nẵng" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
-            <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
+          <div onclick="searchByDestination('Đà Nẵng')" class="group relative h-72 sm:h-80 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=600" alt="Đà Nẵng" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between text-white">
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <h3 class="font-heading font-bold text-lg tracking-tight">Đà Nẵng</h3>
-                  <span class="flex items-center gap-0.5 text-[10px] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-amber-300 font-bold">
-                    <i data-lucide="star" class="w-3 h-3 fill-current text-amber-300"></i> 4.9
+                  <h3 class="font-heading font-extrabold text-xl tracking-tight">Đà Nẵng</h3>
+                  <span class="flex items-center gap-0.5 text-xs bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-amber-300 font-bold">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-300"></i> 4.9
                   </span>
                 </div>
-                <p class="text-xs text-white/70">90+ địa điểm khám phá</p>
+                <p class="text-xs text-white/80 font-medium">90+ địa điểm biển đẹp</p>
               </div>
-              <span class="px-3.5 py-1.5 bg-white text-slateDark font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1 group-hover:bg-oceanBlue group-hover:text-white">
-                Khám phá <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <span class="p-2.5 bg-white text-slateDark rounded-xl shadow transition-all group-hover:bg-oceanBlue group-hover:text-white">
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </span>
             </div>
           </div>
 
           <!-- Card 4: Hội An -->
-          <div onclick="searchByDestination('Hội An')" class="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600" alt="Hội An" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
-            <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
+          <div onclick="searchByDestination('Hội An')" class="group relative h-72 sm:h-80 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600" alt="Hội An" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between text-white">
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <h3 class="font-heading font-bold text-lg tracking-tight">Hội An</h3>
-                  <span class="flex items-center gap-0.5 text-[10px] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-amber-300 font-bold">
-                    <i data-lucide="star" class="w-3 h-3 fill-current text-amber-300"></i> 4.7
+                  <h3 class="font-heading font-extrabold text-xl tracking-tight">Hội An</h3>
+                  <span class="flex items-center gap-0.5 text-xs bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-amber-300 font-bold">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-300"></i> 4.7
                   </span>
                 </div>
-                <p class="text-xs text-white/70">80+ địa điểm khám phá</p>
+                <p class="text-xs text-white/80 font-medium">80+ di sản phố cổ</p>
               </div>
-              <span class="px-3.5 py-1.5 bg-white text-slateDark font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1 group-hover:bg-oceanBlue group-hover:text-white">
-                Khám phá <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <span class="p-2.5 bg-white text-slateDark rounded-xl shadow transition-all group-hover:bg-oceanBlue group-hover:text-white">
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </span>
             </div>
           </div>
 
-          <!-- Card 5: Nha Trang -->
-          <div onclick="searchByDestination('Nha Trang')" class="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600" alt="Nha Trang" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
-            <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
+          <!-- Card 5: Đà Lạt -->
+          <div onclick="searchByDestination('Đà Lạt')" class="group relative h-72 sm:h-80 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1583244532610-2a234e7c3eca?w=600" alt="Đà Lạt" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between text-white">
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <h3 class="font-heading font-bold text-lg tracking-tight">Nha Trang</h3>
-                  <span class="flex items-center gap-0.5 text-[10px] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-amber-300 font-bold">
-                    <i data-lucide="star" class="w-3 h-3 fill-current text-amber-300"></i> 4.8
+                  <h3 class="font-heading font-extrabold text-xl tracking-tight">Đà Lạt</h3>
+                  <span class="flex items-center gap-0.5 text-xs bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-amber-300 font-bold">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-300"></i> 4.9
                   </span>
                 </div>
-                <p class="text-xs text-white/70">100+ địa điểm khám phá</p>
+                <p class="text-xs text-white/80 font-medium">110+ địa điểm mộng mơ</p>
               </div>
-              <span class="px-3.5 py-1.5 bg-white text-slateDark font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1 group-hover:bg-oceanBlue group-hover:text-white">
-                Khám phá <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <span class="p-2.5 bg-white text-slateDark rounded-xl shadow transition-all group-hover:bg-oceanBlue group-hover:text-white">
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </span>
             </div>
           </div>
 
-          <!-- Card 6: Đà Lạt -->
-          <div onclick="searchByDestination('Đà Lạt')" class="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <img src="https://images.unsplash.com/photo-1583244532610-2a234e7c3eca?w=600" alt="Đà Lạt" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
-            <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
+          <!-- Card 6: Phú Quốc -->
+          <div onclick="searchByDestination('Phú Quốc')" class="group relative h-72 sm:h-80 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600" alt="Phú Quốc" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between text-white">
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <h3 class="font-heading font-bold text-lg tracking-tight">Đà Lạt</h3>
-                  <span class="flex items-center gap-0.5 text-[10px] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-amber-300 font-bold">
-                    <i data-lucide="star" class="w-3 h-3 fill-current text-amber-300"></i> 4.9
+                  <h3 class="font-heading font-extrabold text-xl tracking-tight">Phú Quốc</h3>
+                  <span class="flex items-center gap-0.5 text-xs bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-amber-300 font-bold">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-300"></i> 4.8
                   </span>
                 </div>
-                <p class="text-xs text-white/70">110+ địa điểm khám phá</p>
+                <p class="text-xs text-white/80 font-medium">95+ thiên đường nghỉ dưỡng</p>
               </div>
-              <span class="px-3.5 py-1.5 bg-white text-slateDark font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1 group-hover:bg-oceanBlue group-hover:text-white">
-                Khám phá <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <span class="p-2.5 bg-white text-slateDark rounded-xl shadow transition-all group-hover:bg-oceanBlue group-hover:text-white">
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </span>
             </div>
           </div>
+
         </div>
       </section>
 
-      <!-- Section: Tại sao chọn TravelLako -->
-      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-100">
-        <div class="text-center mb-12">
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark font-heading">Tại sao chọn TravelLako?</h2>
-          <p class="text-slateMuted mt-1">Trải nghiệm du lịch thông minh, tối ưu và trọn vẹn hơn bao giờ hết</p>
-        </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- Card 1 -->
-          <div class="bg-white p-6 rounded-2xl border border-borderGray hover:border-oceanBlue/30 hover:shadow-lg transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-oceanBlue/5 flex items-center justify-center text-oceanBlue mb-5 group-hover:scale-110 transition-transform">
-              <i data-lucide="cpu" class="w-6 h-6"></i>
-            </div>
-            <h3 class="font-heading font-bold text-lg text-slateDark mb-2">AI Lập Lịch Trình</h3>
-            <p class="text-sm text-slateMuted leading-relaxed">Tự động tối ưu hóa đường đi và thời gian tham quan chỉ trong vài giây.</p>
-          </div>
-          
-          <!-- Card 2 -->
-          <div class="bg-white p-6 rounded-2xl border border-borderGray hover:border-oceanBlue/30 hover:shadow-lg transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-oceanBlue/5 flex items-center justify-center text-oceanBlue mb-5 group-hover:scale-110 transition-transform">
-              <i data-lucide="map" class="w-6 h-6"></i>
-            </div>
-            <h3 class="font-heading font-bold text-lg text-slateDark mb-2">Hàng Ngàn Địa Điểm</h3>
-            <p class="text-sm text-slateMuted leading-relaxed">Kho dữ liệu khổng lồ với các địa điểm vui chơi, ẩm thực được chọn lọc kỹ càng.</p>
-          </div>
-          
-          <!-- Card 3 -->
-          <div class="bg-white p-6 rounded-2xl border border-borderGray hover:border-oceanBlue/30 hover:shadow-lg transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-oceanBlue/5 flex items-center justify-center text-oceanBlue mb-5 group-hover:scale-110 transition-transform">
-              <i data-lucide="wallet" class="w-6 h-6"></i>
-            </div>
-            <h3 class="font-heading font-bold text-lg text-slateDark mb-2">Tối Ưu Ngân Sách</h3>
-            <p class="text-sm text-slateMuted leading-relaxed">Dự kiến chi phí thông minh giúp bạn kiểm soát ngân sách chuyến đi hiệu quả.</p>
-          </div>
-          
-          <!-- Card 4 -->
-          <div class="bg-white p-6 rounded-2xl border border-borderGray hover:border-oceanBlue/30 hover:shadow-lg transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-oceanBlue/5 flex items-center justify-center text-oceanBlue mb-5 group-hover:scale-110 transition-transform">
-              <i data-lucide="book-open" class="w-6 h-6"></i>
-            </div>
-            <h3 class="font-heading font-bold text-lg text-slateDark mb-2">Nhật Ký Hành Trình</h3>
-            <p class="text-sm text-slateMuted leading-relaxed">Lưu giữ những khoảnh khắc, hình ảnh và kỷ niệm đẹp trên từng chặng đường.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Trending AI Itineraries -->
-      <section class="bg-grayBg py-16">
+      <!-- Section: Tại sao chọn TravelLako (Restyled Features) -->
+      <section class="bg-grayBg/70 py-16 border-y border-borderGray/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="mb-12 text-center">
-            <div class="inline-flex items-center gap-1 px-3 py-1 bg-oceanBlue/5 rounded-full text-xs font-bold text-oceanBlue mb-3">
-              AI Planner
+          <div class="text-center mb-12">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark font-heading">Tại sao chọn TravelLako?</h2>
+            <p class="text-slateMuted mt-1">Trải nghiệm du lịch thông minh, tối ưu và trọn vẹn hơn bao giờ hết</p>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Feature Card 1 -->
+            <div class="bg-white p-6 rounded-3xl border border-borderGray hover:border-oceanBlue/40 hover:shadow-xl transition-all duration-300 group">
+              <div class="w-14 h-14 rounded-2xl bg-oceanBlue/10 flex items-center justify-center text-oceanBlue mb-5 group-hover:scale-110 group-hover:bg-oceanBlue group-hover:text-white transition-all shadow-sm">
+                <i data-lucide="cpu" class="w-7 h-7"></i>
+              </div>
+              <h3 class="font-heading font-bold text-lg text-slateDark mb-2">AI Lập Lịch Trình</h3>
+              <p class="text-xs text-slateMuted leading-relaxed">Tự động tối ưu hóa đường đi và thời gian tham quan chỉ trong vài giây.</p>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark font-heading">Lịch trình Gợi ý từ AI Tiêu biểu</h2>
-            <p class="text-slateMuted mt-1">Được thiết kế tự động tối ưu chi phí và điểm đến hấp dẫn nhất</p>
+            
+            <!-- Feature Card 2 -->
+            <div class="bg-white p-6 rounded-3xl border border-borderGray hover:border-oceanBlue/40 hover:shadow-xl transition-all duration-300 group">
+              <div class="w-14 h-14 rounded-2xl bg-oceanBlue/10 flex items-center justify-center text-oceanBlue mb-5 group-hover:scale-110 group-hover:bg-oceanBlue group-hover:text-white transition-all shadow-sm">
+                <i data-lucide="map-pin" class="w-7 h-7"></i>
+              </div>
+              <h3 class="font-heading font-bold text-lg text-slateDark mb-2">Hàng Ngàn Địa Điểm</h3>
+              <p class="text-xs text-slateMuted leading-relaxed">Kho dữ liệu khổng lồ với các địa điểm vui chơi, ẩm thực được chọn lọc kỹ càng.</p>
+            </div>
+            
+            <!-- Feature Card 3 -->
+            <div class="bg-white p-6 rounded-3xl border border-borderGray hover:border-oceanBlue/40 hover:shadow-xl transition-all duration-300 group">
+              <div class="w-14 h-14 rounded-2xl bg-oceanBlue/10 flex items-center justify-center text-oceanBlue mb-5 group-hover:scale-110 group-hover:bg-oceanBlue group-hover:text-white transition-all shadow-sm">
+                <i data-lucide="wallet" class="w-7 h-7"></i>
+              </div>
+              <h3 class="font-heading font-bold text-lg text-slateDark mb-2">Tối Ưu Ngân Sách</h3>
+              <p class="text-xs text-slateMuted leading-relaxed">Dự kiến chi phí thông minh giúp bạn kiểm soát ngân sách chuyến đi hiệu quả.</p>
+            </div>
+            
+            <!-- Feature Card 4 -->
+            <div class="bg-white p-6 rounded-3xl border border-borderGray hover:border-oceanBlue/40 hover:shadow-xl transition-all duration-300 group">
+              <div class="w-14 h-14 rounded-2xl bg-oceanBlue/10 flex items-center justify-center text-oceanBlue mb-5 group-hover:scale-110 group-hover:bg-oceanBlue group-hover:text-white transition-all shadow-sm">
+                <i data-lucide="book-open" class="w-7 h-7"></i>
+              </div>
+              <h3 class="font-heading font-bold text-lg text-slateDark mb-2">Nhật Ký Hành Trình</h3>
+              <p class="text-xs text-slateMuted leading-relaxed">Lưu giữ những khoảnh khắc, hình ảnh và kỷ niệm đẹp trên từng chặng đường.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured Place Reviews (Khớp API Đánh Giá Địa Điểm) -->
+      <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark font-heading">Trải Nghiệm Thực Tế Tại Các Địa Điểm</h2>
+            <p class="text-slateMuted mt-1">Cảm nhận và đánh giá chân thực từ cộng đồng xê dịch về những điểm đến nổi bật</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Place Review Card 1: Bà Nà Hills -->
+            <div class="bg-white p-6 rounded-3xl border border-borderGray flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-oceanBlue/10 text-oceanBlue flex items-center justify-center font-bold text-xs">
+                      <i data-lucide="map-pin" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-heading font-extrabold text-sm text-slateDark group-hover:text-oceanBlue transition-colors">Sun World Bà Nà Hills</h4>
+                      <span class="text-[10px] text-slateMuted font-medium">Đà Nẵng</span>
+                    </div>
+                  </div>
+                  <span class="flex items-center gap-1 text-xs bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-bold border border-amber-200/60">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i> 5.0
+                  </span>
+                </div>
+                <p class="text-xs leading-relaxed text-slateMuted italic mb-6">"Cầu Vàng thực sự là kiệt tác! Khí hậu se lạnh dễ chịu như châu Âu thu nhỏ. Tuyệt vời nhất là cáp treo xuyên qua sương mù."</p>
+              </div>
+              <div class="flex items-center gap-3 pt-4 border-t border-borderGray/60">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Du khách" class="w-8 h-8 rounded-full object-cover shadow-sm">
+                <div>
+                  <span class="block font-bold text-xs text-slateDark">Trần Hoàng Nam</span>
+                  <span class="block text-[10px] text-slateMuted">Đã trải nghiệm • T8/2026</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Place Review Card 2: Phố cổ Hội An -->
+            <div class="bg-white p-6 rounded-3xl border border-borderGray flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-oceanBlue/10 text-oceanBlue flex items-center justify-center font-bold text-xs">
+                      <i data-lucide="landmark" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-heading font-extrabold text-sm text-slateDark group-hover:text-oceanBlue transition-colors">Phố Cổ Hội An</h4>
+                      <span class="text-[10px] text-slateMuted font-medium">Quảng Nam</span>
+                    </div>
+                  </div>
+                  <span class="flex items-center gap-1 text-xs bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-bold border border-amber-200/60">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i> 4.9
+                  </span>
+                </div>
+                <p class="text-xs leading-relaxed text-slateMuted italic mb-6">"Buổi tối phố cổ lên đèn lồng lung linh diệu kỳ. Thả hoa đăng trên sông Hoài và ăn mỳ Quảng ở chợ đêm là trải nghiệm đáng nhớ!"</p>
+              </div>
+              <div class="flex items-center gap-3 pt-4 border-t border-borderGray/60">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" alt="Du khách" class="w-8 h-8 rounded-full object-cover shadow-sm">
+                <div>
+                  <span class="block font-bold text-xs text-slateDark">Nguyễn Phương Thảo</span>
+                  <span class="block text-[10px] text-slateMuted">Đã trải nghiệm • T7/2026</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Place Review Card 3: Hồ Tuyền Lâm Đà Lạt -->
+            <div class="bg-white p-6 rounded-3xl border border-borderGray flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-oceanBlue/10 text-oceanBlue flex items-center justify-center font-bold text-xs">
+                      <i data-lucide="trees" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-heading font-extrabold text-sm text-slateDark group-hover:text-oceanBlue transition-colors">KDL Hồ Tuyền Lâm</h4>
+                      <span class="text-[10px] text-slateMuted font-medium">Đà Lạt</span>
+                    </div>
+                  </div>
+                  <span class="flex items-center gap-1 text-xs bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-bold border border-amber-200/60">
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i> 4.8
+                  </span>
+                </div>
+                <p class="text-xs leading-relaxed text-slateMuted italic mb-6">"Bình minh chèo SUP trên hồ săn mây cực thơ. Cảnh rừng thông soi bóng xuống mặt nước bình yên vô cùng."</p>
+              </div>
+              <div class="flex items-center gap-3 pt-4 border-t border-borderGray/60">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Du khách" class="w-8 h-8 rounded-full object-cover shadow-sm">
+                <div>
+                  <span class="block font-bold text-xs text-slateDark">Lê Quốc Tuấn</span>
+                  <span class="block text-[10px] text-slateMuted">Đã trải nghiệm • T8/2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- ================= MÀN 10: CẨM NANG DU LỊCH (BLOG PAGE) ================= -->
+    <div id="page-blog" class="page-section hidden fade-in pb-16">
+      <!-- Hero Banner Cẩm Nang -->
+      <div class="bg-gradient-to-r from-oceanBlue to-coastalTeal py-14 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+          <span class="px-3.5 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider">Kinh nghiệm & Bí quyết</span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold font-heading">Cẩm Nang Du Lịch TravelLako</h1>
+          <p class="text-white/80 max-w-2xl mx-auto text-sm">Tổng hợp các bài viết chuyên sâu về ẩm thực, điểm đến và bí quyết du lịch tiết kiệm từ những người đam mê xê dịch.</p>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        <!-- Category Filter Pills -->
+        <div class="flex items-center justify-center gap-2 overflow-x-auto pb-4 mb-10">
+          <button class="px-4 py-2 bg-oceanBlue text-white rounded-full text-xs font-bold shadow-sm">Tất cả bài viết</button>
+          <button class="px-4 py-2 bg-white text-slateDark hover:bg-grayBg border border-borderGray rounded-full text-xs font-semibold">Ẩm thực</button>
+          <button class="px-4 py-2 bg-white text-slateDark hover:bg-grayBg border border-borderGray rounded-full text-xs font-semibold">Kinh nghiệm</button>
+          <button class="px-4 py-2 bg-white text-slateDark hover:bg-grayBg border border-borderGray rounded-full text-xs font-semibold">Địa điểm</button>
+          <button class="px-4 py-2 bg-white text-slateDark hover:bg-grayBg border border-borderGray rounded-full text-xs font-semibold">Văn hóa</button>
+        </div>
+
+        <!-- 6-Blog Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Card 1 -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-borderGray group hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+            <div class="overflow-hidden h-52 relative">
+              <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600" alt="Blog 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-oceanBlue font-extrabold text-[10px] uppercase">Ẩm thực</span>
+            </div>
+            <div class="p-6 flex-grow flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
+                  <span>15/07/2026</span>
+                  <span>•</span>
+                  <span>5 phút đọc</span>
+                </div>
+                <h3 class="font-heading font-bold text-lg text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Top 10 món ăn đường phố phải thử ở Hà Nội</h3>
+                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Bún chả, chả cá Lã Vọng, cà phê trứng - cẩm nang ăn trọn vẹn Hà Nội từ dân bản địa.</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-oceanBlue">
+                <span>Đọc bài viết</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-borderGray group hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+            <div class="overflow-hidden h-52 relative">
+              <img src="https://images.unsplash.com/photo-1509060464153-44667396260f?w=600" alt="Blog 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-oceanBlue font-extrabold text-[10px] uppercase">Kinh nghiệm</span>
+            </div>
+            <div class="p-6 flex-grow flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
+                  <span>15/07/2026</span>
+                  <span>•</span>
+                  <span>8 phút đọc</span>
+                </div>
+                <h3 class="font-heading font-bold text-lg text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Bí quyết đi Sapa săn mây tự túc tiết kiệm</h3>
+                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Kế hoạch chi tiết từ đặt vé xe giường nằm, homestay bản Cát Cát đến săn mây trên đỉnh Fansipan.</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-oceanBlue">
+                <span>Đọc bài viết</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-borderGray group hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+            <div class="overflow-hidden h-52 relative">
+              <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=600" alt="Blog 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-oceanBlue font-extrabold text-[10px] uppercase">Địa điểm</span>
+            </div>
+            <div class="p-6 flex-grow flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
+                  <span>15/07/2026</span>
+                  <span>•</span>
+                  <span>6 phút đọc</span>
+                </div>
+                <h3 class="font-heading font-bold text-lg text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Khám phá Tràng An - Kỳ quan sinh thái Ninh Bình</h3>
+                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Chèo thuyền ngắm thạch nhũ, hang động ngập nước đầy ngoạn mục của di sản thiên nhiên kép thế giới.</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-oceanBlue">
+                <span>Đọc bài viết</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-borderGray group hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+            <div class="overflow-hidden h-52 relative">
+              <img src="https://images.unsplash.com/photo-1583244532610-2a234e7c3eca?w=600" alt="Blog 4" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-oceanBlue font-extrabold text-[10px] uppercase">Kinh nghiệm</span>
+            </div>
+            <div class="p-6 flex-grow flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
+                  <span>20/07/2026</span>
+                  <span>•</span>
+                  <span>7 phút đọc</span>
+                </div>
+                <h3 class="font-heading font-bold text-lg text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Lộ trình check-in Đà Lạt 3 ngày 2 đêm sống ảo cực chất</h3>
+                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Gợi ý các quán cà phê ngắm hoàng hôn đỉnh nhất và các đồi thông thơ mộng ít người biết.</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-oceanBlue">
+                <span>Đọc bài viết</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-borderGray group hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+            <div class="overflow-hidden h-52 relative">
+              <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600" alt="Blog 5" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-oceanBlue font-extrabold text-[10px] uppercase">Văn hóa</span>
+            </div>
+            <div class="p-6 flex-grow flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
+                  <span>18/07/2026</span>
+                  <span>•</span>
+                  <span>9 phút đọc</span>
+                </div>
+                <h3 class="font-heading font-bold text-lg text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Hội An về đêm - Vẻ đẹp hoài cổ và lung linh đèn lồng</h3>
+                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Trải nghiệm thả hoa đăng trên sông Hoài và thưởng thức nét văn hóa bài chòi dân gian đặc sắc.</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-oceanBlue">
+                <span>Đọc bài viết</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-borderGray group hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+            <div class="overflow-hidden h-52 relative">
+              <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600" alt="Blog 6" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-oceanBlue font-extrabold text-[10px] uppercase">Ẩm thực</span>
+            </div>
+            <div class="p-6 flex-grow flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
+                  <span>12/07/2026</span>
+                  <span>•</span>
+                  <span>4 phút đọc</span>
+                </div>
+                <h3 class="font-heading font-bold text-lg text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Bản đồ ẩm thực Phú Quốc: Từ Hải sản đêm đến Bún Quậy</h3>
+                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Khám phá các địa điểm ăn hải sản tươi sống chuẩn vị đảo ngọc giá siêu hợp lý.</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-oceanBlue">
+                <span>Đọc bài viết</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================= MÀN 11: TRANG LỊCH TRÌNH AI (PLANNER LIST PAGE) ================= -->
+    <div id="page-planner-list" class="page-section hidden fade-in pb-16">
+      <!-- Hero Banner Planner -->
+      <div class="bg-gradient-to-r from-slateDark to-oceanBlue py-14 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-amber-300">
+            <i data-lucide="bot" class="w-4 h-4"></i> Trí tuệ nhân tạo TravelLako
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold font-heading">Lịch Trình AI Thông Minh & Tối Ưu</h1>
+          <p class="text-white/80 max-w-2xl mx-auto text-sm">Hệ thống AI tự động phân tích tuyến đường, dự toán chi phí và gợi ý lịch trình phù hợp nhất cho cá nhân bạn.</p>
+          <div class="pt-2">
+            <button onclick="openCreateTripModal()" class="px-6 py-3 bg-sunsetOrange hover:bg-sunsetOrangeDark text-white font-bold text-sm rounded-xl shadow-lg transition-all hover:scale-105">
+              + Tự tạo lịch trình ngay
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 mt-12">
+        <!-- Section: Cách thức hoạt động -->
+        <div>
+          <div class="text-center mb-10">
+            <h2 class="text-2xl font-extrabold text-slateDark font-heading">Cách thức AI hoạt động</h2>
+            <p class="text-slateMuted text-xs mt-1">Lập kế hoạch du lịch nhanh chóng chỉ qua 4 bước</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+            <div class="flex flex-col items-center text-center relative group bg-white p-6 rounded-2xl border border-borderGray shadow-sm">
+              <div class="w-12 h-12 rounded-full bg-oceanBlue/10 flex items-center justify-center text-oceanBlue font-heading font-extrabold text-lg mb-3">1</div>
+              <h3 class="font-heading font-bold text-slateDark mb-1 text-sm">Chọn Điểm Đến</h3>
+              <p class="text-xs text-slateMuted leading-relaxed">Chọn tỉnh thành, thời gian đi và mức ngân sách dự kiến.</p>
+            </div>
+            
+            <div class="flex flex-col items-center text-center relative group bg-white p-6 rounded-2xl border border-borderGray shadow-sm">
+              <div class="w-12 h-12 rounded-full bg-oceanBlue/10 flex items-center justify-center text-oceanBlue font-heading font-extrabold text-lg mb-3">2</div>
+              <h3 class="font-heading font-bold text-slateDark mb-1 text-sm">AI Tạo Lịch Trình</h3>
+              <p class="text-xs text-slateMuted leading-relaxed">AI tự động phân tích và tạo lịch trình tham quan, ăn uống tối ưu.</p>
+            </div>
+            
+            <div class="flex flex-col items-center text-center relative group bg-white p-6 rounded-2xl border border-borderGray shadow-sm">
+              <div class="w-12 h-12 rounded-full bg-oceanBlue/10 flex items-center justify-center text-oceanBlue font-heading font-extrabold text-lg mb-3">3</div>
+              <h3 class="font-heading font-bold text-slateDark mb-1 text-sm">Lưu và Chỉnh Sửa</h3>
+              <p class="text-xs text-slateMuted leading-relaxed">Chỉnh sửa lịch trình theo sở thích cá nhân, thêm/bớt địa điểm dễ dàng.</p>
+            </div>
+            
+            <div class="flex flex-col items-center text-center group bg-white p-6 rounded-2xl border border-borderGray shadow-sm">
+              <div class="w-12 h-12 rounded-full bg-oceanBlue/10 flex items-center justify-center text-oceanBlue font-heading font-extrabold text-lg mb-3">4</div>
+              <h3 class="font-heading font-bold text-slateDark mb-1 text-sm">Bắt Đầu Chuyến Đi</h3>
+              <p class="text-xs text-slateMuted leading-relaxed">Đăng nhập để đồng bộ lịch trình trên điện thoại và sẵn sàng lên đường.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Trending AI Itineraries -->
+        <div>
+          <div class="mb-10 text-center">
+            <h2 class="text-2xl font-extrabold text-slateDark font-heading">Lịch Trình AI Đề Xuất Phổ Biến</h2>
+            <p class="text-slateMuted text-xs mt-1">Lựa chọn mẫu lịch trình có sẵn để bắt đầu chuyến đi ngay</p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Card 1 -->
-            <div class="bg-white rounded-2xl border border-borderGray shadow-sm overflow-hidden flex flex-col h-full hover:shadow-lg transition-all duration-300">
+            <div class="bg-white rounded-3xl border border-borderGray shadow-sm overflow-hidden flex flex-col h-full hover:shadow-xl transition-all duration-300">
               <div class="relative h-48 bg-borderGray overflow-hidden group">
                 <img src="https://images.unsplash.com/photo-1509060464153-44667396260f?w=600" alt="Hà Nội AI" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                <span class="absolute top-4 left-4 bg-white/95 text-oceanBlue font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-lg shadow-sm border border-slate-100">AI Planner</span>
+                <span class="absolute top-4 left-4 bg-white/95 text-oceanBlue font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-lg shadow-sm">AI Planner</span>
               </div>
               <div class="p-6 flex-grow flex flex-col justify-between">
                 <div>
@@ -514,7 +841,7 @@
                     <span class="block text-[10px] text-slateMuted font-bold uppercase tracking-wider">Chi phí dự kiến</span>
                     <span class="text-base font-extrabold text-oceanBlue font-heading">3.500.000 đ</span>
                   </div>
-                  <button onclick="usePresetItinerary('Hà Nội', 3, 3500000)" class="px-4 py-2 bg-oceanBlue hover:bg-oceanBlueDark text-white text-xs font-bold rounded-xl shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
+                  <button onclick="usePresetItinerary('Hà Nội', 3, 3500000)" class="px-4 py-2 bg-oceanBlue hover:bg-oceanBlueDark text-white text-xs font-bold rounded-xl shadow-sm transition-all">
                     Sử dụng lịch trình
                   </button>
                 </div>
@@ -522,10 +849,10 @@
             </div>
 
             <!-- Card 2 -->
-            <div class="bg-white rounded-2xl border border-borderGray shadow-sm overflow-hidden flex flex-col h-full hover:shadow-lg transition-all duration-300">
+            <div class="bg-white rounded-3xl border border-borderGray shadow-sm overflow-hidden flex flex-col h-full hover:shadow-xl transition-all duration-300">
               <div class="relative h-48 bg-borderGray overflow-hidden group">
                 <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=600" alt="Đà Nẵng AI" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                <span class="absolute top-4 left-4 bg-white/95 text-oceanBlue font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-lg shadow-sm border border-slate-100">AI Đề Xuất</span>
+                <span class="absolute top-4 left-4 bg-white/95 text-oceanBlue font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-lg shadow-sm">AI Đề Xuất</span>
               </div>
               <div class="p-6 flex-grow flex flex-col justify-between">
                 <div>
@@ -543,7 +870,7 @@
                     <span class="block text-[10px] text-slateMuted font-bold uppercase tracking-wider">Chi phí dự kiến</span>
                     <span class="text-base font-extrabold text-oceanBlue font-heading">6.000.000 đ</span>
                   </div>
-                  <button onclick="usePresetItinerary('Đà Nẵng', 4, 6000000)" class="px-4 py-2 bg-oceanBlue hover:bg-oceanBlueDark text-white text-xs font-bold rounded-xl shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
+                  <button onclick="usePresetItinerary('Đà Nẵng', 4, 6000000)" class="px-4 py-2 bg-oceanBlue hover:bg-oceanBlueDark text-white text-xs font-bold rounded-xl shadow-sm transition-all">
                     Sử dụng lịch trình
                   </button>
                 </div>
@@ -551,10 +878,10 @@
             </div>
 
             <!-- Card 3 -->
-            <div class="bg-white rounded-2xl border border-borderGray shadow-sm overflow-hidden flex flex-col h-full hover:shadow-lg transition-all duration-300">
+            <div class="bg-white rounded-3xl border border-borderGray shadow-sm overflow-hidden flex flex-col h-full hover:shadow-xl transition-all duration-300">
               <div class="relative h-48 bg-borderGray overflow-hidden group">
                 <img src="https://images.unsplash.com/photo-1583244532610-2a234e7c3eca?w=600" alt="Đà Lạt AI" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                <span class="absolute top-4 left-4 bg-white/95 text-oceanBlue font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-lg shadow-sm border border-slate-100">AI Thiết Kế</span>
+                <span class="absolute top-4 left-4 bg-white/95 text-oceanBlue font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-lg shadow-sm">AI Thiết Kế</span>
               </div>
               <div class="p-6 flex-grow flex flex-col justify-between">
                 <div>
@@ -572,7 +899,7 @@
                     <span class="block text-[10px] text-slateMuted font-bold uppercase tracking-wider">Chi phí dự kiến</span>
                     <span class="text-base font-extrabold text-oceanBlue font-heading">4.200.000 đ</span>
                   </div>
-                  <button onclick="usePresetItinerary('Đà Lạt', 3, 4200000)" class="px-4 py-2 bg-oceanBlue hover:bg-oceanBlueDark text-white text-xs font-bold rounded-xl shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
+                  <button onclick="usePresetItinerary('Đà Lạt', 3, 4200000)" class="px-4 py-2 bg-oceanBlue hover:bg-oceanBlueDark text-white text-xs font-bold rounded-xl shadow-sm transition-all">
                     Sử dụng lịch trình
                   </button>
                 </div>
@@ -580,174 +907,8 @@
             </div>
           </div>
         </div>
-      </section>
-
-      <!-- Section: Cách hoạt động -->
-      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-100">
-        <div class="text-center mb-12">
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark font-heading">Cách thức hoạt động</h2>
-          <p class="text-slateMuted mt-1">Lập kế hoạch cho chuyến đi mơ ước của bạn chỉ với 4 bước đơn giản</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-          <!-- Step 1 -->
-          <div class="flex flex-col items-center text-center relative group">
-            <div class="w-14 h-14 rounded-full bg-oceanBlue/10 flex items-center justify-center text-oceanBlue font-heading font-extrabold text-lg shadow-inner border border-oceanBlue/20 mb-4 group-hover:bg-oceanBlue group-hover:text-white transition-all duration-300">
-              1
-            </div>
-            <h3 class="font-heading font-bold text-slateDark mb-1 text-sm">Chọn Điểm Đến</h3>
-            <p class="text-xs text-slateMuted leading-relaxed max-w-[200px]">Chọn tỉnh thành, thời gian đi và mức ngân sách dự kiến.</p>
-            <!-- Connector arrow (visible on md and up) -->
-            <div class="hidden md:block absolute top-7 left-[70%] w-[60%] border-t-2 border-dashed border-slate-200 z-0"></div>
-          </div>
-          
-          <!-- Step 2 -->
-          <div class="flex flex-col items-center text-center relative group">
-            <div class="w-14 h-14 rounded-full bg-oceanBlue/10 flex items-center justify-center text-oceanBlue font-heading font-extrabold text-lg shadow-inner border border-oceanBlue/20 mb-4 group-hover:bg-oceanBlue group-hover:text-white transition-all duration-300">
-              2
-            </div>
-            <h3 class="font-heading font-bold text-slateDark mb-1 text-sm">AI Tạo Lịch Trình</h3>
-            <p class="text-xs text-slateMuted leading-relaxed max-w-[200px]">AI tự động phân tích và tạo lịch trình tham quan, ăn uống tối ưu.</p>
-            <div class="hidden md:block absolute top-7 left-[70%] w-[60%] border-t-2 border-dashed border-slate-200 z-0"></div>
-          </div>
-          
-          <!-- Step 3 -->
-          <div class="flex flex-col items-center text-center relative group">
-            <div class="w-14 h-14 rounded-full bg-oceanBlue/10 flex items-center justify-center text-oceanBlue font-heading font-extrabold text-lg shadow-inner border border-oceanBlue/20 mb-4 group-hover:bg-oceanBlue group-hover:text-white transition-all duration-300">
-              3
-            </div>
-            <h3 class="font-heading font-bold text-slateDark mb-1 text-sm">Lưu và Chỉnh Sửa</h3>
-            <p class="text-xs text-slateMuted leading-relaxed max-w-[200px]">Chỉnh sửa lịch trình theo sở thích cá nhân, thêm/bớt địa điểm dễ dàng.</p>
-            <div class="hidden md:block absolute top-7 left-[70%] w-[60%] border-t-2 border-dashed border-slate-200 z-0"></div>
-          </div>
-          
-          <!-- Step 4 -->
-          <div class="flex flex-col items-center text-center group">
-            <div class="w-14 h-14 rounded-full bg-oceanBlue/10 flex items-center justify-center text-oceanBlue font-heading font-extrabold text-lg shadow-inner border border-oceanBlue/20 mb-4 group-hover:bg-oceanBlue group-hover:text-white transition-all duration-300">
-              4
-            </div>
-            <h3 class="font-heading font-bold text-slateDark mb-1 text-sm">Bắt Đầu Chuyến Đi</h3>
-            <p class="text-xs text-slateMuted leading-relaxed max-w-[200px]">Đăng nhập để đồng bộ lịch trình trên điện thoại và sẵn sàng lên đường.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Travel Blog Grid -->
-      <section id="blog-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-100">
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark text-center mb-10 font-heading">Cẩm nang Du lịch & Trải nghiệm</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <!-- Blog Card 1 -->
-          <div class="bg-white rounded-2xl overflow-hidden border border-borderGray group hover:shadow-lg transition-all duration-300 flex flex-col h-full">
-            <div class="overflow-hidden h-48">
-              <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500" alt="Blog 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            </div>
-            <div class="p-6 flex-grow flex flex-col justify-between">
-              <div>
-                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
-                  <span class="px-2.5 py-0.5 rounded-full bg-oceanBlue/5 text-oceanBlue font-bold uppercase tracking-wider text-[9px]">Ẩm thực</span>
-                  <span>•</span>
-                  <span>15/07/2026</span>
-                  <span>•</span>
-                  <span>5 phút đọc</span>
-                </div>
-                <h3 class="font-heading font-bold text-base text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Top 10 món ăn đường phố phải thử ở Hà Nội</h3>
-                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Bún chả, chả cá Lã Vọng, cà phê trứng - cẩm nang ăn trọn vẹn Hà Nội từ dân bản địa.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Blog Card 2 -->
-          <div class="bg-white rounded-2xl overflow-hidden border border-borderGray group hover:shadow-lg transition-all duration-300 flex flex-col h-full">
-            <div class="overflow-hidden h-48">
-              <img src="https://images.unsplash.com/photo-1509060464153-44667396260f?w=500" alt="Blog 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            </div>
-            <div class="p-6 flex-grow flex flex-col justify-between">
-              <div>
-                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
-                  <span class="px-2.5 py-0.5 rounded-full bg-oceanBlue/5 text-oceanBlue font-bold uppercase tracking-wider text-[9px]">Kinh nghiệm</span>
-                  <span>•</span>
-                  <span>15/07/2026</span>
-                  <span>•</span>
-                  <span>8 phút đọc</span>
-                </div>
-                <h3 class="font-heading font-bold text-base text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Bí quyết đi Sapa săn mây tự túc tiết kiệm</h3>
-                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Kế hoạch chi tiết từ đặt vé xe giường nằm, homestay bản Cát Cát đến săn mây trên đỉnh Fansipan.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Blog Card 3 -->
-          <div class="bg-white rounded-2xl overflow-hidden border border-borderGray group hover:shadow-lg transition-all duration-300 flex flex-col h-full">
-            <div class="overflow-hidden h-48">
-              <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=500" alt="Blog 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            </div>
-            <div class="p-6 flex-grow flex flex-col justify-between">
-              <div>
-                <div class="flex items-center gap-2 text-[11px] text-slateMuted font-medium mb-3">
-                  <span class="px-2.5 py-0.5 rounded-full bg-oceanBlue/5 text-oceanBlue font-bold uppercase tracking-wider text-[9px]">Địa điểm</span>
-                  <span>•</span>
-                  <span>15/07/2026</span>
-                  <span>•</span>
-                  <span>6 phút đọc</span>
-                </div>
-                <h3 class="font-heading font-bold text-base text-slateDark mb-2 leading-snug group-hover:text-oceanBlue transition-colors">Khám phá Tràng An - Kỳ quan sinh thái Ninh Bình</h3>
-                <p class="text-xs leading-relaxed text-slateMuted line-clamp-2">Chèo thuyền ngắm thạch nhũ, hang động ngập nước đầy ngoạn mục của di sản thiên nhiên kép thế giới.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- User Testimonials -->
-      <section class="bg-grayBg border-t border-borderGray py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark text-center mb-12 font-heading">Đánh giá từ Người dùng</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <!-- Testimonial 1 -->
-            <div class="bg-white p-6 rounded-2xl border border-borderGray flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <div>
-                <div class="flex items-center gap-0.5 mb-3 text-amber-400">
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                </div>
-                <p class="text-sm leading-relaxed text-slateMuted italic mb-6">"Nhờ TravelLako, tôi đã lên kế hoạch du lịch Huế - Đà Nẵng 5 ngày cho gia đình chỉ trong vài phút. Tính năng tối ưu AI sắp xếp điểm đến cực kỳ thông minh giúp giảm tối đa thời gian di chuyển."</p>
-              </div>
-              <div class="flex items-center gap-3">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="User 1" class="w-10 h-10 rounded-full object-cover shadow-sm">
-                <div>
-                  <span class="block font-bold text-xs text-slateDark">Nguyễn Hoàng Long</span>
-                  <span class="block text-[10px] text-slateMuted">Hà Nội</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Testimonial 2 -->
-            <div class="bg-white p-6 rounded-2xl border border-borderGray flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <div>
-                <div class="flex items-center gap-0.5 mb-3 text-amber-400">
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                </div>
-                <p class="text-sm leading-relaxed text-slateMuted italic mb-6">"Cực kỳ ấn tượng với Trợ lý ảo AI! Đoạn chat gợi ý rất cụ thể về chi phí, giá phòng khách sạn và món ăn đặc sản địa phương. Sau đó bấm nút tự lưu hành trình cực tiện lợi."</p>
-              </div>
-              <div class="flex items-center gap-3">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" alt="User 2" class="w-10 h-10 rounded-full object-cover shadow-sm">
-                <div>
-                  <span class="block font-bold text-xs text-slateDark">Phan Minh Anh</span>
-                  <span class="block text-[10px] text-slateMuted">TP. Hồ Chí Minh</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
+    </div>
 
     </div>
 
@@ -781,13 +942,11 @@
               <input type="text" id="sidebar-filter-keyword" oninput="filterKeyword = this.value; renderSearchList();" placeholder="Tìm kiếm..." class="w-full bg-grayBg border-none rounded-full px-4 py-2.5 text-xs font-semibold text-slateDark focus:outline-none focus:ring-1 focus:ring-oceanBlue placeholder-slateMuted">
             </div>
 
-            <!-- Tình/Thành phố -->
+            <!-- Tỉnh/Thành phố -->
             <div class="space-y-2">
-              <label class="flex items-center gap-1.5 font-bold text-xs text-slateDark">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-oceanBlue"></i> Tình/Thành phố
-              </label>
+              <label class="block text-xs font-bold text-slateDark">Tỉnh/Thành phố</label>
               <select id="sidebar-filter-province" onchange="filterProvince = this.value; renderSearchList();" class="w-full bg-white border border-borderGray rounded-lg px-3 py-2.5 text-xs font-semibold text-slateDark focus:outline-none focus:border-oceanBlue transition-all cursor-pointer">
-                <option value="">Chọn tình thành</option>
+                <option value="">Chọn tỉnh thành</option>
                 <option value="Hà Nội">Hà Nội</option>
                 <option value="Đà Nẵng">Đà Nẵng</option>
                 <option value="Đà Lạt">Đà Lạt</option>
@@ -797,24 +956,24 @@
               </select>
             </div>
 
-            <!-- Loại địa điểm -->
+            <!-- Loại địa điểm (Standard Vertical Checkbox List) -->
             <div class="space-y-2.5">
               <label class="block font-bold text-xs text-slateDark">Loại địa điểm</label>
               <div class="space-y-2.5 text-xs font-semibold text-slateDark">
-                <label class="flex items-center gap-2.5 cursor-pointer hover:text-oceanBlue transition-all">
-                  <input type="checkbox" name="sidebar-category" value="Vui chơi" onchange="updateCheckedCategories(); renderSearchList();" class="w-4 h-4 rounded border-borderGray text-oceanBlue focus:ring-oceanBlue cursor-pointer">
+                <label class="flex items-center gap-2.5 cursor-pointer hover:text-oceanBlue transition-colors">
+                  <input type="checkbox" name="sidebar-category" value="Vui chơi" onchange="if(typeof updateCheckedCategories==='function')updateCheckedCategories(); if(typeof renderSearchList==='function')renderSearchList();" class="w-4 h-4 rounded border-borderGray text-oceanBlue focus:ring-oceanBlue accent-oceanBlue cursor-pointer">
                   <span>Danh lam thắng cảnh</span>
                 </label>
-                <label class="flex items-center gap-2.5 cursor-pointer hover:text-oceanBlue transition-all">
-                  <input type="checkbox" name="sidebar-category" value="Khách sạn" onchange="updateCheckedCategories(); renderSearchList();" class="w-4 h-4 rounded border-borderGray text-oceanBlue focus:ring-oceanBlue cursor-pointer">
+                <label class="flex items-center gap-2.5 cursor-pointer hover:text-oceanBlue transition-colors">
+                  <input type="checkbox" name="sidebar-category" value="Khách sạn" onchange="if(typeof updateCheckedCategories==='function')updateCheckedCategories(); if(typeof renderSearchList==='function')renderSearchList();" class="w-4 h-4 rounded border-borderGray text-oceanBlue focus:ring-oceanBlue accent-oceanBlue cursor-pointer">
                   <span>Khách sạn</span>
                 </label>
-                <label class="flex items-center gap-2.5 cursor-pointer hover:text-oceanBlue transition-all">
-                  <input type="checkbox" name="sidebar-category" value="Nhà hàng" onchange="updateCheckedCategories(); renderSearchList();" class="w-4 h-4 rounded border-borderGray text-oceanBlue focus:ring-oceanBlue cursor-pointer">
+                <label class="flex items-center gap-2.5 cursor-pointer hover:text-oceanBlue transition-colors">
+                  <input type="checkbox" name="sidebar-category" value="Nhà hàng" onchange="if(typeof updateCheckedCategories==='function')updateCheckedCategories(); if(typeof renderSearchList==='function')renderSearchList();" class="w-4 h-4 rounded border-borderGray text-oceanBlue focus:ring-oceanBlue accent-oceanBlue cursor-pointer">
                   <span>Nhà hàng</span>
                 </label>
-                <label class="flex items-center gap-2.5 cursor-pointer hover:text-oceanBlue transition-all">
-                  <input type="checkbox" name="sidebar-category" value="Cafe" onchange="updateCheckedCategories(); renderSearchList();" class="w-4 h-4 rounded border-borderGray text-oceanBlue focus:ring-oceanBlue cursor-pointer">
+                <label class="flex items-center gap-2.5 cursor-pointer hover:text-oceanBlue transition-colors">
+                  <input type="checkbox" name="sidebar-category" value="Cafe" onchange="if(typeof updateCheckedCategories==='function')updateCheckedCategories(); if(typeof renderSearchList==='function')renderSearchList();" class="w-4 h-4 rounded border-borderGray text-oceanBlue focus:ring-oceanBlue accent-oceanBlue cursor-pointer">
                   <span>Quán cà phê</span>
                 </label>
               </div>
@@ -822,22 +981,18 @@
 
             <!-- Đánh giá tối thiểu -->
             <div class="space-y-2">
-              <label class="flex items-center gap-1.5 font-bold text-xs text-slateDark">
-                <i data-lucide="star" class="w-3.5 h-3.5 text-sunsetOrange fill-sunsetOrange"></i> Đánh giá tối thiểu
-              </label>
-              <select id="sidebar-filter-stars" onchange="filterStars = this.value ? parseInt(this.value) : 0; renderSearchList();" class="w-full bg-white border border-borderGray rounded-lg px-3 py-2.5 text-xs font-semibold text-slateDark focus:outline-none focus:border-oceanBlue transition-all cursor-pointer">
-                <option value="">Chọn đánh giá</option>
-                <option value="5">5 sao</option>
-                <option value="4">Từ 4 sao</option>
-                <option value="3">Từ 3 sao</option>
+              <label class="block font-bold text-xs text-slateDark">Đánh giá tối thiểu</label>
+              <select id="sidebar-filter-stars" onchange="if(typeof filterStars !== 'undefined') filterStars = this.value ? parseInt(this.value) : 0; if(typeof renderSearchList==='function') renderSearchList();" class="w-full bg-white border border-borderGray rounded-xl px-3 py-2.5 text-xs font-semibold text-slateDark focus:outline-none focus:border-oceanBlue transition-all cursor-pointer">
+                <option value="">Tất cả đánh giá</option>
+                <option value="5">⭐ 5.0 sao</option>
+                <option value="4">⭐ 4.0 sao trở lên</option>
+                <option value="3">⭐ 3.0 sao trở lên</option>
               </select>
             </div>
 
             <!-- Giá (VNĐ) -->
             <div class="space-y-3">
-              <label class="flex items-center gap-1.5 font-bold text-xs text-slateDark">
-                <i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-oceanBlue"></i> Giá (VNĐ)
-              </label>
+              <label class="block font-bold text-xs text-slateDark">Giá (VNĐ)</label>
               <div class="relative w-full h-6 flex items-center">
                 <!-- Track Line -->
                 <div class="absolute inset-x-0 h-1.5 bg-grayBg rounded-lg"></div>
@@ -886,7 +1041,7 @@
               <!-- Xem bản đồ -->
               <button onclick="toggleMapModal(true)" class="bg-grayBg hover:bg-borderGray border border-borderGray text-slateDark font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5">
                 <i data-lucide="map" class="w-4 h-4 text-oceanBlue"></i>
-                🗺 Bản đồ
+                Bản đồ
               </button>
 
               <!-- Mobile Filter Trigger -->
@@ -1999,8 +2154,10 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         
         <div class="space-y-4">
-          <div class="flex items-center gap-2">
-            <img src="../src/assets/logo.webp" alt="Logo" class="h-8 w-auto object-contain rounded-lg" onerror="this.src='https://placehold.co/120x40/2563eb/ffffff?text=TravelLako'">
+          <div class="flex items-center gap-2.5 cursor-pointer" onclick="navigate('home')">
+            <div class="w-9 h-9 rounded-xl bg-oceanBlue flex items-center justify-center text-white shadow-sm">
+              <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+            </div>
             <span class="font-heading font-extrabold text-lg text-slateDark">TravelLako</span>
           </div>
           <p class="text-xs leading-relaxed text-slateMuted">
@@ -2077,8 +2234,8 @@
       <div class="absolute inset-0 bg-oceanBlue/25 rounded-full pulse-dot -z-10"></div>
       <i data-lucide="bot" class="w-6 h-6 shrink-0"></i>
       <span class="hidden md:inline font-bold text-sm tracking-wide whitespace-nowrap">
-        <span class="group-hover:hidden">Lập kế hoạch với AI</span>
-        <span class="hidden group-hover:inline">Cần gợi ý lịch trình?</span>
+        <span class="group-hover:hidden">Trợ lý AI</span>
+        <span class="hidden group-hover:inline">Cần hỗ trợ?</span>
       </span>
     </button>
 
@@ -2122,13 +2279,13 @@
           <span class="text-xs font-bold text-slateMuted uppercase tracking-wider">Gợi ý câu hỏi</span>
           <div class="flex flex-wrap gap-1.5">
             <button onclick="sendQuickPrompt('Lên lịch trình Hà Nội 3 ngày ngân sách 3 triệu')" class="px-2.5 py-1.5 bg-grayBg hover:bg-borderGray rounded-lg text-xs font-semibold text-slateDark text-left transition-all">
-              ✈️ Lịch trình Hà Nội 3 ngày
+              <i data-lucide="plane" class="w-3.5 h-3.5 inline mr-1"></i> Lịch trình Hà Nội 3 ngày
             </button>
             <button onclick="sendQuickPrompt('Ẩm thực Huế ăn gì ngon nhất?')" class="px-2.5 py-1.5 bg-grayBg hover:bg-borderGray rounded-lg text-xs font-semibold text-slateDark text-left transition-all">
-              🍜 Đặc sản Huế là gì?
+              <i data-lucide="utensils" class="w-3.5 h-3.5 inline mr-1"></i> Đặc sản Huế là gì?
             </button>
             <button onclick="sendQuickPrompt('Lập chuyến đi Đà Lạt tự túc 2 ngày')" class="px-2.5 py-1.5 bg-grayBg hover:bg-borderGray rounded-lg text-xs font-semibold text-slateDark text-left transition-all">
-              🌸 Đà Lạt 2 ngày tự túc
+              <i data-lucide="flower" class="w-3.5 h-3.5 inline mr-1"></i> Đà Lạt 2 ngày tự túc
             </button>
           </div>
         </div>
@@ -2169,7 +2326,7 @@
 
           <!-- Tỉnh thành -->
           <div class="space-y-2">
-            <label class="block text-xs font-bold text-slateDark pl-1">📍 Tình/Thành phố</label>
+            <label class="block text-xs font-bold text-slateDark pl-1">Tỉnh/Thành phố</label>
             <select id="mobile-filter-province" onchange="filterProvince = this.value; const sideSel = document.getElementById('sidebar-filter-province'); if (sideSel) sideSel.value = this.value; renderSearchList();" class="w-full bg-white border border-borderGray rounded-lg px-3 py-2.5 text-xs font-semibold text-slateDark focus:outline-none focus:border-oceanBlue">
               <option value="">Chọn tỉnh thành</option>
               <option value="Hà Nội">Hà Nội</option>
@@ -2206,18 +2363,18 @@
 
           <!-- Đánh giá -->
           <div class="space-y-2">
-            <label class="block text-xs font-bold text-slateDark pl-1">⭐ Đánh giá tối thiểu</label>
+            <label class="block text-xs font-bold text-slateDark pl-1">Đánh giá tối thiểu</label>
             <select id="mobile-filter-stars" onchange="filterStars = this.value ? parseInt(this.value) : 0; const sideSel = document.getElementById('sidebar-filter-stars'); if (sideSel) sideSel.value = this.value; renderSearchList();" class="w-full bg-white border border-borderGray rounded-lg px-3 py-2.5 text-xs font-semibold text-slateDark focus:outline-none focus:border-oceanBlue">
-              <option value="">Chọn đánh giá</option>
-              <option value="5">5 sao</option>
-              <option value="4">Từ 4 sao</option>
-              <option value="3">Từ 3 sao</option>
+              <option value="">Tất cả đánh giá</option>
+              <option value="5">⭐ 5.0 sao</option>
+              <option value="4">⭐ 4.0 sao trở lên</option>
+              <option value="3">⭐ 3.0 sao trở lên</option>
             </select>
           </div>
 
           <!-- Khoảng giá -->
           <div class="space-y-3">
-            <label class="block text-xs font-bold text-slateDark pl-1">💵 Giá (VNĐ)</label>
+            <label class="block text-xs font-bold text-slateDark pl-1">Giá (VNĐ)</label>
             <div class="relative w-full h-6 flex items-center">
               <!-- Track Line -->
               <div class="absolute inset-x-0 h-1.5 bg-grayBg rounded-lg"></div>
@@ -2422,8 +2579,8 @@
           <textarea id="ai-optimize-notes" rows="4" placeholder="Ví dụ: &#10;- Ưu tiên ghé quán ăn vào buổi trưa&#10;- Đi các điểm ngoài trời vào buổi sáng để tránh nắng&#10;- Sắp xếp thứ tự di chuyển gần nhất..." class="w-full p-3 border border-borderGray rounded-xl text-sm focus:outline-none focus:border-oceanBlue bg-grayBg text-slateDark font-medium placeholder-slate-400 focus:ring-2 focus:ring-oceanBlue/10 resize-none"></textarea>
         </div>
         
-        <p class="text-xs text-slateMuted leading-relaxed">
-          💡 Nếu để trống, AI sẽ mặc định sắp xếp lộ trình di chuyển ngắn nhất.
+        <p class="text-xs text-slateMuted leading-relaxed flex items-center">
+          <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500 inline mr-1 shrink-0"></i> Nếu để trống, AI sẽ mặc định sắp xếp lộ trình di chuyển ngắn nhất.
         </p>
 
         <button id="btn-submit-ai-optimize" onclick="submitAIOptimize()" class="w-full py-3 bg-sunsetOrange hover:bg-sunsetOrangeDark text-white font-bold rounded-xl transition-all shadow flex items-center justify-center gap-2">

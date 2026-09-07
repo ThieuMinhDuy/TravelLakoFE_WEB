@@ -49,11 +49,12 @@ Hệ màu mới loại bỏ hoàn toàn phong cách AI SaaS màu tím đậm ho�
 
 ## 2. Phông Chữ & Định Dạng (Typography)
 
-*   **Font Family chính:**
-    *   **Headings (Tiêu đề):** `Outfit`, sans-serif (Nét chữ hiện đại, năng động).
-    *   **Body Text (Nội dung):** `Inter`, sans-serif (Sắc nét, chuẩn typographic Apple).
-    *   **Mobile App:** San Francisco (iOS) / Roboto (Android) hoặc Inter font.
-*   **C cỡ chữ tiêu chuẩn (Font Sizes):**
+*   **Font Family chính (Tối ưu 100% Tiếng Việt):**
+    *   **Headings (Tiêu đề):** `Plus Jakarta Sans`, `Be Vietnam Pro`, sans-serif (Nét chữ hiện đại, sang trọng, hỗ trợ chuẩn xác toàn bộ dấu Tiếng Việt).
+    *   **Body Text (Nội dung):** `Be Vietnam Pro`, `Inter`, sans-serif (Font chữ tối ưu nhất cho Tiếng Việt, hiển thị sắc nét không bị lỗi dấu hay vỡ phông).
+    *   **Mobile App:** San Francisco (iOS) / Roboto (Android) hoặc Be Vietnam Pro / Inter font.
+*   **Giải pháp xử lý lỗi Font Tiếng Việt:** Sử dụng trực tiếp Google Fonts `Be Vietnam Pro` (thiết kế chuyên biệt cho Tiếng Việt) kết hợp `Plus Jakarta Sans`, loại bỏ hoàn toàn tình trạng fallback font/méo dấu ở các ký tự có dấu phức tạp (`ể`, `ẵ`, `ệ`, `ở`, `ỉ`, `ỡ`).
+*   **Các cỡ chữ tiêu chuẩn (Font Sizes):**
     *   `text-xs` (12px): Chú thích, nhãn phụ, thời gian.
     *   `text-sm` (14px): Dữ liệu chi tiết, mô tả phụ, giá tiền nhỏ.
     *   `text-base` (16px): Nội dung chính body, bài viết, input form.

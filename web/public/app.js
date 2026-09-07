@@ -122,7 +122,7 @@
     // ================= NAVIGATION SYSTEM =================
     function navigate(pageId) {
       // Show/Hide page views
-      const pages = ['home', 'search', 'detail', 'auth', 'trips', 'planner', 'diary', 'profile', 'saved'];
+      const pages = ['home', 'search', 'detail', 'auth', 'trips', 'planner', 'diary', 'profile', 'saved', 'blog', 'planner-list'];
       pages.forEach(p => {
         const el = document.getElementById(`page-${p}`);
         if (el) {
@@ -135,7 +135,8 @@
       });
 
       // Update select value
-      document.getElementById('quick-selector').value = pageId;
+      const selector = document.getElementById('quick-selector');
+      if (selector) selector.value = pageId;
 
       // Hide header, footer, and AI chat bubble on auth page
       const headerEl = document.querySelector('header');
@@ -158,11 +159,11 @@
       const navLinks = document.querySelectorAll('.nav-link');
       navLinks.forEach(link => {
         if (link.getAttribute('data-page') === pageId) {
-          link.classList.add('text-oceanBlue', 'border-oceanBlue');
-          link.classList.remove('text-slateMuted', 'border-transparent');
+          link.classList.add('text-oceanBlue', 'border-oceanBlue', 'font-bold');
+          link.classList.remove('text-slateMuted', 'border-transparent', 'font-semibold');
         } else {
-          link.classList.remove('text-oceanBlue', 'border-oceanBlue');
-          link.classList.add('text-slateMuted', 'border-transparent');
+          link.classList.remove('text-oceanBlue', 'border-oceanBlue', 'font-bold');
+          link.classList.add('text-slateMuted', 'border-transparent', 'font-semibold');
         }
       });
 
