@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Tạo axios instance tái sử dụng (DRY)
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // Backend URL mặc định
+  baseURL: import.meta.env.VITE_API_URL || 'https://travellako-backend.onrender.com/api', // Lấy từ biến môi trường
   withCredentials: true, // Gửi HTTP-Only cookies tự động
 });
 
