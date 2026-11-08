@@ -54,6 +54,16 @@ Hệ màu mới loại bỏ hoàn toàn phong cách AI SaaS màu tím đậm ho�
     *   **Body Text (Nội dung):** `Be Vietnam Pro`, `Inter`, sans-serif (Font chữ tối ưu nhất cho Tiếng Việt, hiển thị sắc nét không bị lỗi dấu hay vỡ phông).
     *   **Mobile App:** San Francisco (iOS) / Roboto (Android) hoặc Be Vietnam Pro / Inter font.
 *   **Giải pháp xử lý lỗi Font Tiếng Việt:** Sử dụng trực tiếp Google Fonts `Be Vietnam Pro` (thiết kế chuyên biệt cho Tiếng Việt) kết hợp `Plus Jakarta Sans`, loại bỏ hoàn toàn tình trạng fallback font/méo dấu ở các ký tự có dấu phức tạp (`ể`, `ẵ`, `ệ`, `ở`, `ỉ`, `ỡ`).
+*   **Cách tích hợp font trong React + Vite:** Nhúng trực tiếp Google Fonts trong thẻ `<head>` của `index.html` để tải trước (preconnect) và render tức thì:
+    ```html
+    <!-- index.html -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    ```
 *   **Các cỡ chữ tiêu chuẩn (Font Sizes):**
     *   `text-xs` (12px): Chú thích, nhãn phụ, thời gian.
     *   `text-sm` (14px): Dữ liệu chi tiết, mô tả phụ, giá tiền nhỏ.
@@ -76,11 +86,50 @@ Hệ màu mới loại bỏ hoàn toàn phong cách AI SaaS màu tím đậm ho�
 
 ## 4. Công Nghệ & Thư Viện UI
 
-### A. Web Frontend (`web/public/`)
-*   **Tailwind CSS**: Utility-first CSS với custom colors (`oceanBlue`, `softSky`, `coastalTeal`, `sunsetSand`).
-*   **Custom CSS Variables**: Định nghĩa sẵn tại `:root` trong `style.css` (`--color-primary-600`, `--color-primary-50`,...).
-*   **Lucide Icons**: Bộ SVG Icon tối giản, sắc nét.
-*   **Canvas Confetti**: Hoạt ảnh chúc mừng khi tạo chuyến đi thành công.
+### A. Web Frontend (React 19 + Vite + Tailwind CSS v4)
+*   **Tailwind CSS v4**: Tích hợp với Vite qua `@tailwindcss/vite`. Cú pháp mới dùng `@import "tailwindcss"` trong CSS. Không cần file `tailwind.config.js` — cấu hình bảng màu và biến hệ thống trực tiếp trong CSS với directive `@theme`.
+*   **Khai báo CSS Variables với `@theme` (Tailwind v4):** Định nghĩa trong `src/index.css`:
+    ```css
+    @import "tailwindcss";
+
+    @theme {
+      --color-oceanBlue: #0369A1;
+      --color-oceanBlueDark: #075985;
+      --color-oceanBlueLight: #F0F9FF;
+      --color-softSky: #F0F9FF;
+
+      --color-coastalTeal: #0D9488;
+      --color-coastalTealLight: #CCFBF1;
+
+      --color-sunsetOrange: #D97706;
+      --color-sunsetOrangeDark: #B45309;
+      --color-sunsetOrangeLight: #FEF3C7;
+      --color-sunsetSand: #D97706;
+
+      --color-slateDark: #0F172A;
+      --color-slateMuted: #475569;
+      --color-grayBg: #FAFAFA;
+      --color-borderGray: #E2E8F0;
+      --color-surfaceWhite: #FFFFFF;
+      --color-bgSubtle: #F1F5F9;
+
+      --color-bgApp: #FAFAFA;
+      --color-textMain: #0F172A;
+      --color-textSub: #475569;
+
+      --font-sans: "Be Vietnam Pro", Inter, sans-serif;
+      --font-heading: "Plus Jakarta Sans", "Be Vietnam Pro", sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bgApp);
+      color: var(--color-textMain);
+      font-family: var(--font-sans);
+    }
+    ```
+*   **Lucide Icons**: Bộ SVG Icon tối giản, sắc nét — dùng thư viện `lucide-react`.
+*   **Framer Motion**: Animation mượt mà cho page transitions và micro-interactions.
+*   **Sonner**: Toast notifications đẹp, nhẹ.
 
 ### B. Mobile App (Expo / React Native)
 *   **NativeWind**: Cấu hình bảng màu Tailwind tương thích chuẩn với nền tảng React Native.

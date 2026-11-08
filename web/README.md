@@ -1,75 +1,65 @@
-# React + TypeScript + Vite
+# TravelLako Web Frontend (SPA)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dự án Web Frontend của **TravelLako** được xây dựng theo **Kiến trúc B: SPA + NestJS REST API**, sử dụng **React + Vite + TypeScript**.
 
-Currently, two official plugins are available:
+## 🚀 Công nghệ sử dụng
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Core Framework**: React 19 + TypeScript (Strict Mode)
+- **Build Tool**: Vite
+- **Routing**: React Router (hỗ trợ Lazy Loading & Route Guard)
+- **State Management**: Zustand (Global state) & React Context
+- **Styling**: Tailwind CSS v4
+- **API Client**: Axios (Cấu hình Interceptors tập trung)
+- **Testing**: Vitest + React Testing Library
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📁 Cấu trúc thư mục (Feature-based Architecture)
 
 ```
+web/
+├── public/                 # Static assets (favicon, icons)
+├── src/
+│   ├── assets/             # Hình ảnh, SVG, fonts dùng chung
+│   ├── components/         # Reusable UI components
+│   │   ├── common/         # Button, Input, Modal, Toast...
+│   │   ├── layout/         # Header, Footer, Sidebar
+│   │   └── compound/       # Compound Components (FilterGroup, Tabs...)
+│   ├── config/             # Cấu hình Axios, biến hằng số
+│   ├── features/           # Module hóa theo tính năng nghiệp vụ
+│   │   ├── admin/          # Quản trị (Địa điểm, người dùng, review)
+│   │   ├── auth/           # Đăng nhập, đăng ký, OTP
+│   │   ├── diary/          # Nhật ký chuyến đi, feedback
+│   │   ├── places/         # Khám phá, lọc địa điểm, chi tiết
+│   │   └── trips/          # Lập lịch trình, quản lý chuyến đi
+│   ├── hooks/              # Custom Hooks (Generic hooks: usePagination, useDebounce...)
+│   ├── layouts/            # Layouts (MainLayout, AuthLayout, AdminLayout)
+│   ├── routes/             # Định tuyến SPA & Protected Route (RBAC)
+│   ├── services/           # Tầng tích hợp API client
+│   ├── store/              # Global state (Zustand)
+│   ├── types/              # TypeScript types / interfaces / DTOs
+│   ├── utils/              # Tiện ích, formatters, type guards
+│   ├── App.tsx             # Root Component
+│   ├── index.css           # Tailwind CSS directives
+│   └── main.tsx            # Entry point
+├── tests/                  # Bộ kiểm thử Vitest + React Testing Library
+├── .env.example
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠 Hướng dẫn chạy dự án
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# Cài đặt thư viện
+npm install
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Chạy môi trường phát triển (Dev)
+npm run dev
 
+# Kiểm tra kiểu và Build production
+npm run build
+
+# Chạy test
+npm run test
 ```

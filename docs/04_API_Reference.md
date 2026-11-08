@@ -2,6 +2,13 @@
 
 Tài liệu này liệt kê toàn bộ hệ thống API Endpoints của dự án **TravelLako**. Tất cả các endpoint đều có tiền tố mặc định là `/api` (Ví dụ: `http://localhost:5000/api`).
 
+> **Cấu hình Base URL trong React + Vite:** Sử dụng biến môi trường `VITE_API_URL` khai báo trong file `.env` hoặc `.env.example` tại thư mục `/web`:
+> ```env
+> # web/.env
+> VITE_API_URL=http://localhost:5000/api
+> ```
+> Trong mã nguồn TypeScript/JavaScript, truy cập qua: `import.meta.env.VITE_API_URL`.
+
 ---
 
 ## 1. API Xác thực người dùng (Authentication - `/api/auth`)

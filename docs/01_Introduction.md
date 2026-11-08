@@ -14,28 +14,30 @@ Tài liệu này cung cấp cái nhìn tổng quan về hệ thống, kiến tr�
 ---
 
 ## 2. Kiến trúc Hệ thống (System Architecture)
-Hệ thống được phát triển theo mô hình **Client-Server** giao tiếp qua giao thức RESTful API.
+Hệ thống được phát triển theo mô hình **Client-Server** chuẩn **Kiến trúc B: SPA + NestJS REST API**:
 
 ```mermaid
 graph TD
     subgraph Clients
-        Web["React Web App (Customer/Admin)"]
+        Web["React 19 + Vite SPA (Customer/Admin)"]
         Mobile["React Native / Expo App (Customer)"]
     end
 
-    subgraph Backend [Express Server]
-        API["Express Router & Controllers"]
+    subgraph Backend [NestJS Server]
+        API["NestJS REST API (Controllers, Services)"]
+        Auth["JWT & Guards (RBAC)"]
         AI["Gemini AI Integration"]
         CDN["Cloudinary Image Handler"]
         Mail["Nodemailer OTP Service"]
     end
 
-    subgraph Database [MongoDB Atlas]
-        DB[(Collections: User, City, Trip, Places, Review, Chat)]
+    subgraph Database [MongoDB / PostgreSQL]
+        DB[(Collections/Tables: User, City, Trip, Places, Review, Chat)]
     end
 
-    Web -->|REST API - Cookies| API
+    Web -->|REST API - JWT Bearer / Cookie| API
     Mobile -->|REST API - Bearer Token| API
+    API --> Auth
     API --> DB
     API --> AI
     API --> CDN
@@ -44,143 +46,156 @@ graph TD
 
 ---
 
-## 3. Luồng xác thực người dùng (Authentication Flow)
+## 3. Cấu trúc thư mục dự án Web (React + Vite - SPA)
 
-Dự án sử dụng cơ chế bảo mật **JWT (JSON Web Token)** để xác thực quyền truy cập qua hai hình thức khác nhau tùy vào nền tảng thiết bị:
+Dự án Web Frontend sử dụng **React + Vite + TypeScript (Strict Mode)** theo mô hình **Feature-based Architecture**:
 
-### A. Dành cho Web Frontend (React + Vite)
-Để đảm bảo an toàn tuyệt đối chống tấn công XSS, Backend sử dụng **HTTP-Only Cookie** để lưu trữ JWT Token.
-*   **Khi đăng nhập thành công (`POST /api/auth/login`):** Backend tự động ghi đè token vào cookie của trình duyệt (`jwt` cookie) với tùy chọn `httpOnly: true`.
-*   **Khi gọi các API cần quyền hạn (ví dụ: lấy thông tin cá nhân, cập nhật chuyến đi):** Trình duyệt sẽ tự động gửi kèm cookie này.
-*   **Yêu cầu tích hợp ở FE:**
-    *   Bạn **bắt buộc** phải cấu hình Axios (hoặc Fetch) với thuộc tính `withCredentials: true` trên tất cả các request để cookie được gửi đi một cách tự động.
-    ```typescript
-    import axios from 'axios';
-    const api = axios.create({
-      baseURL: 'http://localhost:5000/api',
-      withCredentials: true, // Cực kỳ quan trọng
-    });
-    ```
-
-### B. Dành cho Mobile App (React Native / Expo)
-Môi trường ứng dụng di động không hỗ trợ tự động xử lý Cookie HTTP-Only giống trình duyệt. Do đó, cơ chế xác thực sẽ thông qua Headers.
-*   **Khi đăng nhập thành công:** Phản hồi từ Backend sẽ đính kèm thông tin token trong body (hoặc bạn có thể yêu cầu dev backend hỗ trợ trả token trực tiếp ở response body nếu chạy môi trường App).
-*   **Gửi Request từ App:** Gửi kèm token trong header `Authorization`.
-    ```text
-    Authorization: Bearer <your_jwt_token>
-    ```
-*   **Yêu cầu tích hợp ở App:**
-    *   Sử dụng `expo-secure-store` để lưu JWT Token vào bộ nhớ bảo mật Keychain (iOS) / Keystore (Android) khi đăng nhập thành công.
-    *   Tự cấu hình Axios interceptor để gán token vào Header trên mỗi request đi từ app.
-
-### C. Quy trình Xác thực tài khoản bằng OTP (Email Verification)
-Hệ thống sử dụng cơ chế bảo mật 2 lớp đăng ký bằng mã OTP qua Email:
-1.  Người dùng điền thông tin đăng ký (`/api/auth/register`).
-2.  Backend tạo tài khoản ở trạng thái chưa kích hoạt (`isVerified: false`), đồng thời gửi mã OTP 6 số qua email đăng ký của người dùng thông qua dịch vụ Nodemailer.
-3.  FE chuyển hướng người dùng đến màn hình nhập mã OTP.
-4.  Người dùng nhập OTP và FE gửi yêu cầu xác thực (`/api/auth/verify-otp`).
-5.  Xác thực thành công -> Backend cập nhật `isVerified: true`, đăng nhập và cấp quyền truy cập chính thức.
+```
+web/
+├── public/                        # Static assets (favicon.svg, icons.svg)
+├── src/
+│   ├── assets/                    # Ảnh, SVG, fonts toàn cục
+│   ├── components/                # Components giao diện dùng chung
+│   │   ├── common/                # Button, Input, Modal, Toast, Table...
+│   │   ├── layout/                # Header, Footer, Sidebar
+│   │   └── compound/              # Compound Components (FilterGroup, Tabs...)
+│   ├── config/                    # Cấu hình tập trung (Axios, Constants)
+│   │   └── axios.ts               # Axios instance (Interceptors, JWT header, Error handling)
+│   ├── features/                  # Module hóa theo tính năng nghiệp vụ (Feature-driven)
+│   │   ├── admin/                 # Quản trị (Dashboard, Places, Users, Reviews)
+│   │   ├── auth/                  # Đăng nhập, đăng ký, xác thực OTP
+│   │   ├── diary/                 # Nhật ký hành trình, ảnh chuyến đi, review
+│   │   ├── places/                # Khám phá, lọc danh sách, chi tiết địa điểm
+│   │   └── trips/                 # Lập kế hoạch, quản lý lịch trình, timeline
+│   ├── hooks/                     # Custom Hooks dùng chung (Ít nhất 2 Generic Hooks)
+│   │   ├── useDebounce.ts         # Generic hook debounce tìm kiếm
+│   │   ├── usePagination.ts       # Generic hook phân trang dữ liệu
+│   │   └── useDocumentTitle.ts    # Title động cho từng trang (SEO SPA)
+│   ├── layouts/                   # Khung giao diện (MainLayout, AuthLayout, AdminLayout)
+│   ├── routes/                    # Quản lý định tuyến React Router
+│   │   ├── AppRoutes.tsx          # Code-splitting với React.lazy() & Suspense
+│   │   └── ProtectedRoute.tsx     # Phân quyền RBAC (Role-based Access Control)
+│   ├── services/                  # Tầng tích hợp API client theo domain
+│   ├── store/                     # State toàn cục bằng Zustand (AuthStore, UIStore)
+│   ├── types/                     # TypeScript types/interfaces/DTO dùng chung
+│   ├── utils/                     # Tiện ích, formatters, type guards
+│   ├── App.tsx                    # Component gốc
+│   ├── index.css                  # Tailwind CSS directive & variables
+│   └── main.tsx                   # Entry point ReactDOM
+├── tests/                         # Bộ kiểm thử Vitest + React Testing Library (≥ 15 tests)
+├── .env.example                   # Biến môi trường mẫu
+├── index.html                     # File HTML chính (Mount root div, nạp Google Fonts)
+├── package.json                   # Quản lý dependencies & scripts
+├── tsconfig.json                  # Tham chiếu cấu hình TS
+└── vite.config.ts                 # Cấu hình Vite & Tailwind
+```
 
 ---
 
-## 4. Danh sách Công nghệ & Thư viện Đề xuất (Tech Stack & Packages)
+## 4. Luồng xác thực người dùng (Authentication Flow)
 
-Dưới đây là danh sách chi tiết các công nghệ và thư viện đề xuất cho cả Web Frontend và Mobile App để đảm bảo hiệu năng cao, giao diện mượt mà và tương thích tốt nhất với API Backend:
+Dự án sử dụng cơ chế bảo mật **JWT (JSON Web Token)** để xác thực quyền truy cập qua giao thức REST API:
+
+### A. Dành cho Web Frontend (React + Vite + TypeScript)
+*   **Khi đăng nhập thành công (`POST /api/auth/login`):** Backend NestJS trả về accessToken (và refreshToken) hoặc ghi cookie `httpOnly`. FE lưu token an toàn và cập nhật trạng thái người dùng vào Zustand `useAuthStore`.
+*   **Gửi Request từ Web:** Axios Interceptor tự động đính kèm `Bearer token` vào header `Authorization` trên mọi request:
+    ```typescript
+    // src/config/axios.ts
+    import axios from 'axios';
+
+    const api = axios.create({
+      baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('access_token');
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
+    export default api;
+    ```
+
+*   **Bảo vệ Route với React Router (`ProtectedRoute.tsx`):**
+    ```typescript
+    // src/routes/ProtectedRoute.tsx
+    import { Navigate, Outlet } from 'react-router-dom';
+    import { useAuthStore } from '@/store/useAuthStore';
+
+    interface ProtectedRouteProps {
+      allowedRoles?: string[];
+    }
+
+    export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
+      const { user, isAuthenticated } = useAuthStore();
+
+      if (!isAuthenticated) {
+        return <Navigate to="/login" replace />;
+      }
+
+      if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+        return <Navigate to="/403" replace />;
+      }
+
+      return <Outlet />;
+    };
+    ```
+
+### B. Dành cho Mobile App (React Native / Expo)
+*   Tương tự như Web, sau khi đăng nhập thành công, Mobile App lưu JWT Token vào `expo-secure-store` và đính kèm vào Header `Authorization: Bearer <token>` trên mỗi request.
+
+### C. Quy trình Xác thực tài khoản bằng OTP (Email Verification)
+1.  Người dùng điền thông tin đăng ký (`/api/auth/register`).
+2.  Backend tạo tài khoản ở trạng thái chưa kích hoạt (`isVerified: false`), gửi mã OTP 6 số qua email.
+3.  FE điều hướng đến trang xác thực OTP (`/verify-otp`).
+4.  Người dùng nhập OTP và FE gửi yêu cầu xác thực (`/api/auth/verify-otp`).
+5.  Xác thực thành công -> Lưu JWT, cập nhật trạng thái người dùng và chuyển hướng về trang chủ (`/`).
+
+---
+
+## 5. Danh sách Công nghệ & Thư viện Đề xuất (Tech Stack)
 
 ### A. Dành cho Web Frontend (React + Vite + TypeScript)
 
 #### 1. Bộ khung & Cấu trúc cơ bản
-*   **Vite**: Trình build nhanh chóng, tối ưu hóa quá trình phát triển (Hỗ trợ HMR siêu tốc).
-*   **TypeScript**: Đảm bảo an toàn kiểu dữ liệu (Type-safe) khi kết nối với các interfaces dữ liệu ở Tài liệu 02.
-*   **`react-router-dom`**: Quản lý định tuyến và phân trang SPA (Home, Login, Register, Trips, Detail, Admin Dashboard).
-*   *Lệnh cài đặt:*
-    ```bash
-    npm install react-router-dom
-    ```
+*   **React 19 & TypeScript**: Strict mode (`strict: true`), Type-safe toàn diện, Generic types, Utility types.
+*   **Vite**: Build tool thế hệ mới, Hot Module Replacement (HMR) cực nhanh.
+*   **React Router**: Định tuyến client-side SPA, hỗ trợ code-splitting qua `React.lazy()` và `Suspense`.
+*   **Tailwind CSS**: Utility-first CSS, định nghĩa bảng màu nhận diện thương hiệu TravelLako.
 
 #### 2. Kết nối API & Quản lý State
-*   **`axios`**: Trực quan hóa việc gửi request. Cần cấu hình `{ withCredentials: true }` để tự động đính kèm cookie.
-*   **`@tanstack/react-query`**: Quản lý lưu trữ đệm (caching), tự động lấy lại dữ liệu khi người dùng chuyển tab hoặc mất mạng, và quản lý các trạng thái tải dữ liệu (`isLoading`, `isError`).
-*   **`zustand`**: Quản lý global state siêu nhẹ, tối ưu cho TypeScript, dùng để lưu trữ thông tin User đang đăng nhập hoặc cài đặt UI.
-*   *Lệnh cài đặt:*
-    ```bash
-    npm install axios @tanstack/react-query zustand
-    ```
+*   **`axios`**: HTTP Client với Request & Response Interceptors.
+*   **`@tanstack/react-query`**: Quản lý server state, caching, refetching và đồng bộ dữ liệu.
+*   **`zustand`**: Quản lý client global state nhẹ, gọn, tối ưu cho TypeScript.
+*   **React Context**: Dùng cho state ít thay đổi (`ThemeContext`, `ToastContext`).
 
 #### 3. Thiết kế & Hiệu ứng Giao diện (UI/UX)
-Các thư viện và quy chuẩn thiết kế giao diện được trình bày chi tiết trong **[Tài liệu 06: Design System](06_Design_System.md)**.
-*   *Lệnh cài đặt các gói UI/UX:*
-    ```bash
-    npm install -D tailwindcss postcss autoprefixer
-    npx tailwindcss init -p
-    npm install lucide-react framer-motion sonner
-    ```
+*   **`lucide-react`**: Bộ icon vector sắc nét, tối giản.
+*   **`framer-motion`**: Micro-interactions và page transitions mượt mà.
+*   **`sonner`**: Hệ thống thông báo Toast hiện đại.
 
-#### 4. Tính năng Bản đồ & Lập kế hoạch
-*   **`leaflet` & `react-leaflet`**: Bản đồ miễn phí hiển thị tọa độ các địa điểm du lịch của thành phố trên bản đồ dạng vệ tinh hoặc đường phố.
-*   **`@hello-pangea/dnd`**: Thư viện hỗ trợ tính năng kéo thả Timeline để sắp xếp thứ tự đi của địa điểm trong ngày.
-*   **`date-fns`**: Thư viện thao tác, định dạng ngày tháng tiện lợi.
-*   *Lệnh cài đặt:*
-    ```bash
-    npm install leaflet react-leaflet @hello-pangea/dnd date-fns
-    npm install -D @types/leaflet
-    ```
+#### 4. Bản đồ & Tính năng Lập lịch trình
+*   **`leaflet` & `react-leaflet`**: Hiển thị bản đồ tương tác, định vị tọa độ địa điểm du lịch.
+*   **`@hello-pangea/dnd`**: Kéo thả Timeline để sắp xếp thứ tự các điểm đến trong ngày.
+*   **`date-fns`**: Xử lý và định dạng ngày tháng.
 
-#### 5. Form & Validation dữ liệu
-*   **`react-hook-form`**: Tối ưu hóa việc nhập liệu form đăng nhập, đăng ký, viết đánh giá mà không gây re-render ứng dụng liên tục.
-*   **`zod` & `@hookform/resolvers`**: Kiểm tra định dạng dữ liệu (Email, Mật khẩu, Số điện thoại...) ngay tại Frontend và tự động xuất ra lỗi trước khi gửi lên API.
-*   *Lệnh cài đặt:*
-    ```bash
-    npm install react-hook-form zod @hookform/resolvers
-    ```
+#### 5. Form & Validation
+*   **`react-hook-form`**: Quản lý form hiệu năng cao, giảm thiểu re-render.
+*   **`zod` & `@hookform/resolvers`**: Kiểm tra tính hợp lệ của dữ liệu form với schema validation.
 
-#### 6. Biểu đồ Admin Dashboard
-*   **`recharts`**: Vẽ biểu đồ thống kê dạng cột, tròn, đường một cách trực quan bằng SVG.
-*   *Lệnh cài đặt:*
-    ```bash
-    npm install recharts
-    ```
+#### 6. Kiểm thử (Testing)
+*   **`vitest`**: Test runner tích hợp sâu với Vite.
+*   **`@testing-library/react` & `@testing-library/user-event`**: Kiểm thử component theo tương tác người dùng thực tế.
 
 ---
 
 ### B. Dành cho Mobile App (React Native / Expo + TypeScript)
-
-#### 1. Bộ khung & Điều hướng
-*   **Expo**: Công cụ phát triển React Native tốt nhất hiện nay, cung cấp sẵn các API truy cập phần cứng và môi trường build đám mây (EAS).
-*   **`expo-router`**: Định tuyến dựa trên thư mục giống như Next.js, tối ưu hóa các tab điều hướng di động.
-*   *Lệnh cài đặt:*
-    ```bash
-    npx expo install expo-router react-native-safe-area-context react-native-screens
-    ```
-
-#### 2. Styling di động
-Các công cụ styling và quy chuẩn thiết kế UI trên Mobile được trình bày chi tiết trong **[Tài liệu 06: Design System](06_Design_System.md)**.
-*   *Lệnh cài đặt các gói Styling:*
-    ```bash
-    npm install nativewind react-native-paper
-    ```
-
-#### 3. API, State & Lưu trữ Bảo mật (Secure Store)
-*   **`expo-secure-store`**: Lưu trữ bảo mật JWT Token vào ổ cứng điện thoại dưới dạng mã hóa (Keychain/Keystore) để tự động đăng nhập khi mở app.
-*   **Axios & React Query & Zustand**: Tương tự như phiên bản Web để gọi và đồng bộ API.
-*   *Lệnh cài đặt:*
-    ```bash
-    npx expo install expo-secure-store
-    npm install axios @tanstack/react-query zustand
-    ```
-
-#### 4. Định vị GPS & Bản đồ Mobile
-*   **`expo-location`**: Lấy tọa độ định vị GPS hiện tại của người dùng để so khớp khoảng cách check-in địa điểm du lịch (khoảng cách dưới 200m).
-*   **`react-native-maps`**: Nhúng trực tiếp bản đồ Google Maps (Android) hoặc Apple Maps (iOS) để ghim vị trí địa điểm.
-*   *Lệnh cài đặt:*
-    ```bash
-    npx expo install expo-location react-native-maps
-    ```
-
-#### 5. Camera & Chọn ảnh từ Album (Nhật ký chuyến đi)
-*   **`expo-image-picker`**: Cung cấp giao diện để người dùng chọn ảnh từ thư viện hoặc mở camera chụp ảnh mới để tải lên nhật ký chuyến đi.
-*   *Lệnh cài đặt:*
-    ```bash
-    npx expo install expo-image-picker
-    ```
-
+*   **Expo & `expo-router`**: Framework và điều hướng mobile.
+*   **`nativewind`**: Tailwind CSS cho React Native.
+*   **`expo-secure-store`**: Lưu trữ bảo mật JWT Token.
+*   **`expo-location` & `react-native-maps`**: Bản đồ và định vị GPS.

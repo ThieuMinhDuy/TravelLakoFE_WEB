@@ -1,6 +1,8 @@
 # Tài liệu 03: Sơ đồ Luồng Giao diện (UI Flow) & Các tính năng
 
-Tài liệu này hướng dẫn chi tiết sơ đồ luồng hoạt động của các màn hình và tính năng chính trong hệ thống TravelLako trên cả nền tảng **Web** và **Mobile App**.
+Tài liệu này hướng dẫn chi tiết sơ đồ luồng hoạt động của các màn hình và tính năng chính trong hệ thống TravelLako trên cả nền tảng **Web (React + Vite SPA)** và **Mobile App**.
+
+> **Lưu ý kỹ thuật (React Router SPA):** Mọi điều hướng phía client sử dụng `useNavigate` hoặc `<Link>` từ `react-router-dom`. Các route cần bảo vệ sử dụng component `ProtectedRoute` kết hợp với `useAuthStore` để kiểm tra quyền truy cập (RBAC).
 
 ---
 
