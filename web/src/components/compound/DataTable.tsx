@@ -3,6 +3,7 @@ import { cn } from '../../utils/cn';
 import { Skeleton } from '../common/Skeleton';
 import { EmptyState } from '../common/EmptyState';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import './css/DataTable.css';
 
 export interface Column<T> {
   key: string;
@@ -67,13 +68,13 @@ export function DataTable<T extends object>({
   }, [filteredData, currentPage, pageSize]);
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('ui-data-table', className)}>
       {/* Top Bar (Search + Actions) */}
       {(searchable || actions) && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="ui-data-table__top-bar">
           {searchable ? (
-            <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <div className="ui-data-table__search-wrapper">
+              <Search className="ui-data-table__search-icon" />
               <input
                 type="text"
                 placeholder={searchPlaceholder}
@@ -82,35 +83,35 @@ export function DataTable<T extends object>({
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-borderGray bg-surfaceWhite focus:outline-none focus:border-oceanBlue focus:ring-1 focus:ring-oceanBlue"
+                className="ui-data-table__search-input"
               />
             </div>
           ) : (
             <div />
           )}
-          {actions && <div className="flex items-center gap-2">{actions}</div>}
+          {actions && <div className="ui-data-table__actions">{actions}</div>}
         </div>
       )}
 
       {/* Table Container */}
-      <div className="rounded-2xl border border-borderGray bg-surfaceWhite overflow-hidden shadow-xs">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50 border-b border-borderGray text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+      <div className="ui-data-table__container">
+        <div className="ui-data-table__scroll">
+          <table className="ui-data-table__table">
+            <thead className="ui-data-table__thead">
               <tr>
                 {columns.map((col) => (
-                  <th key={col.key} className={cn('px-4 py-3.5', col.className)}>
+                  <th key={col.key} className={cn('ui-data-table__th', col.className)}>
                     {col.header}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-borderGray/60">
+            <tbody className="ui-data-table__tbody">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i}>
                     {columns.map((col) => (
-                      <td key={col.key} className="px-4 py-3.5">
+                      <td key={col.key} className="ui-data-table__td">
                         <Skeleton className="h-4 w-full" />
                       </td>
                     ))}
@@ -127,9 +128,9 @@ export function DataTable<T extends object>({
                   const itemObj = item as Record<string, unknown>;
                   const rowKey = (itemObj._id as string) || rowIndex;
                   return (
-                    <tr key={rowKey} className="hover:bg-slate-50/60 transition-colors">
+                    <tr key={rowKey}>
                       {columns.map((col) => (
-                        <td key={col.key} className={cn('px-4 py-3.5', col.className)}>
+                        <td key={col.key} className={cn('ui-data-table__td', col.className)}>
                           {col.render
                             ? col.render(item)
                             : String(itemObj[col.key] ?? '')}
@@ -145,27 +146,29 @@ export function DataTable<T extends object>({
 
         {/* Pagination Bar */}
         {!isLoading && filteredData.length > pageSize && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-borderGray text-xs text-slate-500">
+          <div className="ui-data-table__pagination">
             <span>
               Hiển thị {(currentPage - 1) * pageSize + 1} -{' '}
               {Math.min(currentPage * pageSize, filteredData.length)} trên tổng số{' '}
               {filteredData.length} kết quả
             </span>
-            <div className="flex items-center gap-1.5">
+            <div className="ui-data-table__pagination-controls">
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="p-1 rounded-lg border border-borderGray hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="ui-data-table__pagination-btn"
+                type="button"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="px-2 font-medium text-slate-800">
+              <span className="ui-data-table__pagination-current">
                 {currentPage} / {totalPages}
               </span>
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className="p-1 rounded-lg border border-borderGray hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="ui-data-table__pagination-btn"
+                type="button"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

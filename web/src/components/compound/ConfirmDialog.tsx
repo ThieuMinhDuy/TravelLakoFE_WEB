@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import { AlertTriangle } from 'lucide-react';
+import './css/ConfirmDialog.css';
 
 export interface ConfirmDialogProps {
   isOpen: boolean;
@@ -28,25 +29,25 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} maxWidth="sm">
-      <div className="flex items-start gap-4">
+      <div className="ui-confirm-dialog__content">
         <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+          className={`ui-confirm-dialog__icon-box ${
             variant === 'danger'
-              ? 'bg-red-50 text-red-600'
-              : 'bg-amber-50 text-amber-600'
+              ? 'ui-confirm-dialog__icon-box--danger'
+              : 'ui-confirm-dialog__icon-box--accent'
           }`}
         >
           <AlertTriangle className="w-5 h-5" />
         </div>
         <div>
-          <h4 className="text-base font-bold text-slate-900">{title}</h4>
-          <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+          <h4 className="ui-confirm-dialog__title">{title}</h4>
+          <p className="ui-confirm-dialog__message">
             {message}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-2.5 mt-6 pt-4 border-t border-borderGray">
+      <div className="ui-confirm-dialog__actions">
         <Button variant="outline" size="sm" onClick={onClose} disabled={isLoading}>
           {cancelText}
         </Button>

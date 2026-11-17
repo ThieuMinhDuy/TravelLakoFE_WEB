@@ -3,6 +3,7 @@ import { cn } from '../../utils/cn';
 import { uploadService } from '../../services/uploadService';
 import { UploadCloud, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import './css/ImageUploader.css';
 
 export interface ImageUploaderProps {
   value?: string;
@@ -52,15 +53,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  const aspectClasses = {
-    square: 'aspect-square',
-    video: 'aspect-video',
-    wide: 'aspect-[21/9]',
-  };
+  const aspectClass = `ui-image-uploader__aspect--${aspectRatio}`;
 
   return (
-    <div className={cn('space-y-1.5', className)}>
-      {label && <label className="block text-xs font-semibold text-slate-700">{label}</label>}
+    <div className={cn('ui-image-uploader', className)}>
+      {label && <label className="ui-image-uploader__label">{label}</label>}
 
       <input
         ref={fileInputRef}
@@ -73,12 +70,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       {value ? (
         <div
           className={cn(
-            'relative rounded-2xl overflow-hidden border border-borderGray group bg-slate-100',
-            aspectClasses[aspectRatio]
+            'ui-image-uploader__preview',
+            aspectClass
           )}
         >
-          <img src={value} alt="Uploaded" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+          <img src={value} alt="Uploaded" className="ui-image-uploader__preview-img" />
+          <div className="ui-image-uploader__preview-overlay">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -99,8 +96,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         <div
           onClick={() => !isUploading && fileInputRef.current?.click()}
           className={cn(
-            'rounded-2xl border-2 border-dashed border-borderGray bg-slate-50/60 hover:bg-slate-100/60 transition-colors cursor-pointer flex flex-col items-center justify-center p-6 text-center',
-            aspectClasses[aspectRatio]
+            'ui-image-uploader__dropzone',
+            aspectClass
           )}
         >
           {isUploading ? (
@@ -110,7 +107,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             </div>
           ) : (
             <>
-              <div className="w-10 h-10 rounded-full bg-slate-200/60 flex items-center justify-center text-slate-500 mb-2">
+              <div className="ui-image-uploader__icon-box">
                 <UploadCloud className="w-5 h-5" />
               </div>
               <p className="text-xs font-semibold text-slate-700">Nhấn để chọn ảnh hoặc kéo thả</p>
