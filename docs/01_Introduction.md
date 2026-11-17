@@ -104,7 +104,7 @@ Dự án sử dụng cơ chế bảo mật **JWT (JSON Web Token)** để xác t
     import axios from 'axios';
 
     const api = axios.create({
-      baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+      baseURL: import.meta.env.VITE_API_URL || 'https://travellako-backend.onrender.com/api',
       headers: {
         'Content-Type': 'application/json',
       },

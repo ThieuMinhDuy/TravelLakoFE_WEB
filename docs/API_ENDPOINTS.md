@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "/api",
-      "description": "Current Server"
+      "url": "https://travellako-backend.onrender.com/api",
+      "description": "Production Server (Render)"
     },
     {
       "url": "http://localhost:5000/api",
