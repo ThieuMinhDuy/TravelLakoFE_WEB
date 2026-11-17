@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
+import './css/Card.css';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hoverable?: boolean;
@@ -14,9 +15,8 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div
       className={cn(
-        'rounded-2xl border border-borderGray bg-surfaceWhite p-6 shadow-sm',
-        hoverable &&
-          'transition-all duration-200 hover:-translate-y-1 hover:shadow-md cursor-pointer',
+        'ui-card',
+        hoverable && 'ui-card--hoverable',
         className
       )}
       {...props}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 import { Inbox } from 'lucide-react';
+import './css/EmptyState.css';
 
 export interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -18,20 +19,15 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   className,
 }) => {
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center justify-center p-8 text-center rounded-2xl border border-dashed border-borderGray bg-slate-50/50',
-        className
-      )}
-    >
-      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+    <div className={cn('ui-empty-state', className)}>
+      <div className="ui-empty-state__icon-box">
         {icon || <Inbox className="w-6 h-6" />}
       </div>
-      <h4 className="text-sm font-bold text-slate-800">{title}</h4>
+      <h4 className="ui-empty-state__title">{title}</h4>
       {description && (
-        <p className="text-xs text-slate-500 max-w-sm mt-1">{description}</p>
+        <p className="ui-empty-state__description">{description}</p>
       )}
-      {action && <div className="mt-4">{action}</div>}
+      {action && <div className="ui-empty-state__action">{action}</div>}
     </div>
   );
 };

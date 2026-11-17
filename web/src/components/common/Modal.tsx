@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { cn } from '../../utils/cn';
 import { X } from 'lucide-react';
+import './css/Modal.css';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -35,44 +36,39 @@ export const Modal: React.FC<ModalProps> = ({
 
   if (!isOpen) return null;
 
-  const maxWidths = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    '2xl': 'max-w-2xl',
-  };
+  const maxWidthClass = `ui-modal__dialog--${maxWidth}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="ui-modal">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity animate-fade-in"
+        className="ui-modal__backdrop"
         onClick={onClose}
       />
 
       {/* Modal Dialog Content */}
       <div
         className={cn(
-          'relative w-full rounded-2xl bg-surfaceWhite shadow-2xl border border-borderGray p-6 z-10 animate-scale-up',
-          maxWidths[maxWidth],
+          'ui-modal__dialog',
+          maxWidthClass,
           className
         )}
       >
         {/* Header */}
         {(title || description) && (
-          <div className="flex items-start justify-between pb-4 border-b border-borderGray mb-4">
+          <div className="ui-modal__header">
             <div>
               {title && (
-                <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+                <h3 className="ui-modal__title">{title}</h3>
               )}
               {description && (
-                <p className="text-xs text-slate-500 mt-1">{description}</p>
+                <p className="ui-modal__description">{description}</p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition-colors"
+              className="ui-modal__close-btn"
+              type="button"
             >
               <X className="w-5 h-5" />
             </button>
@@ -80,11 +76,11 @@ export const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Body */}
-        <div className="max-h-[75vh] overflow-y-auto">{children}</div>
+        <div className="ui-modal__body">{children}</div>
 
         {/* Footer */}
         {footer && (
-          <div className="pt-4 border-t border-borderGray mt-6 flex items-center justify-end gap-3">
+          <div className="ui-modal__footer">
             {footer}
           </div>
         )}
