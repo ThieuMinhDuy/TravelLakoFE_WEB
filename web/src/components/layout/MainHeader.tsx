@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { cn } from '../../utils/cn';
+import { toast } from 'sonner';
 import {
   Search,
   X,
@@ -13,6 +14,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
+import { OpenAuthLink } from '../../features/auth/components/OpenAuthLink';
 import './css/MainHeader.css';
 
 export const MainHeader: React.FC = () => {
@@ -64,6 +66,7 @@ export const MainHeader: React.FC = () => {
   const handleLogout = () => {
     logout();
     setDropdownOpen(false);
+    toast.success('Đã đăng xuất. Hẹn gặp lại bạn!');
     navigate('/');
   };
 
@@ -276,12 +279,12 @@ export const MainHeader: React.FC = () => {
             </div>
           ) : (
             <div className="main-header__guest-actions">
-              <Link to="/login" className="main-header__login-link">
+              <OpenAuthLink to="/login" className="main-header__login-link">
                 Đăng nhập
-              </Link>
-              <Link to="/register" className="main-header__signup-btn">
+              </OpenAuthLink>
+              <OpenAuthLink to="/register" className="main-header__signup-btn">
                 Đăng ký
-              </Link>
+              </OpenAuthLink>
             </div>
           )}
         </div>

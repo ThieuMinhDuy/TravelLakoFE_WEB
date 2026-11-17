@@ -1,40 +1,88 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card } from '../../../components/common/Card';
+import { useSearchParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { KeyRound } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
-import { Mail } from 'lucide-react';
-import './css/AuthPages.css';
+import {
+  AuthHeader,
+  AuthItem,
+  BackToLogin,
+  FormAlert,
+  SlowServerHint,
+} from '../components/AuthUI';
+import { useAuthModal } from '../components/AuthModalContext';
+import { useAuthNavigation } from '../hooks/useAuthNavigation';
+import { useSlowHint } from '../hooks/useSlowHint';
+import { forgotPasswordSchema, type ForgotPasswordValues } from '../schemas';
+import { authService } from '../services/authService';
 
 export const ForgotPasswordPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const { goTo } = useAuthNavigation();
+  const { shake } = useAuthModal();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<ForgotPasswordValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: { email: searchParams.get('email') ?? '' },
+  });
+
+  const forgot = useMutation({
+    mutationFn: authService.forgotPassword,
+    onSuccess: (res, email) => {
+      toast.success(res.message);
+      goTo('/reset-password', { email });
+    },
+    onError: () => shake(),
+  });
+
+  const slow = useSlowHint(forgot.isPending);
+
   return (
-    <Card className="auth-card">
-      <div className="auth-card__header">
-        <h2 className="auth-card__title">Quên mật khẩu</h2>
-        <p className="auth-card__subtitle">
-          Nhập địa chỉ email đăng ký để nhận mã OTP đặt lại mật khẩu
-        </p>
-      </div>
+    <div className="auth-centered">
+      <AuthHeader
+        centered
+        icon={KeyRound}
+        title="Quên mật khẩu?"
+        subtitle="Đừng lo, nhập email đã đăng ký và chúng tôi sẽ gửi mã đặt lại mật khẩu cho bạn."
+      />
 
-      <form onSubmit={(e) => e.preventDefault()} className="auth-card__form">
-        <Input
-          label="Địa chỉ Email"
-          type="email"
-          placeholder="yourname@gmail.com"
-          leftIcon={<Mail className="w-4 h-4" />}
-          required
-        />
+      <form
+        className="auth-form"
+        onSubmit={handleSubmit(({ email }) => forgot.mutate(email.trim()), shake)}
+        noValidate
+      >
+        <AuthItem>
+          <Input
+            label="Địa chỉ email"
+            type="email"
+            placeholder="Nhập địa chỉ email của bạn"
+            autoComplete="email"
+            autoFocus
+            error={errors.email?.message}
+            {...register('email')}
+          />
+        </AuthItem>
 
-        <Button variant="primary" className="w-full" size="md">
-          Gửi mã OTP xác nhận
-        </Button>
+        <FormAlert message={forgot.error?.message} />
+
+        <AuthItem>
+          <Button type="submit" className="auth-btn" isLoading={forgot.isPending}>
+            {forgot.isPending ? 'Đang gửi mã…' : 'Gửi mã đặt lại'}
+          </Button>
+          <SlowServerHint show={slow} />
+        </AuthItem>
       </form>
 
-      <div className="auth-card__footer">
-        <Link to="/login" className="auth-card__back-link">
-          ← Quay lại Đăng nhập
-        </Link>
-      </div>
-    </Card>
+      <BackToLogin email={watch('email')} />
+    </div>
   );
 };

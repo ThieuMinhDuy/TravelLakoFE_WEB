@@ -4,6 +4,7 @@ import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
 import { Compass, Sparkles, Map, Shield } from 'lucide-react';
 import './css/HomePage.css';
+import { OpenAuthLink } from '../features/auth/components/OpenAuthLink';
 
 export const HomePage: React.FC = () => {
   return (
@@ -30,11 +31,11 @@ export const HomePage: React.FC = () => {
         </p>
 
         <div className="home-hero__actions">
-          <Link to="/login">
+          <OpenAuthLink to="/login">
             <Button variant="accent" size="lg">
               Đăng nhập / Đăng ký
             </Button>
-          </Link>
+          </OpenAuthLink>
           <Link to="/profile">
             <Button
               variant="outline"

@@ -1,10 +1,15 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { env } from '../config/env';
-import { storage } from '../utils/storage';
+import { useAuthStore } from '../store/useAuthStore';
 
+/**
+ * Xác thực bằng Bearer token (không dùng cookie):
+ * - Backend (onrender.com) khác site với Frontend nên cookie bên thứ ba dễ bị trình duyệt chặn.
+ * - Cho phép Frontend tự kiểm soát "Ghi nhớ đăng nhập" và đăng xuất hoàn toàn phía client.
+ */
 export const apiClient: AxiosInstance = axios.create({
   baseURL: env.API_BASE_URL,
-  withCredentials: true, // Cho phép gửi và nhận cookie jwt qua CORS
+  withCredentials: false,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -14,7 +19,7 @@ export const apiClient: AxiosInstance = axios.create({
 // Request Interceptor: Tự động gán Bearer Token nếu có
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = storage.getToken();
+    const token = useAuthStore.getState().token;
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -22,6 +27,9 @@ apiClient.interceptors.request.use(
   },
   (error: unknown) => Promise.reject(error)
 );
+
+// Các endpoint auth công khai trả 401 khi sai thông tin đăng nhập — không phải hết phiên
+const PUBLIC_AUTH_ENDPOINT = /^\/?auth\/(login|register|google|verify-otp|resend-otp|forgot-password|reset-password)/;
 
 // Response Interceptor: Chuẩn hóa error message & bắt lỗi 401
 apiClient.interceptors.response.use(
@@ -33,20 +41,14 @@ apiClient.interceptors.response.use(
       error.message ||
       'Đã xảy ra lỗi kết nối đến máy chủ!';
 
-    // Khi token hết hạn hoặc không hợp lệ (401)
-    if (statusCode === 401) {
+    // Token hết hạn hoặc không hợp lệ (401) → đăng xuất phía client
+    const url = error.config?.url ?? '';
+    if (statusCode === 401 && !PUBLIC_AUTH_ENDPOINT.test(url) && useAuthStore.getState().token) {
+      useAuthStore.getState().logout();
       const currentPath = window.location.pathname;
-      const isAuthPage =
-        currentPath.includes('/login') ||
-        currentPath.includes('/register') ||
-        currentPath.includes('/verify-otp');
-
-      if (!isAuthPage) {
-        storage.clearAll();
-        // Không redirect cưỡng bức nếu đang ở trang công khai
-        if (currentPath.startsWith('/admin') || currentPath.startsWith('/profile')) {
-          window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
-        }
+      // Chỉ chuyển hướng khi đang ở trang yêu cầu đăng nhập
+      if (currentPath.startsWith('/admin') || currentPath.startsWith('/profile')) {
+        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
       }
     }
 

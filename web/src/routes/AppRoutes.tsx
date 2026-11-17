@@ -1,20 +1,18 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation, type Location } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { MainLayout } from '../layouts/MainLayout';
-import { AuthLayout } from '../layouts/AuthLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 
 import { ProtectedRoute } from './ProtectedRoute';
-import { GuestRoute } from './GuestRoute';
+import { GuestRedirect } from './GuestRedirect';
+import { useAuthStore } from '../store/useAuthStore';
 
 import { HomePage } from '../pages/HomePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 
-import { LoginPage } from '../features/auth/pages/LoginPage';
-import { RegisterPage } from '../features/auth/pages/RegisterPage';
-import { VerifyOtpPage } from '../features/auth/pages/VerifyOtpPage';
-import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage';
-import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage';
+import { AuthModalRoutes } from '../features/auth/AuthModalRoutes';
+import { isAuthPath, type AuthModalState } from '../features/auth/authPaths';
 
 import { ProfilePage } from '../features/profile/pages/ProfilePage';
 
@@ -33,9 +31,28 @@ const PlaceholderPage: React.FC<{ title: string; desc: string }> = ({ title, des
   </div>
 );
 
+/** Trang nền mặc định khi mở thẳng URL /login, /register... */
+const HOME_LOCATION: Location = {
+  pathname: '/',
+  search: '',
+  hash: '',
+  state: null,
+  key: 'auth-background',
+};
+
 export const AppRoutes: React.FC = () => {
+  const location = useLocation();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  // Các màn auth là popup: trang phía sau là trang người dùng đang xem (hoặc trang chủ)
+  const isAuthOpen = isAuthPath(location.pathname);
+  const backgroundLocation = isAuthOpen
+    ? ((location.state as AuthModalState | null)?.backgroundLocation ?? HOME_LOCATION)
+    : null;
+
   return (
-    <Routes>
+    <>
+    <Routes location={backgroundLocation ?? location}>
       {/* 1. Public Routes with MainLayout */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
@@ -120,22 +137,8 @@ export const AppRoutes: React.FC = () => {
         />
       </Route>
 
-      {/* 2. Guest Auth Routes with AuthLayout (Split-Screen) */}
-      <Route
-        element={
-          <GuestRoute>
-            <AuthLayout />
-          </GuestRoute>
-        }
-      >
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/verify-otp" element={<VerifyOtpPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-      </Route>
 
-      {/* 3. Protected Admin Routes with AdminLayout */}
+      {/* 2. Protected Admin Routes with AdminLayout */}
       <Route
         path="/admin"
         element={
@@ -152,10 +155,19 @@ export const AppRoutes: React.FC = () => {
         <Route path="import" element={<AdminImportPage />} />
       </Route>
 
-      {/* 4. Fallback 404 Route */}
+      {/* 3. Fallback 404 Route */}
       <Route element={<MainLayout />}>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
+
+    {/* 4. Popup xác thực (Login, Register, OTP, Quên / Đặt lại mật khẩu) */}
+    {isAuthOpen && isAuthenticated && <GuestRedirect location={location} />}
+    <AnimatePresence>
+      {isAuthOpen && !isAuthenticated && (
+        <AuthModalRoutes key="auth-modal" location={location} />
+      )}
+    </AnimatePresence>
+    </>
   );
 };
