@@ -16,6 +16,10 @@
   flex: 1;
 }
 
+.main-layout__content--subpage {
+  padding-top: 4.5rem;
+}
+
 /* Floating AI Assistance Bubble */
 .main-layout__ai-bubble {
   position: fixed;

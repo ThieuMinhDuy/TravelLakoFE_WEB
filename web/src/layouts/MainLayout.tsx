@@ -1,18 +1,22 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { MainHeader } from '../components/layout/MainHeader';
 import { MainFooter } from '../components/layout/MainFooter';
+import { cn } from '../utils/cn';
 import { Bot } from 'lucide-react';
 import './css/MainLayout.css';
 
 export const MainLayout: React.FC = () => {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
   return (
     <div className="main-layout">
       {/* Navigation Header */}
       <MainHeader />
 
       {/* Main Content Area */}
-      <main className="main-layout__content">
+      <main className={cn('main-layout__content', !isHome && 'main-layout__content--subpage')}>
         <Outlet />
       </main>
 

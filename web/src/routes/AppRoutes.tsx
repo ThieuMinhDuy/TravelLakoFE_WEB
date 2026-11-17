@@ -40,6 +40,15 @@ export const AppRoutes: React.FC = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route
+          path="/cities"
+          element={
+            <PlaceholderPage
+              title="Điểm đến (Cities & Places)"
+              desc="Khám phá 63 tỉnh thành Việt Nam và các điểm tham quan nổi bật."
+            />
+          }
+        />
+        <Route
           path="/places"
           element={
             <PlaceholderPage
@@ -55,6 +64,39 @@ export const AppRoutes: React.FC = () => {
               title="Chuyến đi của tôi (My Trips)"
               desc="Màn 5 & 6: Quản lý danh sách chuyến đi và giao diện kéo thả timeline lịch trình thông minh."
             />
+          }
+        />
+        <Route
+          path="/diary"
+          element={
+            <ProtectedRoute>
+              <PlaceholderPage
+                title="Nhật ký Chuyến đi (Trip Diary)"
+                desc="Màn 7: Ghi lại khoảnh khắc, cảm xúc và hình ảnh trong hành trình của bạn."
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trips/:id/diary"
+          element={
+            <ProtectedRoute>
+              <PlaceholderPage
+                title="Nhật ký Chuyến đi"
+                desc="Màn 7: Ghi lại khoảnh khắc, cảm xúc và hình ảnh trong hành trình của bạn."
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute>
+              <PlaceholderPage
+                title="Địa điểm đã lưu (Yêu thích)"
+                desc="Danh sách các địa điểm, khách sạn và nhà hàng bạn đã lưu vào mục Yêu thích."
+              />
+            </ProtectedRoute>
           }
         />
         <Route

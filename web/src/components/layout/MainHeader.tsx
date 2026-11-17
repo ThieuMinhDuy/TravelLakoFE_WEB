@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Button } from '../common/Button';
+import { cn } from '../../utils/cn';
 import {
-  Compass,
-  MapPin,
-  BookOpen,
+  Search,
+  X,
+  Heart,
   User as UserIcon,
+  Compass,
   LogOut,
   ShieldAlert,
   ChevronDown,
@@ -17,9 +18,25 @@ import './css/MainHeader.css';
 export const MainHeader: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const isHome = location.pathname === '/';
+
+  // Lắng nghe scroll để áp dụng background glass khi cuộn
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Đóng dropdown khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -30,47 +47,150 @@ export const MainHeader: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Xử lý submit tìm kiếm Global
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/cities?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  // Xóa nhanh text tìm kiếm
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    searchInputRef.current?.focus();
+  };
+
   const handleLogout = () => {
     logout();
     setDropdownOpen(false);
     navigate('/');
   };
 
+  const isTransparent = isHome && !isScrolled;
+  const isAdmin = user?.isAdmin || (user as { role?: string })?.role === 'admin';
+
   return (
-    <header className="main-header">
+    <header
+      className={cn(
+        'main-header',
+        isTransparent ? 'main-header--transparent' : 'main-header--scrolled'
+      )}
+    >
       <div className="main-header__container">
-        {/* Logo */}
-        <Link to="/" className="main-header__brand-link">
-          <img src={logoImg} alt="TravelLako" className="main-header__brand-logo" />
-          <span className="main-header__brand-title">
-            Travel<span className="main-header__brand-highlight">Lako</span>
-          </span>
-        </Link>
+        {/* ==================================================================
+            1. BÊN TRÁI: Logo thương hiệu
+            ================================================================== */}
+        <div className="main-header__left">
+          <Link to="/" className="main-header__brand-link">
+            <img src={logoImg} alt="TravelLako" className="main-header__brand-logo" />
+            <span className="main-header__brand-title">
+              Travel<span className="main-header__brand-highlight">Lako</span>
+            </span>
+          </Link>
+        </div>
 
-        {/* Navigation Menu */}
-        <nav className="main-header__nav">
-          <Link to="/places" className="main-header__nav-link">
-            <Compass className="main-header__nav-icon" />
-            Khám phá điểm đến
-          </Link>
-          <Link to="/trips" className="main-header__nav-link">
-            <MapPin className="main-header__nav-icon" />
-            Chuyến đi của tôi
-          </Link>
-          <Link to="/blog" className="main-header__nav-link">
-            <BookOpen className="main-header__nav-icon" />
-            Cẩm nang du lịch
-          </Link>
-        </nav>
+        {/* ==================================================================
+            2. Ở GIỮA: Navigation Links
+            - Điểm đến (/cities)
+            - Lịch trình (/trips)
+            - Nhật ký (/diary)
+            ================================================================== */}
+        <div className="main-header__center">
+          <nav className="main-header__nav">
+            <NavLink
+              to="/cities"
+              className={({ isActive }) =>
+                cn('main-header__nav-link', isActive && 'main-header__nav-link--active')
+              }
+            >
+              Điểm đến
+            </NavLink>
 
-        {/* User Actions */}
-        <div className="main-header__actions">
+            <NavLink
+              to="/trips"
+              className={({ isActive }) =>
+                cn('main-header__nav-link', isActive && 'main-header__nav-link--active')
+              }
+            >
+              Lịch trình
+            </NavLink>
+
+            <NavLink
+              to="/diary"
+              className={({ isActive }) =>
+                cn('main-header__nav-link', isActive && 'main-header__nav-link--active')
+              }
+            >
+              Nhật ký
+            </NavLink>
+          </nav>
+        </div>
+
+        {/* ==================================================================
+            3. BÊN PHẢI: Actions & User Controls
+            - Global Search với nút xóa nhanh
+            - Yêu thích (/favorites - chỉ hiện khi đăng nhập)
+            - Auth State: Guest (Đăng nhập / Đăng ký) hoặc Authenticated Dropdown
+            ================================================================== */}
+        <div className="main-header__right">
+          {/* Thanh tìm kiếm (Global Search) */}
+          <form onSubmit={handleSearchSubmit} className="main-header__search-form">
+            <div className="main-header__search-wrapper">
+              <button
+                type="submit"
+                className="main-header__search-icon-btn"
+                title="Tìm kiếm"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tìm kiếm điểm đến..."
+                className="main-header__search-input"
+              />
+
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="main-header__search-clear-btn"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </form>
+
+          {/* Nút Yêu thích (/favorites) - Chỉ hiển thị khi đã đăng nhập */}
+          {isAuthenticated && user && (
+            <Link
+              to="/favorites"
+              className="main-header__fav-link"
+              title="Địa điểm đã lưu (Yêu thích)"
+            >
+              <Heart className="w-4 h-4 fill-current text-white/90 hover:text-red-400" />
+              {user.stats && user.stats.favorites > 0 && (
+                <span className="main-header__fav-badge">
+                  {user.stats.favorites > 99 ? '99+' : user.stats.favorites}
+                </span>
+              )}
+            </Link>
+          )}
+
+          {/* Khu vực Tài khoản (Auth State) */}
           {isAuthenticated && user ? (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="main-header__user-btn"
                 type="button"
+                aria-label="Menu tài khoản"
               >
                 {user.avatar ? (
                   <img
@@ -97,28 +217,52 @@ export const MainHeader: React.FC = () => {
                     <p className="main-header__dropdown-email">{user.email}</p>
                   </div>
 
+                  {/* 1. Thông tin tài khoản */}
                   <Link
                     to="/profile"
                     onClick={() => setDropdownOpen(false)}
                     className="main-header__dropdown-item"
                   >
                     <UserIcon className="w-4 h-4 text-slate-500" />
-                    Hồ sơ cá nhân & Sở thích
+                    Thông tin tài khoản
                   </Link>
 
-                  {user.isAdmin && (
+                  {/* 2. Chuyến đi của tôi */}
+                  <Link
+                    to="/trips"
+                    onClick={() => setDropdownOpen(false)}
+                    className="main-header__dropdown-item"
+                  >
+                    <Compass className="w-4 h-4 text-slate-500" />
+                    Chuyến đi của tôi
+                  </Link>
+
+                  {/* 3. Địa điểm đã lưu */}
+                  <Link
+                    to="/favorites"
+                    onClick={() => setDropdownOpen(false)}
+                    className="main-header__dropdown-item"
+                  >
+                    <Heart className="w-4 h-4 text-red-500" />
+                    Địa điểm đã lưu
+                  </Link>
+
+                  {/* 4. Trang quản trị (Chỉ render nếu là Admin) */}
+                  {isAdmin && (
                     <Link
                       to="/admin"
                       onClick={() => setDropdownOpen(false)}
                       className="main-header__dropdown-item main-header__dropdown-item--admin"
                     >
                       <ShieldAlert className="w-4 h-4 text-amber-600" />
-                      Trang Quản trị (Admin)
+                      Trang quản trị (Admin)
                     </Link>
                   )}
 
+                  {/* Divider ngăn cách */}
                   <div className="main-header__dropdown-divider" />
 
+                  {/* 5. Đăng xuất */}
                   <button
                     onClick={handleLogout}
                     className="main-header__dropdown-item main-header__dropdown-item--logout"
@@ -132,15 +276,11 @@ export const MainHeader: React.FC = () => {
             </div>
           ) : (
             <div className="main-header__guest-actions">
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  Đăng nhập
-                </Button>
+              <Link to="/login" className="main-header__login-link">
+                Đăng nhập
               </Link>
-              <Link to="/register">
-                <Button variant="primary" size="sm">
-                  Đăng ký
-                </Button>
+              <Link to="/register" className="main-header__signup-btn">
+                Đăng ký
               </Link>
             </div>
           )}

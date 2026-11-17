@@ -8,7 +8,7 @@ import './css/HomePage.css';
 export const HomePage: React.FC = () => {
   return (
     <div className="home-page">
-      {/* Hero Welcome Section */}
+      {/* Hero Welcome Section with Scenic Landscape Banner */}
       <section className="home-hero">
         <div className="home-hero__badge">
           <Sparkles className="w-3.5 h-3.5" />
@@ -31,17 +31,26 @@ export const HomePage: React.FC = () => {
 
         <div className="home-hero__actions">
           <Link to="/login">
-            <Button variant="primary" size="lg">
+            <Button variant="accent" size="lg">
               Đăng nhập / Đăng ký
             </Button>
           </Link>
           <Link to="/profile">
-            <Button variant="outline" size="lg">
+            <Button
+              variant="outline"
+              size="lg"
+              style={{
+                color: '#FFFFFF',
+                borderColor: 'rgba(255, 255, 255, 0.4)',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
               Hồ sơ cá nhân
             </Button>
           </Link>
           <Link to="/admin">
-            <Button variant="accent" size="lg" leftIcon={<Shield className="w-4 h-4" />}>
+            <Button variant="primary" size="lg" leftIcon={<Shield className="w-4 h-4" />}>
               Cổng Quản trị Admin
             </Button>
           </Link>
@@ -49,37 +58,39 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* Feature Highlights Grid */}
-      <section className="home-features">
-        <Card hoverable>
-          <div className="home-feature__icon-box home-feature__icon-box--blue">
-            <Compass className="w-5 h-5" />
-          </div>
-          <h3 className="home-feature__title">Chuẩn hóa 100% Backend</h3>
-          <p className="home-feature__desc">
-            Kết nối trọn vẹn với các API của TravelLakoBE (Auth OTP, Profile thống kê, Admin Dashboard, OSM Import).
-          </p>
-        </Card>
+      <div className="home-container">
+        <section className="home-features">
+          <Card hoverable>
+            <div className="home-feature__icon-box home-feature__icon-box--blue">
+              <Compass className="w-5 h-5" />
+            </div>
+            <h3 className="home-feature__title">Chuẩn hóa 100% Backend</h3>
+            <p className="home-feature__desc">
+              Kết nối trọn vẹn với các API của TravelLakoBE (Auth OTP, Profile thống kê, Admin Dashboard, OSM Import).
+            </p>
+          </Card>
 
-        <Card hoverable>
-          <div className="home-feature__icon-box home-feature__icon-box--amber">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <h3 className="home-feature__title">Design System Figma</h3>
-          <p className="home-feature__desc">
-            Bộ font Open Sans (96%), Caveat script, bảng màu Modern Natural Travel và bố cục Split-screen.
-          </p>
-        </Card>
+          <Card hoverable>
+            <div className="home-feature__icon-box home-feature__icon-box--amber">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <h3 className="home-feature__title">Design System Figma</h3>
+            <p className="home-feature__desc">
+              Bộ font Open Sans (96%), Caveat script, bảng màu Modern Natural Travel và bố cục Split-screen.
+            </p>
+          </Card>
 
-        <Card hoverable>
-          <div className="home-feature__icon-box home-feature__icon-box--teal">
-            <Map className="w-5 h-5" />
-          </div>
-          <h3 className="home-feature__title">Hạ tầng Mở rộng</h3>
-          <p className="home-feature__desc">
-            Sẵn sàng mở rộng cho các tính năng tiếp theo: Leaflet Map, kéo thả Timeline dnd và Chatbot AI.
-          </p>
-        </Card>
-      </section>
+          <Card hoverable>
+            <div className="home-feature__icon-box home-feature__icon-box--teal">
+              <Map className="w-5 h-5" />
+            </div>
+            <h3 className="home-feature__title">Hạ tầng Mở rộng</h3>
+            <p className="home-feature__desc">
+              Sẵn sàng mở rộng cho các tính năng tiếp theo: Leaflet Map, kéo thả Timeline dnd và Chatbot AI.
+            </p>
+          </Card>
+        </section>
+      </div>
     </div>
   );
 };
