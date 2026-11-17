@@ -32,7 +32,7 @@ export const AdminCitiesPage: React.FC = () => {
         <div>
           <h1 className="admin-page__title">Quản lý Thành phố</h1>
           <p className="admin-page__subtitle">
-            Danh mục các tỉnh thành hỗ trợ trên hệ thống TravelLako
+            Danh mục các tỉnh thành hỗ trợ trên hệ thống TripMate
           </p>
         </div>
         <Button variant="primary" size="sm" leftIcon={<Plus className="w-4 h-4" />}>

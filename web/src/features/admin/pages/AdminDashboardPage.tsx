@@ -9,7 +9,7 @@ export const AdminDashboardPage: React.FC = () => {
       <div>
         <h1 className="admin-page__title">Tổng quan Quản trị (Dashboard)</h1>
         <p className="admin-page__subtitle">
-          Số liệu thống kê thời gian thực từ hệ thống TravelLakoBE
+          Số liệu thống kê thời gian thực từ hệ thống TripMate Backend
         </p>
       </div>
 

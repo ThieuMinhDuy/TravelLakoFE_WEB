@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logoImg from '../../assets/logo.webp';
+import logoImg from '../../assets/logo.png';
 import { MapPin, Phone, Mail } from 'lucide-react';
 import './css/MainFooter.css';
 
@@ -12,9 +12,9 @@ export const MainFooter: React.FC = () => {
           {/* Col 1: Brand & Bio */}
           <div className="main-footer__brand">
             <Link to="/" className="main-footer__logo-link">
-              <img src={logoImg} alt="TravelLako" className="main-footer__logo" />
+              <img src={logoImg} alt="TripMate" className="main-footer__logo" />
               <span className="main-footer__brand-title">
-                Travel<span className="main-footer__brand-highlight">Lako</span>
+                Trip<span className="main-footer__brand-highlight">Mate</span>
               </span>
             </Link>
             <p className="main-footer__brand-desc">
@@ -91,7 +91,7 @@ export const MainFooter: React.FC = () => {
               </li>
               <li className="main-footer__contact-item">
                 <Mail className="main-footer__contact-icon" />
-                <span>contact@travellako.vn</span>
+                <span>contact@tripmate.vn</span>
               </li>
             </ul>
           </div>
@@ -99,7 +99,7 @@ export const MainFooter: React.FC = () => {
 
         {/* Bottom Line */}
         <div className="main-footer__bottom">
-          <p>© {new Date().getFullYear()} TravelLako. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} TripMate. All rights reserved.</p>
           <p>Thiết kế tinh tế theo chuẩn Modern Natural Travel.</p>
         </div>
       </div>

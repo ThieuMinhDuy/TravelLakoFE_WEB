@@ -59,7 +59,7 @@
     // ================= APP INITIALIZATION =================
     window.addEventListener('DOMContentLoaded', () => {
       // Check localStorage for logged-in user simulation
-      const savedUser = localStorage.getItem('travellako_user');
+      const savedUser = localStorage.getItem('tripmate_user');
       if (savedUser) {
         currentUser = JSON.parse(savedUser);
         updateAuthUI();
@@ -492,7 +492,7 @@
         email: 'googletraveler@gmail.com',
         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'
       };
-      localStorage.setItem('travellako_user', JSON.stringify(currentUser));
+      localStorage.setItem('tripmate_user', JSON.stringify(currentUser));
       updateAuthUI();
       showToast('Đăng nhập bằng Google thành công!');
       navigate('home');
@@ -512,7 +512,7 @@
         email: email,
         avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100'
       };
-      localStorage.setItem('travellako_user', JSON.stringify(currentUser));
+      localStorage.setItem('tripmate_user', JSON.stringify(currentUser));
       updateAuthUI();
       showToast('Đăng nhập thành công!');
       navigate('home');
@@ -597,7 +597,7 @@
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'
       };
       
-      localStorage.setItem('travellako_user', JSON.stringify(currentUser));
+      localStorage.setItem('tripmate_user', JSON.stringify(currentUser));
       clearInterval(otpCountdownTimer);
       updateAuthUI();
       
@@ -660,7 +660,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('travellako_user');
+      localStorage.removeItem('tripmate_user');
       updateAuthUI();
       showToast('Đã đăng xuất khỏi tài khoản.');
       navigate('home');
@@ -681,7 +681,7 @@
       
       if (currentUser) {
         currentUser.avatar = newAvatar;
-        localStorage.setItem('travellako_user', JSON.stringify(currentUser));
+        localStorage.setItem('tripmate_user', JSON.stringify(currentUser));
         updateAuthUI();
       }
       showToast('Đã cập nhật ảnh đại diện mới thành công!');
@@ -3154,7 +3154,7 @@
       }
       if (currentUser) {
         currentUser.name = name;
-        localStorage.setItem('travellako_user', JSON.stringify(currentUser));
+        localStorage.setItem('tripmate_user', JSON.stringify(currentUser));
         updateAuthUI();
       }
       const dispNameEl = document.getElementById('profile-user-display-name');
@@ -3185,7 +3185,7 @@
         document.getElementById('profile-avatar-img').src = newAva;
         if (currentUser) {
           currentUser.avatar = newAva;
-          localStorage.setItem('travellako_user', JSON.stringify(currentUser));
+          localStorage.setItem('tripmate_user', JSON.stringify(currentUser));
           updateAuthUI();
         }
         showToast('Cập nhật ảnh đại diện thành công!');

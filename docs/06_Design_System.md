@@ -1,12 +1,12 @@
 # Tài liệu 06: Design System & Quy chuẩn Giao diện (Modern Natural Travel)
 
-Tài liệu này định nghĩa hệ thống thiết kế (Design System) của TravelLako dựa trên phong cách chủ đạo **"Modern Natural Travel"** — kết hợp sự tối giản tinh tế của **Apple**, tính chân thực du lịch của **Airbnb**, khoảng trắng thư thái của **Notion** và thông tin trực quan từ **Google Travel**.
+Tài liệu này định nghĩa hệ thống thiết kế (Design System) của TripMate dựa trên phong cách chủ đạo **"Modern Natural Travel"** — kết hợp sự tối giản tinh tế của **Apple**, tính chân thực du lịch của **Airbnb**, khoảng trắng thư thái của **Notion** và thông tin trực quan từ **Google Travel**.
 
 > 💡 **Vai trò của File Thiết kế Figma (UI Kit Reference):**
 > Dự án sử dụng file Figma [*FREE e-commerce website for travel agency*](https://www.figma.com/design/GhFdyDI68jSRbEp94NgCUS/FREE-e-commerce-website-for-travel-agency--Community---Copy-?node-id=201-2) làm **UI Kit & Thư viện thành phần tham khảo**.
 > * **Kế thừa trực tiếp từ Figma:** Quy chuẩn Typography (`Open Sans`, `Podcast`/`Caveat`, `Inter`, `Poppins`), hệ thống phân cấp bố cục (Header, Hero Banner, Search Widget, Thẻ Card địa điểm, Layout Form Auth Split-Screen, DatePicker, Footer).
-> * **Màu sắc giao diện:** Kế thừa hệ màu trung tính (`#FAFAFA`, `#FFFFFF`, `#E2E8F0`, `#333333`) và màu cam hổ phách (`#FA8B02` / `#D97706` Sunset Sand) của Figma làm màu nhấn nổi bật (Accent/Highlight), kết hợp cùng màu xanh `Ocean Azure` (`#0369A1`) cho các hành động thông minh đặc thù của TravelLako.
-> * **Thành phần tự phát triển mới:** Các màn hình đặc thù của TravelLako (Bong bóng Chat AI, Kéo thả Timeline Day-by-Day, Bản đồ lộ trình Leaflet, Nhật ký hành trình) được thiết kế đồng nhất theo đúng token typography, bo góc và elevation của Figma.
+> * **Màu sắc giao diện:** Kế thừa hệ màu trung tính (`#FAFAFA`, `#FFFFFF`, `#E2E8F0`, `#333333`) và màu cam hổ phách (`#FA8B02` / `#D97706` Sunset Sand) của Figma làm màu nhấn nổi bật (Accent/Highlight), kết hợp cùng màu xanh `Ocean Azure` (`#0369A1`) cho các hành động thông minh đặc thù của TripMate.
+> * **Thành phần tự phát triển mới:** Các màn hình đặc thù của TripMate (Bong bóng Chat AI, Kéo thả Timeline Day-by-Day, Bản đồ lộ trình Leaflet, Nhật ký hành trình) được thiết kế đồng nhất theo đúng token typography, bo góc và elevation của Figma.
 
 ---
 

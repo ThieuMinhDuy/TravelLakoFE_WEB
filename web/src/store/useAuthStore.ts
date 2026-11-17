@@ -59,7 +59,7 @@ export const useAuthStore = create<AuthState>()(
       setInitialized: () => set({ isInitialized: true }),
     }),
     {
-      name: 'travellako_auth_store',
+      name: 'tripmate_auth_store',
       partialize: (state) => ({
         user: state.user,
         token: state.token,

@@ -1,5 +1,5 @@
-const TOKEN_KEY = 'travellako_jwt';
-const USER_KEY = 'travellako_user';
+const TOKEN_KEY = 'tripmate_jwt';
+const USER_KEY = 'tripmate_user';
 
 export const storage = {
   getToken: (): string | null => {

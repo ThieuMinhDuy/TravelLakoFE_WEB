@@ -60,7 +60,7 @@ export const AdminUsersPage: React.FC = () => {
         <div>
           <h1 className="admin-page__title">Quản lý Người dùng</h1>
           <p className="admin-page__subtitle">
-            Danh sách tất cả tài khoản trong hệ thống TravelLako
+            Danh sách tất cả tài khoản trong hệ thống TripMate
           </p>
         </div>
       </div>

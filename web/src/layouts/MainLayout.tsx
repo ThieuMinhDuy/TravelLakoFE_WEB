@@ -27,10 +27,10 @@ export const MainLayout: React.FC = () => {
       <button
         onClick={() => {
           // Placeholder trigger chatbot AI
-          alert('Tính năng Trợ lý ảo AI TravelLako sẽ sớm ra mắt!');
+          alert('Tính năng Trợ lý ảo AI TripMate sẽ sớm ra mắt!');
         }}
         className="main-layout__ai-bubble"
-        title="Trợ lý ảo AI TravelLako"
+        title="Trợ lý ảo AI TripMate"
         type="button"
       >
         <Bot className="w-6 h-6 animate-pulse" />

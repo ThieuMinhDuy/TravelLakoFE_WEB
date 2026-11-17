@@ -12,7 +12,7 @@ export const LoginPage: React.FC = () => {
       <div className="auth-card__header">
         <h2 className="auth-card__title">Đăng nhập</h2>
         <p className="auth-card__subtitle">
-          Chào mừng bạn quay trở lại với TravelLako
+          Chào mừng bạn quay trở lại với TripMate
         </p>
       </div>
 

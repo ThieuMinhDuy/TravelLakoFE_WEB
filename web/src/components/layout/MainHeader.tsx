@@ -12,7 +12,7 @@ import {
   ShieldAlert,
   ChevronDown,
 } from 'lucide-react';
-import logoImg from '../../assets/logo.webp';
+import logoImg from '../../assets/logo.png';
 import './css/MainHeader.css';
 
 export const MainHeader: React.FC = () => {
@@ -83,9 +83,9 @@ export const MainHeader: React.FC = () => {
             ================================================================== */}
         <div className="main-header__left">
           <Link to="/" className="main-header__brand-link">
-            <img src={logoImg} alt="TravelLako" className="main-header__brand-logo" />
+            <img src={logoImg} alt="TripMate" className="main-header__brand-logo" />
             <span className="main-header__brand-title">
-              Travel<span className="main-header__brand-highlight">Lako</span>
+              Trip<span className="main-header__brand-highlight">Mate</span>
             </span>
           </Link>
         </div>

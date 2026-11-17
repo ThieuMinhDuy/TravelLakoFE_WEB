@@ -1,5 +1,5 @@
 /**
- * Kiểm tra định dạng email (Bắt buộc đuôi @gmail.com theo chuẩn TravelLakoBE)
+ * Kiểm tra định dạng email (Bắt buộc đuôi @gmail.com theo chuẩn TripMate Backend)
  */
 export function isValidGmail(email: string): boolean {
   if (!email) return false;
@@ -9,7 +9,7 @@ export function isValidGmail(email: string): boolean {
 }
 
 /**
- * Kiểm tra mật khẩu mạnh theo rule TravelLakoBE:
+ * Kiểm tra mật khẩu mạnh theo rule TripMate Backend:
  * - Tối thiểu 6 ký tự
  * - Có ít nhất 1 chữ hoa
  * - Có ít nhất 1 chữ thường

@@ -17,7 +17,7 @@ export const HomePage: React.FC = () => {
 
         <h1 className="home-hero__title">
           Nền tảng Lập kế hoạch Du lịch Thông minh{' '}
-          <span className="home-hero__title-highlight">TravelLako</span>
+          <span className="home-hero__title-highlight">TripMate</span>
         </h1>
 
         <p className="home-hero__script">
@@ -25,7 +25,7 @@ export const HomePage: React.FC = () => {
         </p>
 
         <p className="home-hero__description">
-          Base code của dự án đã sẵn sàng với hạ tầng Axios Client kết nối 100% với TravelLakoBE,
+          Base code của dự án đã sẵn sàng với hạ tầng Axios Client kết nối 100% với TripMate Backend,
           hệ thống phân quyền RBAC, Zustand state store và bộ UI components chuẩn Figma.
         </p>
 
@@ -66,7 +66,7 @@ export const HomePage: React.FC = () => {
             </div>
             <h3 className="home-feature__title">Chuẩn hóa 100% Backend</h3>
             <p className="home-feature__desc">
-              Kết nối trọn vẹn với các API của TravelLakoBE (Auth OTP, Profile thống kê, Admin Dashboard, OSM Import).
+              Kết nối trọn vẹn với các API của TripMate Backend (Auth OTP, Profile thống kê, Admin Dashboard, OSM Import).
             </p>
           </Card>
 

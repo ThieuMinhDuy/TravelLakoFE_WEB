@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import authBannerImg from '../assets/authbanner.webp';
-import logoImg from '../assets/logo.webp';
+import logoImg from '../assets/logo.png';
 import './css/AuthLayout.css';
 
 export const AuthLayout: React.FC = () => {
@@ -23,7 +23,7 @@ export const AuthLayout: React.FC = () => {
         <div className="auth-layout__banner-header">
           <img src={logoImg} alt="Logo" className="auth-layout__banner-logo" />
           <span className="auth-layout__banner-brand">
-            Travel<span className="auth-layout__banner-highlight">Lako</span>
+            Trip<span className="auth-layout__banner-highlight">Mate</span>
           </span>
         </div>
 
@@ -45,7 +45,7 @@ export const AuthLayout: React.FC = () => {
           <Link to="/" className="auth-layout__mobile-link">
             <img src={logoImg} alt="Logo" className="auth-layout__mobile-logo" />
             <span className="auth-layout__mobile-brand">
-              Travel<span className="text-oceanBlue">Lako</span>
+              Trip<span className="text-oceanBlue">Mate</span>
             </span>
           </Link>
         </div>

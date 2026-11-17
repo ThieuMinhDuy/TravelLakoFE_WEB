@@ -1,15 +1,15 @@
 # Đặc tả Thành phần Giao diện & Ánh xạ Thiết kế (Figma UI Mapping)
 
-> **Nguyên tắc định hướng (Hướng 2 - Nghiệp vụ TravelLako làm chuẩn, Figma làm UI Kit):**
-> * **Nghiệp vụ cốt lõi:** Giữ nguyên 100% định hướng TravelLako – Nền tảng lập kế hoạch du lịch thông minh bằng AI cho thị trường Việt Nam (63 tỉnh thành, AI Itinerary, kéo thả Timeline, bản đồ tương tác Leaflet, nhật ký hành trình).
+> **Nguyên tắc định hướng (Hướng 2 - Nghiệp vụ TripMate làm chuẩn, Figma làm UI Kit):**
+> * **Nghiệp vụ cốt lõi:** Giữ nguyên 100% định hướng TripMate – Nền tảng lập kế hoạch du lịch thông minh bằng AI cho thị trường Việt Nam (63 tỉnh thành, AI Itinerary, kéo thả Timeline, bản đồ tương tác Leaflet, nhật ký hành trình).
 > * **Vai trò của File Figma:** File Figma (`FREE e-commerce website for travel agency`) đóng vai trò là **UI/UX Reference & Component Kit** (Cung cấp quy chuẩn Typography Open Sans, cấu trúc Hero Banner, Search Widget, Card gói tour/địa điểm, Form Auth chia đôi màn hình, DatePicker và Footer).
-> * **Các màn hình đặc thù của TravelLako chưa có trên Figma:** Tự phát triển mới dựa trên cùng hệ thống Design System (cùng font, cỡ chữ, bo góc, padding và elevation) được chuẩn hóa từ Figma.
+> * **Các màn hình đặc thù của TripMate chưa có trên Figma:** Tự phát triển mới dựa trên cùng hệ thống Design System (cùng font, cỡ chữ, bo góc, padding và elevation) được chuẩn hóa từ Figma.
 
 ---
 
 ## Bảng ánh xạ tổng quan màn hình & Node Figma
 
-| Màn hình TravelLako | Node Figma tham khảo | Mức độ kế thừa | Thành phần tái sử dụng từ Figma | Thành phần đặc thù TravelLako cần tự dựng |
+| Màn hình TripMate | Node Figma tham khảo | Mức độ kế thừa | Thành phần tái sử dụng từ Figma | Thành phần đặc thù TripMate cần tự dựng |
 | :--- | :--- | :---: | :--- | :--- |
 | **Màn 1: Home & Explore** | `201:254` (Home Page) | **85%** | Header, Hero banner, Search Widget frame, Tour Card, Testimonials, Footer | Bộ chọn 63 tỉnh thành, Lưới 3 lịch trình AI mẫu, Bong bóng AI nổi |
 | **Màn 2: Place Directory** | `201:3669` (Search Result) | **80%** | Filter Bar layout, Lưới Card địa điểm, Pagination | Bộ lọc 4 danh mục (Khách sạn/Vui chơi/Ăn uống/Cafe), Lọc giá VNĐ |
@@ -29,7 +29,7 @@
 * **Ánh xạ từ Figma (`201:254` - Home Page):**
   * Tái sử dụng trực tiếp layout Header (`201:256`), Hero banner (`201:255`), Search widget (`201:1663`), Tour cards (`201:1748`), Testimonials slider (`201:2092`) và Footer (`201:2104`).
 * **Các thành phần giao diện:**
-  1. **Thanh điều hướng cố định (Sticky Header):** Kế thừa từ node Figma `201:256` (Logo TravelLako bên trái; Menu giữa: Khám phá điểm đến, Chuyến đi của tôi, Cẩm nang du lịch; Avatar người dùng kèm dropdown bên phải).
+  1. **Thanh điều hướng cố định (Sticky Header):** Kế thừa từ node Figma `201:256` (Logo TripMate bên trái; Menu giữa: Khám phá điểm đến, Chuyến đi của tôi, Cẩm nang du lịch; Avatar người dùng kèm dropdown bên phải).
   2. **Banner trình chiếu chính (Hero Carousel Banner):** Kế thừa hero banner `201:255`, kết hợp slogan font script nghệ thuật `Podcast`/`Caveat` (`201:1661`) hiển thị slide danh lam thắng cảnh Việt Nam.
   3. **Thanh tìm kiếm thông minh (Overlay Search Bar):** Dựa trên layout khung search Figma `201:1663`, tùy biến các ô input: Ô chọn tỉnh thành (trong 63 tỉnh thành Việt Nam), ô chọn ngày dự kiến và nút "Tìm kiếm".
   4. **Lưới Điểm đến Phổ biến (Top Destinations Grid):** Hệ thống thẻ tỉnh thành lớn (Hà Nội, TP.HCM, Đà Nẵng, Hội An, Nha Trang, Đà Lạt) kế thừa phong cách bo góc và đổ bóng của Figma card.

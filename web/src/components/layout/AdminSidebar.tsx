@@ -10,7 +10,7 @@ import {
   MessageSquare,
   DownloadCloud,
 } from 'lucide-react';
-import logoImg from '../../assets/logo.webp';
+import logoImg from '../../assets/logo.png';
 import './css/AdminSidebar.css';
 
 export const AdminSidebar: React.FC = () => {
@@ -64,7 +64,7 @@ export const AdminSidebar: React.FC = () => {
           {!adminSidebarCollapsed && (
             <div className="admin-sidebar__brand-text">
               <span className="admin-sidebar__brand-name">
-                Travel<span className="admin-sidebar__brand-highlight">Lako</span>
+                Trip<span className="admin-sidebar__brand-highlight">Mate</span>
               </span>
               <span className="admin-sidebar__brand-tag">
                 Admin Portal
@@ -104,7 +104,7 @@ export const AdminSidebar: React.FC = () => {
       {/* Footer / Meta */}
       {!adminSidebarCollapsed && (
         <div className="admin-sidebar__footer">
-          <p className="admin-sidebar__footer-text">TravelLako Engine v1.0</p>
+          <p className="admin-sidebar__footer-text">TripMate Engine v1.0</p>
           <p className="admin-sidebar__footer-text">OpenAPI Mongoose Compatible</p>
         </div>
       )}
