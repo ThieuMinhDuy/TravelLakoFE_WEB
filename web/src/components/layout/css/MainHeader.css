@@ -484,3 +484,41 @@
 .main-header__dropdown-item--logout:hover {
   background-color: #FEE2E2;
 }
+
+/* ==========================================================================
+   Căn menu giữa chính xác (màn ≥ 1280px)
+   Lưới 3 cột với 2 cột bên bằng nhau → menu nằm đúng giữa header, không bị kéo lệch
+   bởi độ rộng khác nhau của logo (trái) và cụm tìm kiếm / tài khoản (phải).
+   Cụm bên phải được thu gọn để vừa nửa header (kể cả khi đã đăng nhập).
+   Màn hẹp hơn không đủ chỗ cho 2 bên bằng nhau → giữ bố cục flex để không bị đè chữ.
+   ========================================================================== */
+@media (min-width: 1280px) {
+  .main-header__container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .main-header__left {
+    justify-self: start;
+  }
+
+  .main-header__right {
+    justify-self: end;
+    gap: 0.75rem;
+  }
+
+  .main-header__search-wrapper,
+  .main-header__search-wrapper:focus-within {
+    width: 14rem;
+  }
+
+  .main-header__user-name {
+    max-width: 6rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .main-header__search-wrapper:focus-within {
+    width: 16rem;
+  }
+}
