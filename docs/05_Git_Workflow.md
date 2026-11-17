@@ -1,4 +1,4 @@
-# Tài liệu 05: Quy Trình Git Workflow - TravelLako Frontend
+# Tài liệu 05: Quy Trình Git Workflow - TripMate Frontend
 
 Quy trình quản lý nhánh (branching strategy) và làm việc nhóm trên Git giúp mã nguồn luôn ổn định và tránh conflict.
 

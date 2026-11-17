@@ -1,0 +1,21 @@
+/* ==========================================================================
+   Card Component Styles
+   ========================================================================== */
+
+.ui-card {
+  border-radius: 1rem;
+  border: 1px solid var(--color-borderGray, #E2E8F0);
+  background-color: var(--color-surfaceWhite, #FFFFFF);
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.ui-card--hoverable {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.ui-card--hoverable:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+}

@@ -1,6 +1,6 @@
-# TravelLako Web Frontend (SPA)
+# TripMate Web Frontend (SPA)
 
-Dự án Web Frontend của **TravelLako** được xây dựng theo **Kiến trúc B: SPA + NestJS REST API**, sử dụng **React + Vite + TypeScript**.
+Dự án Web Frontend của **TripMate** được xây dựng theo **Kiến trúc B: SPA + NestJS REST API**, sử dụng **React + Vite + TypeScript**.
 
 ## 🚀 Công nghệ sử dụng
 

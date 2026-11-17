@@ -1,0 +1,111 @@
+/* ==========================================================================
+   Modal Component Styles
+   ========================================================================== */
+
+.ui-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.ui-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.ui-modal__dialog {
+  position: relative;
+  width: 100%;
+  border-radius: 1rem;
+  background-color: var(--color-surfaceWhite, #FFFFFF);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--color-borderGray, #E2E8F0);
+  padding: 1.5rem;
+  z-index: 10;
+  animation: modalScaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ui-modal__dialog--sm { max-width: 24rem; }
+.ui-modal__dialog--md { max-width: 28rem; }
+.ui-modal__dialog--lg { max-width: 32rem; }
+.ui-modal__dialog--xl { max-width: 36rem; }
+.ui-modal__dialog--2xl { max-width: 42rem; }
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.ui-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-borderGray, #E2E8F0);
+  margin-bottom: 1rem;
+}
+
+.ui-modal__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+.ui-modal__description {
+  font-size: 0.75rem;
+  color: #64748B;
+  margin: 0.25rem 0 0 0;
+}
+
+.ui-modal__close-btn {
+  color: #94A3B8;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-modal__close-btn:hover {
+  color: #334155;
+  background-color: #F1F5F9;
+}
+
+.ui-modal__body {
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.ui-modal__footer {
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-borderGray, #E2E8F0);
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}

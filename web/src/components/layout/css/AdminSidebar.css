@@ -1,0 +1,136 @@
+/* ==========================================================================
+   AdminSidebar Component Styles
+   ========================================================================== */
+
+.admin-sidebar {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-right: 1px solid var(--color-borderGray, #E2E8F0);
+  background-color: var(--color-surfaceWhite, #FFFFFF);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  width: 16rem;
+}
+
+.admin-sidebar--collapsed {
+  width: 5rem;
+}
+
+/* Brand Header */
+.admin-sidebar__header {
+  height: 4rem;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-borderGray, #E2E8F0);
+}
+
+.admin-sidebar__brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.admin-sidebar__brand-logo {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.admin-sidebar__brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar__brand-name {
+  font-weight: 800;
+  font-size: 0.875rem;
+  color: #0F172A;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.admin-sidebar__brand-highlight {
+  color: var(--color-oceanBlue, #0369A1);
+}
+
+.admin-sidebar__brand-tag {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: #D97706;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Navigation Menu */
+.admin-sidebar__nav {
+  flex: 1;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+}
+
+.admin-sidebar__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+}
+
+.admin-sidebar__nav-item:hover {
+  background-color: #F1F5F9;
+  color: #0F172A;
+}
+
+.admin-sidebar__nav-item--active {
+  background-color: var(--color-oceanBlueLight, #F0F9FF);
+  color: var(--color-oceanBlue, #0369A1);
+  font-weight: 700;
+}
+
+.admin-sidebar__nav-item--collapsed {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.admin-sidebar__nav-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.admin-sidebar__nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Footer / Meta */
+.admin-sidebar__footer {
+  padding: 1rem;
+  border-top: 1px solid var(--color-borderGray, #E2E8F0);
+  background-color: #F8FAFC;
+}
+
+.admin-sidebar__footer-text {
+  font-size: 0.625rem;
+  color: #94A3B8;
+  line-height: 1.35;
+  margin: 0;
+}

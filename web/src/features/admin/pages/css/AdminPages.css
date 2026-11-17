@@ -1,0 +1,237 @@
+/* ==========================================================================
+   Admin Pages Styles (Dashboard, Users, Cities, Places, Reviews, Import)
+   ========================================================================== */
+
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.admin-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .admin-page__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.admin-page__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0;
+}
+
+.admin-page__subtitle {
+  font-size: 0.75rem;
+  color: #64748B;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+/* 4-Stat Cards */
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.admin-stat-card {
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-stat-card__icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.admin-stat-card__icon--blue {
+  background-color: #F0F9FF;
+  color: var(--color-oceanBlue, #0369A1);
+}
+
+.admin-stat-card__icon--amber {
+  background-color: #FFFBEB;
+  color: #D97706;
+}
+
+.admin-stat-card__icon--teal {
+  background-color: #F0FDF4;
+  color: #0D9488;
+}
+
+.admin-stat-card__icon--purple {
+  background-color: #FAF5FF;
+  color: #9333EA;
+}
+
+.admin-stat-card__label {
+  font-size: 0.75rem;
+  color: #64748B;
+  font-weight: 500;
+  margin: 0;
+}
+
+.admin-stat-card__value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0;
+}
+
+/* User item in table */
+.admin-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.admin-user-cell__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: #F1F5F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #334155;
+  flex-shrink: 0;
+}
+
+.admin-user-cell__name {
+  font-weight: 600;
+  color: #0F172A;
+  margin: 0;
+}
+
+.admin-user-cell__email {
+  font-size: 0.6875rem;
+  color: #94A3B8;
+  margin: 0;
+}
+
+/* Tabs */
+.admin-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-borderGray, #E2E8F0);
+  gap: 0.5rem;
+}
+
+.admin-tab {
+  padding: 0.625rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.admin-tab:hover {
+  color: #0F172A;
+}
+
+.admin-tab--active {
+  border-bottom-color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-oceanBlue, #0369A1);
+}
+
+/* Form Controls in Admin */
+.admin-import-card {
+  padding: 1.5rem;
+  max-width: 36rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-import-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-borderGray, #E2E8F0);
+}
+
+.admin-import-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.25rem;
+}
+
+.admin-select {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-borderGray, #E2E8F0);
+  background-color: var(--color-surfaceWhite, #FFFFFF);
+  padding: 0.625rem 0.875rem;
+  font-size: 0.75rem;
+  color: #0F172A;
+  outline: none;
+  transition: all 0.15s ease-in-out;
+}
+
+.admin-select:focus {
+  border-color: var(--color-oceanBlue, #0369A1);
+  box-shadow: 0 0 0 2px rgba(3, 105, 161, 0.15);
+}
+
+.admin-number-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-borderGray, #E2E8F0);
+  background-color: var(--color-surfaceWhite, #FFFFFF);
+  padding: 0.625rem 0.875rem;
+  font-size: 0.75rem;
+  color: #0F172A;
+  outline: none;
+  transition: all 0.15s ease-in-out;
+}
+
+.admin-number-input:focus {
+  border-color: var(--color-oceanBlue, #0369A1);
+  box-shadow: 0 0 0 2px rgba(3, 105, 161, 0.15);
+}

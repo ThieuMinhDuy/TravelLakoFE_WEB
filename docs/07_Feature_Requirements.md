@@ -1,6 +1,6 @@
 # Tài liệu 07: Danh sách Đặc tả Yêu cầu Chức năng (Feature Requirements)
 
-Tài liệu này đóng vai trò là danh sách kiểm tra (Checklist) toàn bộ các tính năng cần phát triển của hệ thống TravelLako trên cả Web Frontend và Mobile App.
+Tài liệu này đóng vai trò là danh sách kiểm tra (Checklist) toàn bộ các tính năng cần phát triển của hệ thống TripMate trên cả Web Frontend và Mobile App.
 
 ---
 

@@ -1,0 +1,55 @@
+/* ==========================================================================
+   MainLayout Styles
+   ========================================================================== */
+
+.main-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bgApp, #FAFAFA);
+  color: var(--color-textMain, #0F172A);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.main-layout__content {
+  flex: 1;
+}
+
+.main-layout__content--subpage {
+  padding-top: 4.5rem;
+}
+
+/* Floating AI Assistance Bubble */
+.main-layout__ai-bubble {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 40;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  background-color: var(--color-oceanBlue, #0369A1);
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-layout__ai-bubble:hover {
+  background-color: var(--color-oceanBlueDark, #075985);
+  transform: scale(1.05);
+}
+
+.main-layout__ai-bubble:active {
+  transform: scale(0.95);
+}
+
+.main-layout__ai-bubble:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(186, 230, 253, 0.8);
+}

@@ -1,11 +1,11 @@
 # Tài liệu 04: Tài liệu Tham khảo API (API Reference)
 
-Tài liệu này liệt kê toàn bộ hệ thống API Endpoints của dự án **TravelLako**. Tất cả các endpoint đều có tiền tố mặc định là `/api` (Ví dụ: `http://localhost:5000/api`).
+Tài liệu này liệt kê toàn bộ hệ thống API Endpoints của dự án **TripMate**. Tất cả các endpoint đều có tiền tố mặc định là `/api` (Production: `https://travellako-backend.onrender.com/api` hoặc Local: `http://localhost:5000/api`).
 
 > **Cấu hình Base URL trong React + Vite:** Sử dụng biến môi trường `VITE_API_URL` khai báo trong file `.env` hoặc `.env.example` tại thư mục `/web`:
 > ```env
 > # web/.env
-> VITE_API_URL=http://localhost:5000/api
+> VITE_API_URL=https://travellako-backend.onrender.com/api
 > ```
 > Trong mã nguồn TypeScript/JavaScript, truy cập qua: `import.meta.env.VITE_API_URL`.
 

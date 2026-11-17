@@ -1,0 +1,61 @@
+/* ==========================================================================
+   Badge Component Styles
+   ========================================================================== */
+
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-style: solid;
+  line-height: 1;
+}
+
+/* Variants */
+.ui-badge--neutral {
+  background-color: #F1F5F9;
+  color: #334155;
+  border-color: #E2E8F0;
+}
+
+.ui-badge--primary {
+  background-color: #F0F9FF;
+  color: var(--color-oceanBlue, #0369A1);
+  border-color: #BAE6FD;
+}
+
+.ui-badge--accent {
+  background-color: #FFFBEB;
+  color: #B45309;
+  border-color: #FDE68A;
+}
+
+.ui-badge--success {
+  background-color: #F0FDF4;
+  color: #047857;
+  border-color: #BBF7D0;
+}
+
+.ui-badge--warning {
+  background-color: #FFFBEB;
+  color: #D97706;
+  border-color: #FDE68A;
+}
+
+.ui-badge--danger {
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border-color: #FECACA;
+}
+
+/* Sizes */
+.ui-badge--sm {
+  font-size: 0.6875rem;
+  padding: 0.125rem 0.5rem;
+}
+
+.ui-badge--md {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.625rem;
+}

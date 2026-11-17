@@ -1,13 +1,13 @@
-# Tài liệu 01: Giới thiệu Tổng quan & Kiến trúc Dự án TravelLako
+# Tài liệu 01: Giới thiệu Tổng quan & Kiến trúc Dự án TripMate
 
-Chào mừng các bạn Frontend Developer (Web & Mobile) tham gia phát triển dự án **TravelLako** - Hệ thống tư vấn, quản lý và tự động tối ưu hóa lịch trình du lịch thông minh.
+Chào mừng các bạn Frontend Developer (Web & Mobile) tham gia phát triển dự án **TripMate** - Hệ thống tư vấn, quản lý và tự động tối ưu hóa lịch trình du lịch thông minh.
 
 Tài liệu này cung cấp cái nhìn tổng quan về hệ thống, kiến trúc ứng dụng và cơ chế xác thực (Authentication Flow) để bắt đầu xây dựng FE.
 
 ---
 
 ## 1. Giới thiệu Dự án
-**TravelLako** là một nền tảng hỗ trợ người dùng khám phá các địa điểm du lịch, ẩm thực, giải trí và lập kế hoạch di chuyển tối ưu:
+**TripMate** là một nền tảng hỗ trợ người dùng khám phá các địa điểm du lịch, ẩm thực, giải trí và lập kế hoạch di chuyển tối ưu:
 *   **Customer (Khách hàng):** Khám phá danh thắng, khách sạn, nhà hàng, quán cafe; yêu thích địa điểm; lên lịch trình chuyến đi; trò chuyện trực tiếp với trợ lý ảo AI để được đề xuất và tối ưu hóa đường đi ngắn nhất.
 *   **Admin (Quản trị viên):** Quản trị danh sách người dùng, thành phố, địa điểm du lịch; xem biểu đồ thống kê tăng trưởng; import dữ liệu hàng loạt.
 
@@ -52,7 +52,7 @@ Dự án Web Frontend sử dụng **React + Vite + TypeScript (Strict Mode)** th
 
 ```
 web/
-├── public/                        # Static assets (favicon.svg, icons.svg)
+├── public/                        # Static assets (favicon.png, icons.svg)
 ├── src/
 │   ├── assets/                    # Ảnh, SVG, fonts toàn cục
 │   ├── components/                # Components giao diện dùng chung
@@ -104,7 +104,7 @@ Dự án sử dụng cơ chế bảo mật **JWT (JSON Web Token)** để xác t
     import axios from 'axios';
 
     const api = axios.create({
-      baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+      baseURL: import.meta.env.VITE_API_URL || 'https://travellako-backend.onrender.com/api',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -166,7 +166,7 @@ Dự án sử dụng cơ chế bảo mật **JWT (JSON Web Token)** để xác t
 *   **React 19 & TypeScript**: Strict mode (`strict: true`), Type-safe toàn diện, Generic types, Utility types.
 *   **Vite**: Build tool thế hệ mới, Hot Module Replacement (HMR) cực nhanh.
 *   **React Router**: Định tuyến client-side SPA, hỗ trợ code-splitting qua `React.lazy()` và `Suspense`.
-*   **Tailwind CSS**: Utility-first CSS, định nghĩa bảng màu nhận diện thương hiệu TravelLako.
+*   **Tailwind CSS**: Utility-first CSS, định nghĩa bảng màu nhận diện thương hiệu TripMate.
 
 #### 2. Kết nối API & Quản lý State
 *   **`axios`**: HTTP Client với Request & Response Interceptors.
