@@ -1,56 +1,57 @@
 import React from 'react';
 import { Card } from '../../../components/common/Card';
 import { Users, MapPin, Compass, MessageSquare } from 'lucide-react';
+import './css/AdminPages.css';
 
 export const AdminDashboardPage: React.FC = () => {
   return (
-    <div className="space-y-6">
+    <div className="admin-page">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Tổng quan Quản trị (Dashboard)</h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <h1 className="admin-page__title">Tổng quan Quản trị (Dashboard)</h1>
+        <p className="admin-page__subtitle">
           Số liệu thống kê thời gian thực từ hệ thống TravelLakoBE
         </p>
       </div>
 
       {/* 4 Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-oceanBlue flex items-center justify-center font-bold">
+      <div className="admin-stats-grid">
+        <Card className="admin-stat-card">
+          <div className="admin-stat-card__icon admin-stat-card__icon--blue">
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 font-medium">Tổng Người dùng</p>
-            <p className="text-2xl font-extrabold text-slate-900">--</p>
+            <p className="admin-stat-card__label">Tổng Người dùng</p>
+            <p className="admin-stat-card__value">--</p>
           </div>
         </Card>
 
-        <Card className="p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+        <Card className="admin-stat-card">
+          <div className="admin-stat-card__icon admin-stat-card__icon--amber">
             <Compass className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 font-medium">Tổng Chuyến đi</p>
-            <p className="text-2xl font-extrabold text-slate-900">--</p>
+            <p className="admin-stat-card__label">Tổng Chuyến đi</p>
+            <p className="admin-stat-card__value">--</p>
           </div>
         </Card>
 
-        <Card className="p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold">
+        <Card className="admin-stat-card">
+          <div className="admin-stat-card__icon admin-stat-card__icon--teal">
             <MapPin className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 font-medium">Tổng Địa điểm</p>
-            <p className="text-2xl font-extrabold text-slate-900">--</p>
+            <p className="admin-stat-card__label">Tổng Địa điểm</p>
+            <p className="admin-stat-card__value">--</p>
           </div>
         </Card>
 
-        <Card className="p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+        <Card className="admin-stat-card">
+          <div className="admin-stat-card__icon admin-stat-card__icon--purple">
             <MessageSquare className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 font-medium">Đánh giá & Review</p>
-            <p className="text-2xl font-extrabold text-slate-900">--</p>
+            <p className="admin-stat-card__label">Đánh giá & Review</p>
+            <p className="admin-stat-card__value">--</p>
           </div>
         </Card>
       </div>

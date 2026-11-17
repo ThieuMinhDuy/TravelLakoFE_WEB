@@ -4,18 +4,19 @@ import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import { Mail } from 'lucide-react';
+import './css/AuthPages.css';
 
 export const ForgotPasswordPage: React.FC = () => {
   return (
-    <Card className="p-8 shadow-lg border-borderGray">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-extrabold text-slate-900">Quên mật khẩu</h2>
-        <p className="text-xs text-slate-500 mt-1.5">
+    <Card className="auth-card">
+      <div className="auth-card__header">
+        <h2 className="auth-card__title">Quên mật khẩu</h2>
+        <p className="auth-card__subtitle">
           Nhập địa chỉ email đăng ký để nhận mã OTP đặt lại mật khẩu
         </p>
       </div>
 
-      <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+      <form onSubmit={(e) => e.preventDefault()} className="auth-card__form">
         <Input
           label="Địa chỉ Email"
           type="email"
@@ -29,8 +30,8 @@ export const ForgotPasswordPage: React.FC = () => {
         </Button>
       </form>
 
-      <div className="mt-6 pt-6 border-t border-borderGray text-center">
-        <Link to="/login" className="text-xs text-slate-500 hover:text-slate-800 font-medium">
+      <div className="auth-card__footer">
+        <Link to="/login" className="auth-card__back-link">
           ← Quay lại Đăng nhập
         </Link>
       </div>

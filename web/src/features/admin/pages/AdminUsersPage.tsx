@@ -4,6 +4,7 @@ import { Button } from '../../../components/common/Button';
 import { DataTable, Column } from '../../../components/compound/DataTable';
 import { Badge } from '../../../components/common/Badge';
 import { User } from '../../../types/user';
+import './css/AdminPages.css';
 
 export const AdminUsersPage: React.FC = () => {
   const columns: Column<User>[] = [
@@ -11,13 +12,13 @@ export const AdminUsersPage: React.FC = () => {
       key: 'name',
       header: 'Người dùng',
       render: (u) => (
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-xs text-slate-700">
+        <div className="admin-user-cell">
+          <div className="admin-user-cell__avatar">
             {u.name?.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="font-semibold text-slate-900">{u.name}</p>
-            <p className="text-[11px] text-slate-400">{u.email}</p>
+            <p className="admin-user-cell__name">{u.name}</p>
+            <p className="admin-user-cell__email">{u.email}</p>
           </div>
         </div>
       ),
@@ -54,11 +55,11 @@ export const AdminUsersPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="admin-page">
+      <div className="admin-page__header">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Quản lý Người dùng</h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <h1 className="admin-page__title">Quản lý Người dùng</h1>
+          <p className="admin-page__subtitle">
             Danh sách tất cả tài khoản trong hệ thống TravelLako
           </p>
         </div>

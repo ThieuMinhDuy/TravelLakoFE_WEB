@@ -4,6 +4,7 @@ import { Button } from '../../../components/common/Button';
 import { DataTable, Column } from '../../../components/compound/DataTable';
 import { PlaceUnion, PlaceType } from '../../../types/place';
 import { Plus } from 'lucide-react';
+import './css/AdminPages.css';
 
 export const AdminPlacesPage: React.FC = () => {
   const [activeType, setActiveType] = useState<PlaceType>('attraction');
@@ -29,11 +30,11 @@ export const AdminPlacesPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="admin-page">
+      <div className="admin-page__header">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Quản lý Địa điểm Du lịch</h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <h1 className="admin-page__title">Quản lý Địa điểm Du lịch</h1>
+          <p className="admin-page__subtitle">
             Quản trị 4 loại hình địa điểm du lịch theo thành phố
           </p>
         </div>
@@ -43,16 +44,13 @@ export const AdminPlacesPage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-borderGray gap-2">
+      <div className="admin-tabs">
         {tabs.map((tab) => (
           <button
             key={tab.type}
+            type="button"
             onClick={() => setActiveType(tab.type)}
-            className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-all ${
-              activeType === tab.type
-                ? 'border-oceanBlue text-oceanBlue'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
+            className={`admin-tab ${activeType === tab.type ? 'admin-tab--active' : ''}`}
           >
             {tab.label}
           </button>

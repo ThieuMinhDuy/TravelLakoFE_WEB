@@ -4,74 +4,75 @@ import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { User, Mail, Phone, Calendar, Heart, MapPin, MessageSquare } from 'lucide-react';
+import './css/ProfilePage.css';
 
 export const ProfilePage: React.FC = () => {
   const { user } = useAuthStore();
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 space-y-8">
+    <div className="profile-page">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Hồ sơ cá nhân & Cài đặt</h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <h1 className="profile-page__title">Hồ sơ cá nhân & Cài đặt</h1>
+        <p className="profile-page__subtitle">
           Quản lý thông tin tài khoản, sở thích du lịch và cá nhân hóa trải nghiệm AI
         </p>
       </div>
 
       {/* User Stats Card */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="flex items-center gap-4 p-5">
-          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-oceanBlue flex items-center justify-center font-bold">
+      <div className="profile-stats">
+        <Card className="profile-stat-card">
+          <div className="profile-stat-card__icon profile-stat-card__icon--blue">
             <MapPin className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 font-medium">Chuyến đi đã tạo</p>
-            <p className="text-xl font-extrabold text-slate-900">{user?.stats?.trips || 0}</p>
+            <p className="profile-stat-card__label">Chuyến đi đã tạo</p>
+            <p className="profile-stat-card__value">{user?.stats?.trips || 0}</p>
           </div>
         </Card>
 
-        <Card className="flex items-center gap-4 p-5">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+        <Card className="profile-stat-card">
+          <div className="profile-stat-card__icon profile-stat-card__icon--amber">
             <Heart className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 font-medium">Địa điểm yêu thích</p>
-            <p className="text-xl font-extrabold text-slate-900">{user?.stats?.favorites || 0}</p>
+            <p className="profile-stat-card__label">Địa điểm yêu thích</p>
+            <p className="profile-stat-card__value">{user?.stats?.favorites || 0}</p>
           </div>
         </Card>
 
-        <Card className="flex items-center gap-4 p-5">
-          <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold">
+        <Card className="profile-stat-card">
+          <div className="profile-stat-card__icon profile-stat-card__icon--teal">
             <MessageSquare className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 font-medium">Đánh giá đã viết</p>
-            <p className="text-xl font-extrabold text-slate-900">{user?.stats?.reviews || 0}</p>
+            <p className="profile-stat-card__label">Đánh giá đã viết</p>
+            <p className="profile-stat-card__value">{user?.stats?.reviews || 0}</p>
           </div>
         </Card>
       </div>
 
       {/* Profile Form Card */}
-      <Card className="p-6 sm:p-8 space-y-6">
-        <div className="flex items-center gap-6 pb-6 border-b border-borderGray">
-          <div className="w-20 h-20 rounded-full bg-slate-100 border-2 border-borderGray flex items-center justify-center text-slate-400 font-extrabold text-2xl overflow-hidden">
+      <Card className="profile-form-card">
+        <div className="profile-user-header">
+          <div className="profile-avatar">
             {user?.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+              <img src={user.avatar} alt={user.name} className="profile-avatar__img" />
             ) : (
               user?.name?.charAt(0).toUpperCase() || 'U'
             )}
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-900">{user?.name || 'Tên người dùng'}</h3>
-            <p className="text-xs text-slate-500">{user?.email || 'email@example.com'}</p>
-            <Button variant="outline" size="sm" className="mt-2.5">
+            <h3 className="profile-user-name">{user?.name || 'Tên người dùng'}</h3>
+            <p className="profile-user-email">{user?.email || 'email@example.com'}</p>
+            <Button variant="outline" size="sm" style={{ marginTop: '0.625rem' }}>
               Đổi ảnh đại diện
             </Button>
           </div>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={(e) => e.preventDefault()} className="profile-form">
+          <div className="profile-form__grid">
             <Input
               label="Họ và tên"
               defaultValue={user?.name}
@@ -85,7 +86,7 @@ export const ProfilePage: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="profile-form__grid">
             <Input
               label="Số điện thoại"
               defaultValue={user?.phone}
@@ -100,7 +101,7 @@ export const ProfilePage: React.FC = () => {
             />
           </div>
 
-          <div className="pt-4 flex justify-end">
+          <div className="profile-form__actions">
             <Button variant="primary" size="md">
               Lưu thay đổi
             </Button>

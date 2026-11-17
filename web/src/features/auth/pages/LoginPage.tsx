@@ -4,18 +4,19 @@ import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import { Mail, Lock } from 'lucide-react';
+import './css/AuthPages.css';
 
 export const LoginPage: React.FC = () => {
   return (
-    <Card className="p-8 shadow-lg border-borderGray">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-extrabold text-slate-900">Đăng nhập</h2>
-        <p className="text-xs text-slate-500 mt-1.5">
+    <Card className="auth-card">
+      <div className="auth-card__header">
+        <h2 className="auth-card__title">Đăng nhập</h2>
+        <p className="auth-card__subtitle">
           Chào mừng bạn quay trở lại với TravelLako
         </p>
       </div>
 
-      <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+      <form onSubmit={(e) => e.preventDefault()} className="auth-card__form">
         <Input
           label="Địa chỉ Email"
           type="email"
@@ -32,14 +33,14 @@ export const LoginPage: React.FC = () => {
           required
         />
 
-        <div className="flex items-center justify-between text-xs">
-          <label className="flex items-center gap-2 cursor-pointer text-slate-600">
+        <div className="auth-card__options">
+          <label className="auth-card__remember">
             <input type="checkbox" className="rounded text-oceanBlue" />
             <span>Ghi nhớ đăng nhập</span>
           </label>
           <Link
             to="/forgot-password"
-            className="text-oceanBlue font-semibold hover:underline"
+            className="auth-card__link"
           >
             Quên mật khẩu?
           </Link>
@@ -50,9 +51,9 @@ export const LoginPage: React.FC = () => {
         </Button>
       </form>
 
-      <div className="mt-6 pt-6 border-t border-borderGray text-center text-xs text-slate-500">
+      <div className="auth-card__footer">
         Chưa có tài khoản?{' '}
-        <Link to="/register" className="text-oceanBlue font-bold hover:underline">
+        <Link to="/register" className="auth-card__link">
           Đăng ký ngay
         </Link>
       </div>

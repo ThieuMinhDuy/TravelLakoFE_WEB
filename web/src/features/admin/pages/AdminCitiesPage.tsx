@@ -4,6 +4,7 @@ import { Button } from '../../../components/common/Button';
 import { DataTable, Column } from '../../../components/compound/DataTable';
 import { City } from '../../../types/city';
 import { Plus } from 'lucide-react';
+import './css/AdminPages.css';
 
 export const AdminCitiesPage: React.FC = () => {
   const columns: Column<City>[] = [
@@ -26,11 +27,11 @@ export const AdminCitiesPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="admin-page">
+      <div className="admin-page__header">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Quản lý Thành phố</h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <h1 className="admin-page__title">Quản lý Thành phố</h1>
+          <p className="admin-page__subtitle">
             Danh mục các tỉnh thành hỗ trợ trên hệ thống TravelLako
           </p>
         </div>

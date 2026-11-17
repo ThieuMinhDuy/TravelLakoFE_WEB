@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from '../../../components/common/Card';
 import { DataTable, Column } from '../../../components/compound/DataTable';
 import { Review } from '../../../types/review';
+import './css/AdminPages.css';
 
 export const AdminReviewsPage: React.FC = () => {
   const columns: Column<Review>[] = [
@@ -27,10 +28,10 @@ export const AdminReviewsPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="admin-page">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Kiểm duyệt Đánh giá</h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <h1 className="admin-page__title">Kiểm duyệt Đánh giá</h1>
+        <p className="admin-page__subtitle">
           Theo dõi và kiểm duyệt các đánh giá của người dùng từ API GET /api/admin/reviews
         </p>
       </div>

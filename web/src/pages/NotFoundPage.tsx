@@ -2,13 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/common/Button';
 import { Home } from 'lucide-react';
+import './css/NotFoundPage.css';
 
 export const NotFoundPage: React.FC = () => {
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
-      <span className="font-extrabold text-7xl text-oceanBlue/30 select-none">404</span>
-      <h2 className="text-2xl font-bold text-slate-900 mt-2">Trang không tồn tại</h2>
-      <p className="text-xs text-slate-500 max-w-sm mt-2 mb-6">
+    <div className="not-found-page">
+      <span className="not-found-page__code">404</span>
+      <h2 className="not-found-page__title">Trang không tồn tại</h2>
+      <p className="not-found-page__desc">
         Đường dẫn bạn yêu cầu không tìm thấy hoặc đã được di chuyển sang địa chỉ khác.
       </p>
       <Link to="/">
