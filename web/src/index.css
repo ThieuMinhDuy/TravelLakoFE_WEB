@@ -25,8 +25,10 @@
   --color-textMain: #0F172A;
   --color-textSub: #475569;
 
-  --font-sans: "Be Vietnam Pro", Inter, sans-serif;
-  --font-heading: "Plus Jakarta Sans", "Be Vietnam Pro", sans-serif;
+  --font-sans: "Open Sans", system-ui, -apple-system, sans-serif;
+  --font-heading: "Open Sans", sans-serif;
+  --font-script: "Podcast", "Caveat", cursive;
+  --font-calendar: "Inter", "Poppins", sans-serif;
 }
 
 body {

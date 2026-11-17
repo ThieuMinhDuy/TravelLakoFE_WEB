@@ -2,6 +2,12 @@
 
 Tài liệu này định nghĩa hệ thống thiết kế (Design System) của TravelLako dựa trên phong cách chủ đạo **"Modern Natural Travel"** — kết hợp sự tối giản tinh tế của **Apple**, tính chân thực du lịch của **Airbnb**, khoảng trắng thư thái của **Notion** và thông tin trực quan từ **Google Travel**.
 
+> 💡 **Vai trò của File Thiết kế Figma (UI Kit Reference):**
+> Dự án sử dụng file Figma [*FREE e-commerce website for travel agency*](https://www.figma.com/design/GhFdyDI68jSRbEp94NgCUS/FREE-e-commerce-website-for-travel-agency--Community---Copy-?node-id=201-2) làm **UI Kit & Thư viện thành phần tham khảo**.
+> * **Kế thừa trực tiếp từ Figma:** Quy chuẩn Typography (`Open Sans`, `Podcast`/`Caveat`, `Inter`, `Poppins`), hệ thống phân cấp bố cục (Header, Hero Banner, Search Widget, Thẻ Card địa điểm, Layout Form Auth Split-Screen, DatePicker, Footer).
+> * **Màu sắc giao diện:** Kế thừa hệ màu trung tính (`#FAFAFA`, `#FFFFFF`, `#E2E8F0`, `#333333`) và màu cam hổ phách (`#FA8B02` / `#D97706` Sunset Sand) của Figma làm màu nhấn nổi bật (Accent/Highlight), kết hợp cùng màu xanh `Ocean Azure` (`#0369A1`) cho các hành động thông minh đặc thù của TravelLako.
+> * **Thành phần tự phát triển mới:** Các màn hình đặc thù của TravelLako (Bong bóng Chat AI, Kéo thả Timeline Day-by-Day, Bản đồ lộ trình Leaflet, Nhật ký hành trình) được thiết kế đồng nhất theo đúng token typography, bo góc và elevation của Figma.
+
 ---
 
 ## 1. Bảng Màu "Modern Natural Travel" (Color Palette)
@@ -47,30 +53,53 @@ Hệ màu mới loại bỏ hoàn toàn phong cách AI SaaS màu tím đậm ho�
 
 ---
 
-## 2. Phông Chữ & Định Dạng (Typography)
+## 2. Phông Chữ & Định Dạng (Typography chuẩn Figma)
 
-*   **Font Family chính (Tối ưu 100% Tiếng Việt):**
-    *   **Headings (Tiêu đề):** `Plus Jakarta Sans`, `Be Vietnam Pro`, sans-serif (Nét chữ hiện đại, sang trọng, hỗ trợ chuẩn xác toàn bộ dấu Tiếng Việt).
-    *   **Body Text (Nội dung):** `Be Vietnam Pro`, `Inter`, sans-serif (Font chữ tối ưu nhất cho Tiếng Việt, hiển thị sắc nét không bị lỗi dấu hay vỡ phông).
-    *   **Mobile App:** San Francisco (iOS) / Roboto (Android) hoặc Be Vietnam Pro / Inter font.
-*   **Giải pháp xử lý lỗi Font Tiếng Việt:** Sử dụng trực tiếp Google Fonts `Be Vietnam Pro` (thiết kế chuyên biệt cho Tiếng Việt) kết hợp `Plus Jakarta Sans`, loại bỏ hoàn toàn tình trạng fallback font/méo dấu ở các ký tự có dấu phức tạp (`ể`, `ẵ`, `ệ`, `ở`, `ỉ`, `ỡ`).
-*   **Cách tích hợp font trong React + Vite:** Nhúng trực tiếp Google Fonts trong thẻ `<head>` của `index.html` để tải trước (preconnect) và render tức thì:
+Dựa trên phân tích toàn bộ **1,577 text nodes** từ file Figma gốc (*FREE e-commerce website for travel agency*):
+
+*   **Font Family chính:**
+    *   **Open Sans (Chủ đạo 96% hệ thống):** Dùng cho toàn bộ Body, Navigation, Buttons, Form Input, Card Titles và Section Headings.
+        *   `Regular (400)`: Body paragraph, mô tả tour, placeholder input (`14px`, `16px`, `18px`, `20px`).
+        *   `SemiBold (600)`: Menu điều hướng, Button CTA, Nhãn Form, Subtitles (`14px`, `15px`, `16px`, `18px`, `20px`, `24px`).
+        *   `Bold (700)`: Tiêu đề gói tour ("Lucca Bike Tour", "Wine tasting"), Điểm đánh giá (`18px`, `20px`, `24px`, `32px`, `48px`).
+        *   `ExtraBold (800)`: Tiêu đề lớn section ("Explore Our Popular Destinations", "The Most Popular Packages"), Giá tiền tour (`20px`, `24px`, `32px`, `48px`).
+    *   **Podcast / Caveat (Script Title nghệ thuật):**
+        *   Figma sử dụng font viết tay `Podcast` (Regular `72px`) cho câu slogan nổi bật trên Hero Banner: *"Enjoy in the best way!"* và *"Our team cares about your full relax"*.
+        *   Giải pháp tối ưu web & Tiếng Việt: Sử dụng Google Fonts `Caveat` (hoặc font `Podcast` nhúng local) để đảm bảo hỗ trợ 100% tiếng Việt không bị lỗi dấu/méo chữ.
+    *   **Inter & Poppins (Phụ trợ Calendar / Picker):**
+        *   `Inter Regular (12px)`: Hiển thị thứ trong tuần trên lịch chọn ngày (Sun, Mon, Tue...).
+        *   `Poppins Medium (10px)` & `Regular (15px)`: Ký tự ngày viết tắt và placeholder thẻ thanh toán.
+
+*   **Cách tích hợp font trong React + Vite + Tailwind CSS v4:**
+    Nhúng Google Fonts trong thẻ `<head>` của `web/index.html`:
     ```html
     <!-- index.html -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600&family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700&family=Poppins:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     ```
-*   **Các cỡ chữ tiêu chuẩn (Font Sizes):**
-    *   `text-xs` (12px): Chú thích, nhãn phụ, thời gian.
-    *   `text-sm` (14px): Dữ liệu chi tiết, mô tả phụ, giá tiền nhỏ.
-    *   `text-base` (16px): Nội dung chính body, bài viết, input form.
-    *   `text-lg` (18px): Tên địa điểm, sub-header.
-    *   `text-xl` (20px): Tiêu đề card, tiêu đề bài viết.
-    *   `text-2xl` đến `text-4xl` (24px - 36px): Tiêu đề màn hình chính, hero banner.
+    Cấu hình token font trong `web/src/index.css` (@theme Tailwind v4):
+    ```css
+    @theme {
+      --font-sans: "Open Sans", system-ui, -apple-system, sans-serif;
+      --font-heading: "Open Sans", sans-serif;
+      --font-script: "Podcast", "Caveat", cursive;
+      --font-calendar: "Inter", "Poppins", sans-serif;
+    }
+    ```
+
+*   **Bảng quy chuẩn cỡ chữ (Font Sizes từ Figma):**
+    *   `text-xs` (10px - 12px): Ký tự viết tắt lịch, badge phụ.
+    *   `text-sm` (14px - 15px): Placeholder, text phụ, dropdown option.
+    *   `text-base` (16px): Body text, menu navigation, input tiêu chuẩn.
+    *   `text-lg` (18px): Nhãn trường tìm kiếm (Search Bar), subtitle.
+    *   `text-xl` (20px): Tiêu đề thẻ Tour card, giá tiền trung bình.
+    *   `text-2xl` (24px): Tiêu đề tour item lớn, title modal.
+    *   `text-3xl` - `text-4xl` (32px - 48px): Section Title ("Explore Our Popular Destinations").
+    *   `text-7xl` (72px): Hero display slogan (Font Script nghệ thuật).
 
 ---
 
