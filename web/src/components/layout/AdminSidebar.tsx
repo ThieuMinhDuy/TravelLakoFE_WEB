@@ -11,6 +11,7 @@ import {
   DownloadCloud,
 } from 'lucide-react';
 import logoImg from '../../assets/logo.webp';
+import './css/AdminSidebar.css';
 
 export const AdminSidebar: React.FC = () => {
   const { adminSidebarCollapsed } = useUIStore();
@@ -52,20 +53,20 @@ export const AdminSidebar: React.FC = () => {
   return (
     <aside
       className={cn(
-        'h-screen sticky top-0 z-40 border-r border-borderGray bg-surfaceWhite transition-all duration-300 flex flex-col',
-        adminSidebarCollapsed ? 'w-20' : 'w-64'
+        'admin-sidebar',
+        adminSidebarCollapsed && 'admin-sidebar--collapsed'
       )}
     >
       {/* Brand Header */}
-      <div className="h-16 px-4 flex items-center justify-between border-b border-borderGray">
-        <Link to="/admin" className="flex items-center gap-2.5 overflow-hidden">
-          <img src={logoImg} alt="Logo" className="w-8 h-8 object-contain shrink-0" />
+      <div className="admin-sidebar__header">
+        <Link to="/admin" className="admin-sidebar__brand-link">
+          <img src={logoImg} alt="Logo" className="admin-sidebar__brand-logo" />
           {!adminSidebarCollapsed && (
-            <div className="flex flex-col">
-              <span className="font-extrabold text-sm text-slate-900 tracking-tight leading-tight">
-                Travel<span className="text-oceanBlue">Lako</span>
+            <div className="admin-sidebar__brand-text">
+              <span className="admin-sidebar__brand-name">
+                Travel<span className="admin-sidebar__brand-highlight">Lako</span>
               </span>
-              <span className="text-[10px] font-semibold text-amber-600 tracking-wide uppercase">
+              <span className="admin-sidebar__brand-tag">
                 Admin Portal
               </span>
             </div>
@@ -73,8 +74,8 @@ export const AdminSidebar: React.FC = () => {
         </Link>
       </div>
 
-      {/* Navigation Items */}
-      <nav className="p-3 space-y-1.5 flex-1 overflow-y-auto">
+      {/* Nav List */}
+      <nav className="admin-sidebar__nav">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -82,29 +83,29 @@ export const AdminSidebar: React.FC = () => {
               key={item.to}
               to={item.to}
               end={item.end}
+              title={adminSidebarCollapsed ? item.label : undefined}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150',
-                  isActive
-                    ? 'bg-sky-50 text-oceanBlue font-bold shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
-                  adminSidebarCollapsed && 'justify-center px-0'
+                  'admin-sidebar__nav-item',
+                  isActive && 'admin-sidebar__nav-item--active',
+                  adminSidebarCollapsed && 'admin-sidebar__nav-item--collapsed'
                 )
               }
-              title={adminSidebarCollapsed ? item.label : undefined}
             >
-              <Icon className="w-4 h-4 shrink-0" />
-              {!adminSidebarCollapsed && <span>{item.label}</span>}
+              <Icon className="admin-sidebar__nav-icon" />
+              {!adminSidebarCollapsed && (
+                <span className="admin-sidebar__nav-label">{item.label}</span>
+              )}
             </NavLink>
           );
         })}
       </nav>
 
-      {/* Bottom Footer Info */}
+      {/* Footer / Meta */}
       {!adminSidebarCollapsed && (
-        <div className="p-4 border-t border-borderGray text-[11px] text-slate-400">
-          <p>TravelLako v1.0.0</p>
-          <p className="text-[10px] text-slate-300 mt-0.5">Admin Management System</p>
+        <div className="admin-sidebar__footer">
+          <p className="admin-sidebar__footer-text">TravelLako Engine v1.0</p>
+          <p className="admin-sidebar__footer-text">OpenAPI Mongoose Compatible</p>
         </div>
       )}
     </aside>

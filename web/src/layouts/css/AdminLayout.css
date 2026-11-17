@@ -1,0 +1,40 @@
+/* ==========================================================================
+   AdminLayout Styles
+   ========================================================================== */
+
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
+  background-color: #F8FAFC;
+  font-family: var(--font-sans);
+  color: #0F172A;
+  -webkit-font-smoothing: antialiased;
+}
+
+.admin-layout__main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-layout__content {
+  flex: 1;
+  padding: 1rem;
+  max-width: 80rem;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  .admin-layout__content {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-layout__content {
+    padding: 2rem;
+  }
+}

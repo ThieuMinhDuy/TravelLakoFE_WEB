@@ -2,17 +2,18 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { AdminSidebar } from '../components/layout/AdminSidebar';
 import { AdminHeader } from '../components/layout/AdminHeader';
+import './css/AdminLayout.css';
 
 export const AdminLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex bg-slate-50 font-sans antialiased text-slate-900">
+    <div className="admin-layout">
       {/* Sidebar */}
       <AdminSidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="admin-layout__main-wrapper">
         <AdminHeader />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="admin-layout__content">
           <Outlet />
         </main>
       </div>
