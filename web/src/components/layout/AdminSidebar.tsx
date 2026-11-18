@@ -13,8 +13,17 @@ import {
 import logoImg from '../../assets/logo.png';
 import './css/AdminSidebar.css';
 
-export const AdminSidebar: React.FC = () => {
-  const { adminSidebarCollapsed } = useUIStore();
+interface AdminSidebarProps {
+  /** `drawer`: hiển thị bên trong Drawer trên màn nhỏ (luôn mở rộng, chiếm hết khung) */
+  variant?: 'sidebar' | 'drawer';
+  /** Gọi khi chọn một mục menu (dùng để đóng drawer) */
+  onNavigate?: () => void;
+}
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ variant = 'sidebar', onNavigate }) => {
+  const collapsedSetting = useUIStore((s) => s.adminSidebarCollapsed);
+  // Trong drawer luôn hiện đầy đủ nhãn, bỏ qua trạng thái thu gọn của desktop
+  const adminSidebarCollapsed = variant === 'sidebar' && collapsedSetting;
 
   const navItems = [
     {
@@ -54,12 +63,13 @@ export const AdminSidebar: React.FC = () => {
     <aside
       className={cn(
         'admin-sidebar',
+        variant === 'drawer' && 'admin-sidebar--drawer',
         adminSidebarCollapsed && 'admin-sidebar--collapsed'
       )}
     >
       {/* Brand Header */}
       <div className="admin-sidebar__header">
-        <Link to="/admin" className="admin-sidebar__brand-link">
+        <Link to="/admin" className="admin-sidebar__brand-link" onClick={onNavigate}>
           <img src={logoImg} alt="Logo" className="admin-sidebar__brand-logo" />
           {!adminSidebarCollapsed && (
             <div className="admin-sidebar__brand-text">
@@ -75,7 +85,7 @@ export const AdminSidebar: React.FC = () => {
       </div>
 
       {/* Nav List */}
-      <nav className="admin-sidebar__nav">
+      <nav className="admin-sidebar__nav" aria-label="Menu quản trị">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -83,6 +93,7 @@ export const AdminSidebar: React.FC = () => {
               key={item.to}
               to={item.to}
               end={item.end}
+              onClick={onNavigate}
               title={adminSidebarCollapsed ? item.label : undefined}
               className={({ isActive }) =>
                 cn(

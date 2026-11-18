@@ -134,3 +134,11 @@
   line-height: 1.35;
   margin: 0;
 }
+
+/* Sidebar hiển thị bên trong Drawer trên màn nhỏ */
+.admin-sidebar--drawer {
+  position: static;
+  height: 100%;
+  width: 100%;
+  border-right: none;
+}

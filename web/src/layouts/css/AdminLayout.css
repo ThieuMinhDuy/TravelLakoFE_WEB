@@ -38,3 +38,13 @@
     padding: 2rem;
   }
 }
+
+/* Khung drawer chứa sidebar trên màn nhỏ */
+.admin-layout__drawer {
+  width: min(16rem, 85vw);
+}
+
+.admin-layout__drawer .ui-drawer__body {
+  display: flex;
+  flex-direction: column;
+}

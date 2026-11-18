@@ -1,24 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { useUIStore } from '../../store/useUIStore';
 import { useLogout } from '../../features/auth/hooks/useLogout';
 import { Menu, LogOut, Home } from 'lucide-react';
 import './css/AdminHeader.css';
 
-export const AdminHeader: React.FC = () => {
+interface AdminHeaderProps {
+  /** Nút ☰: thu gọn sidebar (desktop) hoặc mở drawer menu (màn nhỏ) — do AdminLayout quyết định */
+  onMenuClick: () => void;
+}
+
+export const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuClick }) => {
   const { user } = useAuthStore();
   const logout = useLogout();
-  const { toggleAdminSidebar } = useUIStore();
 
   return (
     <header className="admin-header">
       {/* Left: Sidebar Toggle & Page Title */}
       <div className="admin-header__left">
         <button
-          onClick={toggleAdminSidebar}
+          onClick={onMenuClick}
           className="admin-header__toggle-btn"
-          title="Thu gọn / Mở rộng Sidebar"
+          title="Menu quản trị"
+          aria-label="Mở / thu gọn menu quản trị"
           type="button"
         >
           <Menu className="w-5 h-5" />
@@ -61,6 +65,7 @@ export const AdminHeader: React.FC = () => {
           onClick={logout}
           className="admin-header__logout-btn"
           title="Đăng xuất"
+          aria-label="Đăng xuất"
           type="button"
         >
           <LogOut className="w-4 h-4" />

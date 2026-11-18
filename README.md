@@ -24,12 +24,14 @@ Mục này liệt kê các tiêu chuẩn kỹ thuật **dự án phải đạt**
 |---|---|
 | Feature-based (`auth`, `admin`, `profile`) | ✅ Đã có. `places`, `trips`, `diary` chưa triển khai |
 | Zustand `useAuthStore`, `useUIStore` | ✅ Đã có. `useTripStore`, `useFilterStore` chưa có |
-| React Context (`ToastContext`, `ThemeContext`) | ⏳ Chưa có (thông báo đang dùng `sonner`) |
-| Compound Components (`FilterGroup`, `Tabs`) | ⏳ Chưa có. Đã có `DataTable`, `ConfirmDialog`, `ImageUploader` |
-| Generic hooks `usePagination`, `useDebounce`, `useDocumentTitle` | ⏳ Chưa có. Đã có `useBodyScrollLock`, `useFocusTrap` |
-| RBAC + `ProtectedRoute` | ✅ Đã có |
+| React Context | ✅ `ToastContext` (`useToast()`, lớp bọc quanh `sonner`), Context nội bộ của `Tabs`. Bỏ `ThemeContext` vì dự án không làm dark mode |
+| Compound Components | ✅ `Tabs` (`Tabs.List` / `Tabs.Tab` / `Tabs.Panel`). `FilterGroup` làm cùng feature `places` |
+| Generic hooks | ✅ `usePagination<T>`, `useDebounce<T>`, `useDocumentTitle`, `useMediaQuery`, `useBodyScrollLock`, `useFocusTrap` |
+| RBAC + `ProtectedRoute` | ✅ Đã có, kèm trang 403 riêng |
+| Xử lý lỗi | ✅ `ErrorBoundary` cấp app và cấp layout, tự tải lại khi lỗi tải chunk |
+| Responsive | ✅ Menu mobile (drawer) cho trang chính và trang Admin |
 | Lazy Loading | ✅ Admin, Hồ sơ, popup xác thực |
-| Kiểm thử Vitest + RTL | ✅ Đã cấu hình, 30 test. Độ phủ hiện ~9%, mục tiêu ≥ 50% |
+| Kiểm thử Vitest + RTL | ✅ Đã cấu hình, 59 test. Độ phủ tổng còn thấp, mục tiêu ≥ 50% |
 
 Chi tiết từng yêu cầu:
 
@@ -50,7 +52,7 @@ Thay vì gom nhóm mã nguồn chung chung theo loại file, dự án tổ chứ
 
 ### 2.3. Mô hình Quản lý Trạng thái (State Management)
 * **Global State (Zustand):** Sử dụng Zustand cho trạng thái toàn cục thường xuyên thay đổi (phiên đăng nhập người dùng `useAuthStore`, kế hoạch chuyến đi đang thao tác `useTripStore`, bộ lọc tìm kiếm `useFilterStore`).
-* **UI/Local State (React Context):** Dùng Context API cho các trạng thái ít biến động toàn ứng dụng như thông báo hệ thống (`ToastContext`) và giao diện (`ThemeContext`).
+* **UI/Local State (React Context):** Dùng Context API cho các trạng thái ít biến động toàn ứng dụng như thông báo hệ thống (`ToastContext`). Dự án không làm dark mode nên không có `ThemeContext`.
 
 ### 2.4. Phân Quyền Phía Client: RBAC (Role-Based Access Control)
 * Hệ thống phân định rõ ràng 3 vai trò phía giao diện:
@@ -92,7 +94,8 @@ web/
 │   │   ├── diary/          # Nhật ký hành trình
 │   │   ├── places/         # Danh mục địa điểm, review
 │   │   └── trips/          # Kế hoạch & timeline chuyến đi
-│   ├── hooks/              # Custom Generic Hooks (useDebounce, usePagination...)
+│   ├── contexts/           # React Context (ToastContext)
+│   ├── hooks/              # Custom Generic Hooks (useDebounce, usePagination, useDocumentTitle...)
 │   ├── layouts/            # Khung bố cục (MainLayout, AdminLayout) — màn auth là popup
 │   ├── routes/             # Định tuyến React Router & ProtectedRoute
 │   ├── lib/                # Khởi tạo thư viện dùng chung (QueryClient)
