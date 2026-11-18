@@ -1,8 +1,9 @@
 import React from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useToast } from '../../../contexts/toast/ToastContext';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import {
@@ -23,8 +24,10 @@ import { registerSchema, type RegisterValues } from '../schemas';
 import { authService } from '../services/authService';
 
 export const RegisterPage: React.FC = () => {
+  useDocumentTitle('Đăng ký');
   const { goTo } = useAuthNavigation();
   const { shake } = useAuthModal();
+  const toast = useToast();
 
   const {
     register,

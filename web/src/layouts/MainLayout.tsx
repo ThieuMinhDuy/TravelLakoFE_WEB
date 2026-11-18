@@ -2,13 +2,20 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { MainHeader } from '../components/layout/MainHeader';
 import { MainFooter } from '../components/layout/MainFooter';
+import { ErrorBoundary } from '../components/common/ErrorBoundary';
+import { useToast } from '../contexts/toast/ToastContext';
 import { cn } from '../utils/cn';
 import { Bot } from 'lucide-react';
-import { toast } from 'sonner';
 import './css/MainLayout.css';
 
-export const MainLayout: React.FC = () => {
+interface MainLayoutProps {
+  /** Nội dung hiển thị thay cho <Outlet /> (vd: trang 403 bọc trong layout chính) */
+  children?: React.ReactNode;
+}
+
+export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const toast = useToast();
   const isHome = location.pathname === '/';
 
   return (
@@ -16,9 +23,10 @@ export const MainLayout: React.FC = () => {
       {/* Navigation Header */}
       <MainHeader />
 
-      {/* Main Content Area */}
+      {/* Main Content Area — lỗi trong trang chỉ thay vùng nội dung, header/footer vẫn dùng được.
+          Chuyển trang khác sẽ tự xóa lỗi. */}
       <main className={cn('main-layout__content', !isHome && 'main-layout__content--subpage')}>
-        <Outlet />
+        <ErrorBoundary resetKeys={[location.pathname]}>{children ?? <Outlet />}</ErrorBoundary>
       </main>
 
       {/* Footer */}

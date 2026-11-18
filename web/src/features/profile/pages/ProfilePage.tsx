@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef } from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
-import { toast } from 'sonner';
+import { useToast } from '../../../contexts/toast/ToastContext';
 import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
@@ -33,9 +34,11 @@ const toFormValues = (user: UserModel | null): ProfileValues => ({
 });
 
 export const ProfilePage: React.FC = () => {
+  useDocumentTitle('Hồ sơ cá nhân');
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   // Luôn lấy profile mới nhất (kèm thống kê) khi vào trang
   const profileQuery = useQuery({ queryKey: ['profile'], queryFn: authService.getProfile });

@@ -3,7 +3,7 @@ import { cn } from '../../utils/cn';
 import { uploadService } from '../../services/uploadService';
 import { IMAGE_ACCEPT, validateImageFile } from '../../config/upload';
 import { UploadCloud, X, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '../../contexts/toast/ToastContext';
 import './css/ImageUploader.css';
 
 export interface ImageUploaderProps {
@@ -22,6 +22,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   className,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
+  const toast = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const labelId = useId();

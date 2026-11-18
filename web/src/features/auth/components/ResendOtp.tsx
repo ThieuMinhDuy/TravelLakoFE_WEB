@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useToast } from '../../../contexts/toast/ToastContext';
 import type { MessageResponse } from '../../../types/api';
 
 interface ResendOtpProps {
@@ -12,6 +12,7 @@ interface ResendOtpProps {
 }
 
 export const ResendOtp: React.FC<ResendOtpProps> = ({ onResend, secondsLeft, onResent }) => {
+  const toast = useToast();
   const resend = useMutation({
     mutationFn: onResend,
     onSuccess: (res) => {

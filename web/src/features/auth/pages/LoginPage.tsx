@@ -1,9 +1,10 @@
 import React from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useToast } from '../../../contexts/toast/ToastContext';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import { storage } from '../../../utils/storage';
@@ -25,9 +26,11 @@ import { loginSchema, type LoginValues } from '../schemas';
 import { authService, isUnverifiedLoginError } from '../services/authService';
 
 export const LoginPage: React.FC = () => {
+  useDocumentTitle('Đăng nhập');
   const [searchParams] = useSearchParams();
   const { goTo } = useAuthNavigation();
   const { shake } = useAuthModal();
+  const toast = useToast();
   const completeLogin = useCompleteLogin();
 
   const {

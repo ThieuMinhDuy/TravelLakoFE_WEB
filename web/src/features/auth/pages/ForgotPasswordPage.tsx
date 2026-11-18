@@ -1,10 +1,11 @@
 import React from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { KeyRound } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '../../../contexts/toast/ToastContext';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import {
@@ -21,9 +22,11 @@ import { forgotPasswordSchema, type ForgotPasswordValues } from '../schemas';
 import { authService } from '../services/authService';
 
 export const ForgotPasswordPage: React.FC = () => {
+  useDocumentTitle('Quên mật khẩu');
   const [searchParams] = useSearchParams();
   const { goTo } = useAuthNavigation();
   const { shake } = useAuthModal();
+  const toast = useToast();
 
   const {
     register,

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '../../../contexts/toast/ToastContext';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { authService, type AuthUserResponse } from '../services/authService';
 
@@ -9,6 +9,7 @@ import { authService, type AuthUserResponse } from '../services/authService';
  */
 export function useCompleteLogin() {
   const setAuth = useAuthStore((s) => s.setAuth);
+  const toast = useToast();
   const updateUser = useAuthStore((s) => s.updateUser);
 
   return useCallback(
@@ -23,6 +24,6 @@ export function useCompleteLogin() {
         .then(updateUser)
         .catch(() => undefined);
     },
-    [setAuth, updateUser]
+    [setAuth, updateUser, toast]
   );
 }

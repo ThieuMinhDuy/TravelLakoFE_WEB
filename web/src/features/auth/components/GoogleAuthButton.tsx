@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '../../../contexts/toast/ToastContext';
 import { env } from '../../../config/env';
 import { useCompleteLogin } from '../hooks/useCompleteLogin';
 import { authService } from '../services/authService';
@@ -29,26 +29,30 @@ const GoogleIcon: React.FC = () => (
 );
 
 /** Nút Google khi chưa cấu hình VITE_GOOGLE_CLIENT_ID — giữ đúng giao diện, báo cho dev biết */
-const GoogleFallbackButton: React.FC<{ label: string }> = ({ label }) => (
-  <button
-    type="button"
-    className="auth-google"
-    onClick={() =>
-      toast.info('Đăng nhập Google chưa được cấu hình', {
-        description: 'Thêm VITE_GOOGLE_CLIENT_ID vào file web/.env để bật tính năng này.',
-      })
-    }
-  >
-    <GoogleIcon />
-    {label}
-  </button>
-);
+const GoogleFallbackButton: React.FC<{ label: string }> = ({ label }) => {
+  const toast = useToast();
+  return (
+    <button
+      type="button"
+      className="auth-google"
+      onClick={() =>
+        toast.info('Đăng nhập Google chưa được cấu hình', {
+          description: 'Thêm VITE_GOOGLE_CLIENT_ID vào file web/.env để bật tính năng này.',
+        })
+      }
+    >
+      <GoogleIcon />
+      {label}
+    </button>
+  );
+};
 
 const GoogleSignInButton: React.FC<GoogleAuthButtonProps> = ({ mode, remember = true }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number>();
   const completeLogin = useCompleteLogin();
   const { shake } = useAuthModal();
+  const toast = useToast();
 
   // Nút của Google render trong iframe với độ rộng cố định → đo theo khung chứa (tối đa 400px)
   useLayoutEffect(() => {
