@@ -8,29 +8,49 @@ export function isValidGmail(email: string): boolean {
   return emailRegex.test(trimmed) && trimmed.endsWith('@gmail.com');
 }
 
-/**
- * Kiểm tra mật khẩu mạnh theo rule TripMate Backend:
- * - Tối thiểu 6 ký tự
- * - Có ít nhất 1 chữ hoa
- * - Có ít nhất 1 chữ thường
- * - Có ít nhất 1 chữ số
- */
-export function isStrongPassword(password: string): boolean {
-  if (!password || password.length < 6) return false;
-  const hasUpper = /[A-Z]/.test(password);
-  const hasLower = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  return hasUpper && hasLower && hasNumber;
+export interface PasswordRule {
+  /** Nhãn ngắn hiển thị trong checklist */
+  label: string;
+  /** Thông báo lỗi khi không đạt */
+  message: string;
+  test: (password: string) => boolean;
 }
 
 /**
- * Gợi ý lỗi mật khẩu
+ * Nguồn duy nhất cho rule mật khẩu mạnh — khớp `validator.isStrongPassword` của backend
+ * (minLength 6, minLowercase 1, minUppercase 1, minNumbers 1, minSymbols 0).
+ * Dùng chung cho validate form, checklist trên giao diện và isStrongPassword().
  */
+export const PASSWORD_RULES: readonly PasswordRule[] = [
+  {
+    label: 'Tối thiểu 6 ký tự',
+    message: 'Mật khẩu phải có tối thiểu 6 ký tự',
+    test: (v) => v.length >= 6,
+  },
+  {
+    label: '1 chữ in hoa',
+    message: 'Mật khẩu phải chứa ít nhất 1 chữ in hoa (A-Z)',
+    test: (v) => /[A-Z]/.test(v),
+  },
+  {
+    label: '1 chữ thường',
+    message: 'Mật khẩu phải chứa ít nhất 1 chữ thường (a-z)',
+    test: (v) => /[a-z]/.test(v),
+  },
+  {
+    label: '1 chữ số',
+    message: 'Mật khẩu phải chứa ít nhất 1 số (0-9)',
+    test: (v) => /[0-9]/.test(v),
+  },
+];
+
+/** Thông báo lỗi đầu tiên của mật khẩu, `null` nếu hợp lệ */
 export function getPasswordError(password: string): string | null {
   if (!password) return 'Vui lòng nhập mật khẩu';
-  if (password.length < 6) return 'Mật khẩu phải có tối thiểu 6 ký tự';
-  if (!/[A-Z]/.test(password)) return 'Mật khẩu phải chứa ít nhất 1 chữ in hoa (A-Z)';
-  if (!/[a-z]/.test(password)) return 'Mật khẩu phải chứa ít nhất 1 chữ thường (a-z)';
-  if (!/[0-9]/.test(password)) return 'Mật khẩu phải chứa ít nhất 1 số (0-9)';
-  return null;
+  return PASSWORD_RULES.find((rule) => !rule.test(password))?.message ?? null;
+}
+
+/** Mật khẩu đạt toàn bộ rule mạnh */
+export function isStrongPassword(password: string): boolean {
+  return !!password && PASSWORD_RULES.every((rule) => rule.test(password));
 }

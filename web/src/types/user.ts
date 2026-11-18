@@ -22,6 +22,8 @@ export interface User {
   googleId?: string | null;
   isVerified?: boolean;
   isAdmin?: boolean;
+  /** Dự phòng nếu API chuyển sang phân quyền dạng role — luôn kiểm tra qua isAdminUser() */
+  role?: string;
   isBlocked?: boolean;
   stats?: UserStats;
   createdAt?: string;

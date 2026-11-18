@@ -21,9 +21,10 @@ import { PasswordInput } from '../components/PasswordInput';
 import { ResendOtp } from '../components/ResendOtp';
 import { slideVariants } from '../components/motion';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
+import { useCooldown } from '../hooks/useCooldown';
 import { useSlowHint } from '../hooks/useSlowHint';
 import { newPasswordSchema, type NewPasswordValues } from '../schemas';
-import { authService, isOtpError } from '../services/authService';
+import { authService, isResetOtpError } from '../services/authService';
 
 type Step = 'otp' | 'password' | 'success';
 
@@ -44,6 +45,8 @@ export const ResetPasswordPage: React.FC = () => {
   const [direction, setDirection] = useState(1);
   const [otp, setOtp] = useState('');
   const [otpError, setOtpError] = useState<string | null>(null);
+  // Đặt ở cha: quay lại bước OTP không làm bộ đếm gửi lại mã chạy lại từ đầu
+  const cooldown = useCooldown(60);
 
   const goToStep = (next: Step, dir = 1) => {
     setDirection(dir);
@@ -55,7 +58,7 @@ export const ResetPasswordPage: React.FC = () => {
     onSuccess: () => goToStep('success'),
     onError: (err) => {
       shake();
-      if (isOtpError(err)) {
+      if (isResetOtpError(err)) {
         setOtpError(err.message);
         setOtp('');
         goToStep('otp', -1);
@@ -87,13 +90,19 @@ export const ResetPasswordPage: React.FC = () => {
             }}
             onNext={() => goToStep('password')}
             onInvalid={shake}
+            resendSecondsLeft={cooldown.secondsLeft}
+            onResent={() => {
+              cooldown.restart();
+              setOtp('');
+              setOtpError(null);
+            }}
           />
         )}
 
         {step === 'password' && (
           <PasswordStep
             isPending={reset.isPending}
-            error={reset.error && !isOtpError(reset.error) ? reset.error.message : null}
+            error={reset.error && !isResetOtpError(reset.error) ? reset.error.message : null}
             onSubmit={(newPassword) => reset.mutate({ email, otp, newPassword })}
             onBack={() => goToStep('otp', -1)}
             onInvalid={shake}
@@ -129,9 +138,20 @@ interface OtpStepProps {
   onChange: (value: string) => void;
   onNext: () => void;
   onInvalid: () => void;
+  resendSecondsLeft: number;
+  onResent: () => void;
 }
 
-const OtpStep: React.FC<OtpStepProps> = ({ email, otp, error, onChange, onNext, onInvalid }) => {
+const OtpStep: React.FC<OtpStepProps> = ({
+  email,
+  otp,
+  error,
+  onChange,
+  onNext,
+  onInvalid,
+  resendSecondsLeft,
+  onResent,
+}) => {
   const next = () => (otp.length === 6 ? onNext() : onInvalid());
 
   return (
@@ -178,7 +198,11 @@ const OtpStep: React.FC<OtpStepProps> = ({ email, otp, error, onChange, onNext, 
         >
           Mở Gmail
         </a>
-        <ResendOtp onResend={() => authService.forgotPassword(email)} onResent={() => onChange('')} />
+        <ResendOtp
+          onResend={() => authService.forgotPassword(email)}
+          secondsLeft={resendSecondsLeft}
+          onResent={onResent}
+        />
       </AuthItem>
 
       <BackToLogin email={email} />

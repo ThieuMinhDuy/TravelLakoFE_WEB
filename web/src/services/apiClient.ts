@@ -1,11 +1,14 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { env } from '../config/env';
 import { useAuthStore } from '../store/useAuthStore';
+import { ApiError } from './apiError';
+import { queryClient } from '../lib/queryClient';
 
 /**
  * Xác thực bằng Bearer token (không dùng cookie):
  * - Backend (onrender.com) khác site với Frontend nên cookie bên thứ ba dễ bị trình duyệt chặn.
  * - Cho phép Frontend tự kiểm soát "Ghi nhớ đăng nhập" và đăng xuất hoàn toàn phía client.
+ * Middleware `protect` của backend đọc cả cookie lẫn header `Authorization: Bearer`.
  */
 export const apiClient: AxiosInstance = axios.create({
   baseURL: env.API_BASE_URL,
@@ -31,27 +34,30 @@ apiClient.interceptors.request.use(
 // Các endpoint auth công khai trả 401 khi sai thông tin đăng nhập — không phải hết phiên
 const PUBLIC_AUTH_ENDPOINT = /^\/?auth\/(login|register|google|verify-otp|resend-otp|forgot-password|reset-password)/;
 
-// Response Interceptor: Chuẩn hóa error message & bắt lỗi 401
+interface ErrorBody {
+  message?: string;
+  code?: string;
+}
+
+// Response Interceptor: Chuẩn hóa lỗi thành ApiError (giữ status) & xử lý 401
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<{ message?: string }>) => {
-    const statusCode = error.response?.status;
-    const errorMessage =
-      error.response?.data?.message ||
-      error.message ||
-      'Đã xảy ra lỗi kết nối đến máy chủ!';
+  (error: AxiosError<ErrorBody>) => {
+    const status = error.response?.status ?? null;
+    const data = error.response?.data;
+    const message = data?.message || error.message || 'Đã xảy ra lỗi kết nối đến máy chủ!';
 
-    // Token hết hạn hoặc không hợp lệ (401) → đăng xuất phía client
+    // Token hết hạn hoặc không hợp lệ → xóa phiên phía client.
+    // Không cần tự chuyển trang: ProtectedRoute sẽ đưa người dùng tới popup đăng nhập
+    // (giữ nguyên SPA, không reload mất state).
     const url = error.config?.url ?? '';
-    if (statusCode === 401 && !PUBLIC_AUTH_ENDPOINT.test(url) && useAuthStore.getState().token) {
+    if (status === 401 && !PUBLIC_AUTH_ENDPOINT.test(url) && useAuthStore.getState().token) {
       useAuthStore.getState().logout();
-      const currentPath = window.location.pathname;
-      // Chỉ chuyển hướng khi đang ở trang yêu cầu đăng nhập
-      if (currentPath.startsWith('/admin') || currentPath.startsWith('/profile')) {
-        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
-      }
+      queryClient.clear();
     }
 
-    return Promise.reject(new Error(errorMessage));
+    return Promise.reject(
+      new ApiError(message, { status, code: data?.code ?? error.code, data, cause: error })
+    );
   }
 );

@@ -55,7 +55,8 @@ export const OtpInput: React.FC<OtpInputProps> = ({
         inputMode="numeric"
         autoComplete="one-time-code"
         pattern="[0-9]*"
-        maxLength={length}
+        // Không đặt maxLength: trình duyệt sẽ cắt chuỗi dán vào TRƯỚC khi lọc ký tự,
+        // vd dán "654 321" thành "654 32" → mất 1 số. handleChange tự lọc & cắt đủ `length` số.
         autoFocus={autoFocus}
         disabled={disabled}
         aria-label={`Mã OTP ${length} số`}

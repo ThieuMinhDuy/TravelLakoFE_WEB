@@ -4,6 +4,7 @@ import { MainHeader } from '../components/layout/MainHeader';
 import { MainFooter } from '../components/layout/MainFooter';
 import { cn } from '../utils/cn';
 import { Bot } from 'lucide-react';
+import { toast } from 'sonner';
 import './css/MainLayout.css';
 
 export const MainLayout: React.FC = () => {
@@ -27,7 +28,7 @@ export const MainLayout: React.FC = () => {
       <button
         onClick={() => {
           // Placeholder trigger chatbot AI
-          alert('Tính năng Trợ lý ảo AI TripMate sẽ sớm ra mắt!');
+          toast.info('Trợ lý ảo AI TripMate sẽ sớm ra mắt!', { id: 'ai-coming-soon' });
         }}
         className="main-layout__ai-bubble"
         title="Trợ lý ảo AI TripMate"

@@ -1,6 +1,7 @@
 import { apiClient } from '../../../services/apiClient';
 import type { MessageResponse } from '../../../types/api';
 import type { User } from '../../../types/user';
+import { ApiError, hasStatus, isApiError } from '../../../services/apiError';
 
 /** Render free có thể "ngủ" — request đầu tiên mất 30-50s để khởi động lại */
 const AUTH_TIMEOUT = 60_000;
@@ -12,17 +13,25 @@ export interface RegisterResponse extends MessageResponse {
   email: string;
 }
 
-const ERROR_MESSAGES: [RegExp, string][] = [
-  [/invalid email or password/i, 'Email hoặc mật khẩu không chính xác!'],
-  [/timeout of \d+ms exceeded/i, 'Máy chủ phản hồi quá lâu, vui lòng thử lại.'],
-  [/network error/i, 'Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.'],
-  [/sai định dạng email/i, 'Email không hợp lệ (chỉ chấp nhận địa chỉ @gmail.com).'],
-];
+/** Đổi lỗi kỹ thuật sang câu tiếng Việt thân thiện, vẫn giữ nguyên status/code */
+function toFriendlyError(error: unknown, url: string): ApiError {
+  if (!isApiError(error)) {
+    return new ApiError(error instanceof Error ? error.message : String(error), { cause: error });
+  }
 
-function toFriendlyError(error: unknown): Error {
-  const raw = error instanceof Error ? error.message : String(error);
-  const match = ERROR_MESSAGES.find(([pattern]) => pattern.test(raw));
-  return new Error(match ? match[1] : raw);
+  let message = error.message;
+  if (error.code === 'ECONNABORTED') {
+    message = 'Máy chủ phản hồi quá lâu, vui lòng thử lại.';
+  } else if (error.isNetworkError) {
+    message = 'Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.';
+  } else if (url === '/auth/login' && error.status === 401) {
+    // Backend trả câu tiếng Anh "Invalid email or password"
+    message = 'Email hoặc mật khẩu không chính xác!';
+  }
+
+  return message === error.message
+    ? error
+    : new ApiError(message, { status: error.status, code: error.code, data: error.data, cause: error });
 }
 
 async function post<T>(url: string, body?: unknown): Promise<T> {
@@ -30,17 +39,21 @@ async function post<T>(url: string, body?: unknown): Promise<T> {
     const res = await apiClient.post<T>(url, body, { timeout: AUTH_TIMEOUT });
     return res.data;
   } catch (error) {
-    throw toFriendlyError(error);
+    throw toFriendlyError(error, url);
   }
 }
 
-/** Đăng nhập bị chặn vì tài khoản chưa xác thực email (backend trả 400) */
-export const isUnverifiedError = (error: unknown) =>
-  error instanceof Error && /chưa được xác thực/i.test(error.message);
+/**
+ * POST /auth/login trả 400 duy nhất khi tài khoản chưa xác thực email
+ * (sai mật khẩu → 401, bị khóa → 403). Chỉ dùng cho lỗi của API đăng nhập.
+ */
+export const isUnverifiedLoginError = (error: unknown) => hasStatus(error, 400);
 
-/** Lỗi liên quan tới mã OTP (sai hoặc hết hạn) */
-export const isOtpError = (error: unknown) =>
-  error instanceof Error && /otp/i.test(error.message);
+/**
+ * POST /auth/reset-password trả 400 khi mã OTP sai hoặc hết hạn.
+ * Các lỗi 400 khác (thiếu trường, mật khẩu yếu) đã được form chặn trước khi gửi.
+ */
+export const isResetOtpError = (error: unknown) => hasStatus(error, 400);
 
 export const authService = {
   login: (data: { email: string; password: string }) =>
@@ -60,6 +73,9 @@ export const authService = {
   resetPassword: (data: { email: string; otp: string; newPassword: string }) =>
     post<MessageResponse>('/auth/reset-password', data),
 
+  /** Backend xóa cookie `jwt`; FE dùng Bearer nên chỉ mang tính báo hiệu (best-effort) */
+  logout: () => post<MessageResponse>('/auth/logout'),
+
   googleLogin: (idToken: string) => post<AuthUserResponse>('/auth/google', { idToken }),
 
   getProfile: async (): Promise<User> => {
@@ -67,7 +83,7 @@ export const authService = {
       const res = await apiClient.get<User>('/auth/profile', { timeout: AUTH_TIMEOUT });
       return res.data;
     } catch (error) {
-      throw toFriendlyError(error);
+      throw toFriendlyError(error, '/auth/profile');
     }
   },
 };

@@ -1,18 +1,14 @@
 import React, { forwardRef } from 'react';
-import { cn } from '../../utils/cn';
 import { Loader2 } from 'lucide-react';
+import { buttonVariants, type ButtonSize, type ButtonVariant } from './buttonVariants';
 import './css/Button.css';
+
+export type { ButtonSize, ButtonVariant };
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?:
-    | 'primary'
-    | 'accent'
-    | 'secondary'
-    | 'outline'
-    | 'danger'
-    | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
@@ -29,30 +25,26 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       disabled,
       children,
+      // Mặc định "button": nút trong <form> không vô tình submit form.
+      // Nút submit phải ghi rõ type="submit".
+      type = 'button',
       ...props
     },
     ref
-  ) => {
-    const variantClass = `ui-button--${variant}`;
-    const sizeClass = `ui-button--${size}`;
-
-    return (
-      <button
-        ref={ref}
-        disabled={disabled || isLoading}
-        className={cn('ui-button', variantClass, sizeClass, className)}
-        {...props}
-      >
-        {isLoading ? (
-          <Loader2 className="ui-button__spinner" />
-        ) : (
-          leftIcon
-        )}
-        {children}
-        {!isLoading && rightIcon}
-      </button>
-    );
-  }
+  ) => (
+    <button
+      ref={ref}
+      type={type}
+      disabled={disabled || isLoading}
+      aria-busy={isLoading || undefined}
+      className={buttonVariants({ variant, size, className })}
+      {...props}
+    >
+      {isLoading ? <Loader2 className="ui-button__spinner" /> : leftIcon}
+      {children}
+      {!isLoading && rightIcon}
+    </button>
+  )
 );
 
 Button.displayName = 'Button';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, type Location } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
+import { isAdminUser } from '../utils/auth';
 import type { AuthModalState } from '../features/auth/authPaths';
 
 /** Chỉ chấp nhận đường dẫn nội bộ (chặn open redirect kiểu `//evil.com`) */
@@ -19,7 +20,7 @@ export const GuestRedirect: React.FC<{ location: Location }> = ({ location }) =>
 
   let target = '/';
   if (isSafeRedirect(redirect)) target = redirect;
-  else if (user?.isAdmin) target = '/admin';
+  else if (isAdminUser(user)) target = '/admin';
   else if (background) target = `${background.pathname}${background.search}${background.hash}`;
 
   return <Navigate to={target} replace />;

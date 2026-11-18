@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '../../utils/cn';
 import { X } from 'lucide-react';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import './css/Modal.css';
 
 export interface ModalProps {
@@ -14,8 +17,14 @@ export interface ModalProps {
   className?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({
-  isOpen,
+/**
+ * Hộp thoại dùng chung: render qua portal ra <body>, role="dialog" + aria-modal,
+ * khóa cuộn nền, bẫy focus trong hộp thoại, đóng bằng Esc hoặc bấm ra ngoài.
+ */
+export const Modal: React.FC<ModalProps> = (props) =>
+  props.isOpen ? createPortal(<ModalDialog {...props} />, document.body) : null;
+
+const ModalDialog: React.FC<ModalProps> = ({
   onClose,
   title,
   description,
@@ -24,51 +33,56 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth = 'md',
   className,
 }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const descriptionId = useId();
+
+  useBodyScrollLock();
+  useFocusTrap(dialogRef);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+      if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
-  const maxWidthClass = `ui-modal__dialog--${maxWidth}`;
+  }, [onClose]);
 
   return (
     <div className="ui-modal">
       {/* Backdrop */}
-      <div
-        className="ui-modal__backdrop"
-        onClick={onClose}
-      />
+      <div className="ui-modal__backdrop" onClick={onClose} aria-hidden="true" />
 
       {/* Modal Dialog Content */}
       <div
-        className={cn(
-          'ui-modal__dialog',
-          maxWidthClass,
-          className
-        )}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={description ? descriptionId : undefined}
+        tabIndex={-1}
+        className={cn('ui-modal__dialog', `ui-modal__dialog--${maxWidth}`, className)}
       >
         {/* Header */}
         {(title || description) && (
           <div className="ui-modal__header">
             <div>
               {title && (
-                <h3 className="ui-modal__title">{title}</h3>
+                <h3 id={titleId} className="ui-modal__title">
+                  {title}
+                </h3>
               )}
               {description && (
-                <p className="ui-modal__description">{description}</p>
+                <p id={descriptionId} className="ui-modal__description">
+                  {description}
+                </p>
               )}
             </div>
             <button
               onClick={onClose}
               className="ui-modal__close-btn"
               type="button"
+              aria-label="Đóng hộp thoại"
             >
               <X className="w-5 h-5" />
             </button>
@@ -79,11 +93,7 @@ export const Modal: React.FC<ModalProps> = ({
         <div className="ui-modal__body">{children}</div>
 
         {/* Footer */}
-        {footer && (
-          <div className="ui-modal__footer">
-            {footer}
-          </div>
-        )}
+        {footer && <div className="ui-modal__footer">{footer}</div>}
       </div>
     </div>
   );

@@ -60,12 +60,15 @@ export function DataTable<T extends object>({
     });
   }, [data, searchTerm, searchKeys]);
 
-  // Phân trang
-  const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+  // Phân trang — giới hạn trang hiện tại theo dữ liệu thực tế: khi xóa bản ghi cuối của
+  // trang cuối hoặc refetch ra ít dữ liệu hơn, tự lùi về trang cuối còn dữ liệu
+  // thay vì hiện "Không có dữ liệu".
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+  const page = Math.min(currentPage, totalPages);
   const paginatedData = React.useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
+    const start = (page - 1) * pageSize;
     return filteredData.slice(start, start + pageSize);
-  }, [filteredData, currentPage, pageSize]);
+  }, [filteredData, page, pageSize]);
 
   return (
     <div className={cn('ui-data-table', className)}>
@@ -148,27 +151,29 @@ export function DataTable<T extends object>({
         {!isLoading && filteredData.length > pageSize && (
           <div className="ui-data-table__pagination">
             <span>
-              Hiển thị {(currentPage - 1) * pageSize + 1} -{' '}
-              {Math.min(currentPage * pageSize, filteredData.length)} trên tổng số{' '}
+              Hiển thị {(page - 1) * pageSize + 1} -{' '}
+              {Math.min(page * pageSize, filteredData.length)} trên tổng số{' '}
               {filteredData.length} kết quả
             </span>
             <div className="ui-data-table__pagination-controls">
               <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                onClick={() => setCurrentPage(Math.max(1, page - 1))}
                 className="ui-data-table__pagination-btn"
                 type="button"
+                aria-label="Trang trước"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <span className="ui-data-table__pagination-current">
-                {currentPage} / {totalPages}
+                {page} / {totalPages}
               </span>
               <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                onClick={() => setCurrentPage(Math.min(totalPages, page + 1))}
                 className="ui-data-table__pagination-btn"
                 type="button"
+                aria-label="Trang sau"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

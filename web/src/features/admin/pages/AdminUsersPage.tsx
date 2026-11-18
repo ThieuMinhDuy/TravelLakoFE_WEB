@@ -4,6 +4,7 @@ import { Button } from '../../../components/common/Button';
 import { DataTable, Column } from '../../../components/compound/DataTable';
 import { Badge } from '../../../components/common/Badge';
 import { User } from '../../../types/user';
+import { isAdminUser } from '../../../utils/auth';
 import './css/AdminPages.css';
 
 export const AdminUsersPage: React.FC = () => {
@@ -27,8 +28,8 @@ export const AdminUsersPage: React.FC = () => {
       key: 'role',
       header: 'Vai trò',
       render: (u) => (
-        <Badge variant={u.isAdmin ? 'accent' : 'neutral'}>
-          {u.isAdmin ? 'Admin' : 'Khách hàng'}
+        <Badge variant={isAdminUser(u) ? 'accent' : 'neutral'}>
+          {isAdminUser(u) ? 'Admin' : 'Khách hàng'}
         </Badge>
       ),
     },

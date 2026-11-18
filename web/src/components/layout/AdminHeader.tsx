@@ -1,19 +1,15 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useUIStore } from '../../store/useUIStore';
+import { useLogout } from '../../features/auth/hooks/useLogout';
 import { Menu, LogOut, Home } from 'lucide-react';
 import './css/AdminHeader.css';
 
 export const AdminHeader: React.FC = () => {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
+  const logout = useLogout();
   const { toggleAdminSidebar } = useUIStore();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   return (
     <header className="admin-header">
@@ -62,7 +58,7 @@ export const AdminHeader: React.FC = () => {
         )}
 
         <button
-          onClick={handleLogout}
+          onClick={logout}
           className="admin-header__logout-btn"
           title="Đăng xuất"
           type="button"

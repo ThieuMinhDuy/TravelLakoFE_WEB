@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { cn } from '../../utils/cn';
-import { toast } from 'sonner';
+import { isAdminUser } from '../../utils/auth';
 import {
   Search,
   X,
@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { OpenAuthLink } from '../../features/auth/components/OpenAuthLink';
+import { useLogout } from '../../features/auth/hooks/useLogout';
 import './css/MainHeader.css';
 
 export const MainHeader: React.FC = () => {
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
+  const logout = useLogout();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,25 +31,38 @@ export const MainHeader: React.FC = () => {
 
   const isHome = location.pathname === '/';
 
-  // Lắng nghe scroll để áp dụng background glass khi cuộn
+  // Lắng nghe scroll để áp dụng background glass khi cuộn.
+  // Tính ngay lúc mount: reload giữa trang thì header không bị trong suốt sai.
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Đóng dropdown khi click ra ngoài
+  // Đóng dropdown khi click ra ngoài hoặc nhấn Esc (trả focus về nút mở menu)
   useEffect(() => {
+    if (!dropdownOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
       }
     };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setDropdownOpen(false);
+        dropdownRef.current?.querySelector<HTMLButtonElement>('.main-header__user-btn')?.focus();
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [dropdownOpen]);
 
   // Xử lý submit tìm kiếm Global
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -64,14 +79,12 @@ export const MainHeader: React.FC = () => {
   };
 
   const handleLogout = () => {
-    logout();
     setDropdownOpen(false);
-    toast.success('Đã đăng xuất. Hẹn gặp lại bạn!');
-    navigate('/');
+    logout();
   };
 
   const isTransparent = isHome && !isScrolled;
-  const isAdmin = user?.isAdmin || (user as { role?: string })?.role === 'admin';
+  const isAdmin = isAdminUser(user);
 
   return (
     <header
@@ -194,6 +207,8 @@ export const MainHeader: React.FC = () => {
                 className="main-header__user-btn"
                 type="button"
                 aria-label="Menu tài khoản"
+                aria-haspopup="menu"
+                aria-expanded={dropdownOpen}
               >
                 {user.avatar ? (
                   <img

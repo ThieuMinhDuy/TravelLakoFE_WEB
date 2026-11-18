@@ -1,27 +1,49 @@
-import React from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, useLocation, type Location } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
 import { MainLayout } from '../layouts/MainLayout';
-import { AdminLayout } from '../layouts/AdminLayout';
 
 import { ProtectedRoute } from './ProtectedRoute';
 import { GuestRedirect } from './GuestRedirect';
 import { useAuthStore } from '../store/useAuthStore';
+import { Spinner } from '../components/common/Spinner';
 
 import { HomePage } from '../pages/HomePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 
-import { AuthModalRoutes } from '../features/auth/AuthModalRoutes';
 import { isAuthPath, type AuthModalState } from '../features/auth/authPaths';
 
-import { ProfilePage } from '../features/profile/pages/ProfilePage';
+/**
+ * Lazy-load các phân hệ chỉ dành cho người đã đăng nhập / Admin → khách vào trang chủ
+ * không phải tải code của chúng (tách chunk riêng khi build).
+ */
+const lazyNamed = <K extends string, P extends object = object>(
+  loader: () => Promise<Record<K, React.ComponentType<P>>>,
+  name: K
+) => lazy(() => loader().then((m) => ({ default: m[name] })));
 
-import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage';
-import { AdminUsersPage } from '../features/admin/pages/AdminUsersPage';
-import { AdminCitiesPage } from '../features/admin/pages/AdminCitiesPage';
-import { AdminPlacesPage } from '../features/admin/pages/AdminPlacesPage';
-import { AdminReviewsPage } from '../features/admin/pages/AdminReviewsPage';
-import { AdminImportPage } from '../features/admin/pages/AdminImportPage';
+/** Popup xác thực (kèm framer-motion, zod, react-hook-form, Google SDK) — chunk riêng */
+const loadAuthModal = () => import('../features/auth/AuthModalHost');
+const AuthModalHost = lazyNamed(loadAuthModal, 'AuthModalHost');
+
+const AdminLayout = lazyNamed(() => import('../layouts/AdminLayout'), 'AdminLayout');
+const ProfilePage = lazyNamed(() => import('../features/profile/pages/ProfilePage'), 'ProfilePage');
+const AdminDashboardPage = lazyNamed(() => import('../features/admin/pages/AdminDashboardPage'), 'AdminDashboardPage');
+const AdminUsersPage = lazyNamed(() => import('../features/admin/pages/AdminUsersPage'), 'AdminUsersPage');
+const AdminCitiesPage = lazyNamed(() => import('../features/admin/pages/AdminCitiesPage'), 'AdminCitiesPage');
+const AdminPlacesPage = lazyNamed(() => import('../features/admin/pages/AdminPlacesPage'), 'AdminPlacesPage');
+const AdminReviewsPage = lazyNamed(() => import('../features/admin/pages/AdminReviewsPage'), 'AdminReviewsPage');
+const AdminImportPage = lazyNamed(() => import('../features/admin/pages/AdminImportPage'), 'AdminImportPage');
+
+const PageFallback: React.FC = () => (
+  <div className="flex items-center justify-center py-24" role="status" aria-label="Đang tải trang">
+    <Spinner size="lg" className="text-oceanBlue" />
+  </div>
+);
+
+/** Bọc từng trang lazy trong Suspense riêng → layout xung quanh không bị thay bằng spinner */
+const withSuspense = (element: React.ReactNode) => (
+  <Suspense fallback={<PageFallback />}>{element}</Suspense>
+);
 
 // Simple placeholder helper
 const PlaceholderPage: React.FC<{ title: string; desc: string }> = ({ title, desc }) => (
@@ -49,6 +71,23 @@ export const AppRoutes: React.FC = () => {
   const backgroundLocation = isAuthOpen
     ? ((location.state as AuthModalState | null)?.backgroundLocation ?? HOME_LOCATION)
     : null;
+
+  // Chỉ mount popup sau lần mở đầu tiên; sau đó giữ mount để chạy được hiệu ứng đóng
+  const isAuthModalOpen = isAuthOpen && !isAuthenticated;
+  const [authModalMounted, setAuthModalMounted] = useState(isAuthModalOpen);
+  if (isAuthModalOpen && !authModalMounted) setAuthModalMounted(true);
+
+  // Tải sẵn chunk popup khi trình duyệt rảnh → lần bấm "Đăng nhập" đầu tiên mở ngay
+  useEffect(() => {
+    if (isAuthenticated) return;
+    const prefetch = () => void loadAuthModal();
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(prefetch, { timeout: 4000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const timer = window.setTimeout(prefetch, 2000);
+    return () => window.clearTimeout(timer);
+  }, [isAuthenticated]);
 
   return (
     <>
@@ -131,7 +170,7 @@ export const AppRoutes: React.FC = () => {
           path="/profile"
           element={
             <ProtectedRoute>
-              <ProfilePage />
+              {withSuspense(<ProfilePage />)}
             </ProtectedRoute>
           }
         />
@@ -143,16 +182,16 @@ export const AppRoutes: React.FC = () => {
         path="/admin"
         element={
           <ProtectedRoute requireAdmin>
-            <AdminLayout />
+            {withSuspense(<AdminLayout />)}
           </ProtectedRoute>
         }
       >
-        <Route index element={<AdminDashboardPage />} />
-        <Route path="users" element={<AdminUsersPage />} />
-        <Route path="cities" element={<AdminCitiesPage />} />
-        <Route path="places" element={<AdminPlacesPage />} />
-        <Route path="reviews" element={<AdminReviewsPage />} />
-        <Route path="import" element={<AdminImportPage />} />
+        <Route index element={withSuspense(<AdminDashboardPage />)} />
+        <Route path="users" element={withSuspense(<AdminUsersPage />)} />
+        <Route path="cities" element={withSuspense(<AdminCitiesPage />)} />
+        <Route path="places" element={withSuspense(<AdminPlacesPage />)} />
+        <Route path="reviews" element={withSuspense(<AdminReviewsPage />)} />
+        <Route path="import" element={withSuspense(<AdminImportPage />)} />
       </Route>
 
       {/* 3. Fallback 404 Route */}
@@ -163,11 +202,11 @@ export const AppRoutes: React.FC = () => {
 
     {/* 4. Popup xác thực (Login, Register, OTP, Quên / Đặt lại mật khẩu) */}
     {isAuthOpen && isAuthenticated && <GuestRedirect location={location} />}
-    <AnimatePresence>
-      {isAuthOpen && !isAuthenticated && (
-        <AuthModalRoutes key="auth-modal" location={location} />
-      )}
-    </AnimatePresence>
+    {authModalMounted && (
+      <Suspense fallback={null}>
+        <AuthModalHost open={isAuthModalOpen} location={location} />
+      </Suspense>
+    )}
     </>
   );
 };

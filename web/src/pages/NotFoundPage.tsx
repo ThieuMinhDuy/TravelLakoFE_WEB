@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/common/Button';
+import { buttonVariants } from '../components/common/buttonVariants';
 import { Home } from 'lucide-react';
 import './css/NotFoundPage.css';
 
@@ -12,10 +12,9 @@ export const NotFoundPage: React.FC = () => {
       <p className="not-found-page__desc">
         Đường dẫn bạn yêu cầu không tìm thấy hoặc đã được di chuyển sang địa chỉ khác.
       </p>
-      <Link to="/">
-        <Button variant="primary" size="md" leftIcon={<Home className="w-4 h-4" />}>
-          Trở về Trang chủ
-        </Button>
+      <Link to="/" className={buttonVariants({ variant: 'primary', size: 'md' })}>
+        <Home className="w-4 h-4" />
+        Trở về Trang chủ
       </Link>
     </div>
   );

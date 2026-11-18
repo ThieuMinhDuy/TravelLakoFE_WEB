@@ -12,6 +12,7 @@
   cursor: pointer;
   border: 1px solid transparent;
   outline: none;
+  text-decoration: none; /* khi áp dụng cho <a> qua buttonVariants() */
 }
 
 .ui-button:focus-visible {

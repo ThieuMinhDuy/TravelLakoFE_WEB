@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { motion, useAnimationControls } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useBodyScrollLock } from '../../../hooks/useBodyScrollLock';
+import { useFocusTrap } from '../../../hooks/useFocusTrap';
 import { AuthModalContext } from './AuthModalContext';
 import { EASE_OUT, SHAKE_KEYFRAMES } from './motion';
 import './css/AuthModal.css';
@@ -8,22 +10,6 @@ import './css/AuthModal.css';
 interface AuthModalProps {
   onClose: () => void;
   children: React.ReactNode;
-}
-
-/** Khóa cuộn trang phía sau, bù độ rộng thanh cuộn để layout không bị giật */
-function useBodyScrollLock() {
-  useEffect(() => {
-    const { body, documentElement } = document;
-    const scrollbarWidth = window.innerWidth - documentElement.clientWidth;
-    const prevOverflow = body.style.overflow;
-    const prevPadding = body.style.paddingRight;
-    body.style.overflow = 'hidden';
-    if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
-    return () => {
-      body.style.overflow = prevOverflow;
-      body.style.paddingRight = prevPadding;
-    };
-  }, []);
 }
 
 /** Đo chiều cao nội dung để card co giãn mượt khi chuyển màn */
@@ -45,8 +31,10 @@ function useContentHeight() {
 export const AuthModal: React.FC<AuthModalProps> = ({ onClose, children }) => {
   const shakeControls = useAnimationControls();
   const { ref: contentRef, height } = useContentHeight();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useBodyScrollLock();
+  useFocusTrap(cardRef);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -76,6 +64,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, children }) => {
         }}
       >
         <motion.div
+          ref={cardRef}
           className="auth-modal__card"
           role="dialog"
           aria-modal="true"

@@ -22,7 +22,7 @@ import { useAuthNavigation } from '../hooks/useAuthNavigation';
 import { useCompleteLogin } from '../hooks/useCompleteLogin';
 import { useSlowHint } from '../hooks/useSlowHint';
 import { loginSchema, type LoginValues } from '../schemas';
-import { authService, isUnverifiedError } from '../services/authService';
+import { authService, isUnverifiedLoginError } from '../services/authService';
 
 export const LoginPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -50,12 +50,13 @@ export const LoginPage: React.FC = () => {
     onSuccess: (res) => completeLogin(res, getValues('remember')),
     onError: (err, { email }) => {
       // Tài khoản chưa xác thực email → gửi lại OTP và chuyển sang màn xác thực
-      if (isUnverifiedError(err)) {
+      if (isUnverifiedLoginError(err)) {
         toast.info('Tài khoản chưa được xác thực', {
           description: 'Chúng tôi đã gửi lại mã OTP tới email của bạn.',
         });
         authService.resendOtp(email).catch((e: Error) => toast.error(e.message));
-        goTo('/verify-otp', { email });
+        // Giữ lựa chọn "Ghi nhớ đăng nhập" cho lần đăng nhập sau khi xác thực OTP
+        goTo('/verify-otp', { email, remember: getValues('remember') ? undefined : '0' });
         return;
       }
       shake();
@@ -63,7 +64,7 @@ export const LoginPage: React.FC = () => {
   });
 
   const slow = useSlowHint(login.isPending);
-  const apiError = login.error && !isUnverifiedError(login.error) ? login.error.message : null;
+  const apiError = login.error && !isUnverifiedLoginError(login.error) ? login.error.message : null;
 
   const onSubmit = ({ email, password }: LoginValues) => login.mutate({ email, password });
 

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { MailCheck } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button } from '../../../components/common/Button';
 import {
   AuthHeader,
@@ -16,6 +15,7 @@ import { OtpInput } from '../components/OtpInput';
 import { ResendOtp } from '../components/ResendOtp';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
 import { useCompleteLogin } from '../hooks/useCompleteLogin';
+import { useCooldown } from '../hooks/useCooldown';
 import { useSlowHint } from '../hooks/useSlowHint';
 import { authService } from '../services/authService';
 
@@ -23,20 +23,21 @@ import { authService } from '../services/authService';
 export const VerifyOtpPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') ?? '';
-  const { goTo, buildHref, state } = useAuthNavigation();
+  // Đến từ màn Login với "Ghi nhớ đăng nhập" bị bỏ chọn → remember=0
+  const remember = searchParams.get('remember') !== '0';
+  const { buildHref, state } = useAuthNavigation();
   const { shake } = useAuthModal();
   const completeLogin = useCompleteLogin();
   const [otp, setOtp] = useState('');
+  // Mã vừa được gửi khi vào màn này → đếm ngược 60s ngay
+  const cooldown = useCooldown(60);
 
   const verify = useMutation({
     mutationFn: authService.verifyOtp,
-    onSuccess: (res) => completeLogin(res, true),
-    onError: (err) => {
-      if (/đã được xác thực/i.test(err.message)) {
-        toast.info('Tài khoản đã được xác thực trước đó, vui lòng đăng nhập.');
-        goTo('/login', { email });
-        return;
-      }
+    onSuccess: (res) => completeLogin(res, remember),
+    // Backend trả 400 cho cả "OTP sai/hết hạn" lẫn "đã xác thực trước đó" → hiển thị
+    // nguyên thông báo của backend; người dùng có thể quay lại đăng nhập bằng link bên dưới.
+    onError: () => {
       setOtp('');
       shake();
     },
@@ -110,7 +111,11 @@ export const VerifyOtpPage: React.FC = () => {
         >
           Mở Gmail
         </a>
-        <ResendOtp onResend={() => authService.resendOtp(email)} />
+        <ResendOtp
+          onResend={() => authService.resendOtp(email)}
+          secondsLeft={cooldown.secondsLeft}
+          onResent={cooldown.restart}
+        />
       </AuthItem>
 
       <BackToLogin email={email} />

@@ -1,37 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { MessageResponse } from '../../../types/api';
 
 interface ResendOtpProps {
   onResend: () => Promise<MessageResponse>;
-  /** Thời gian chờ giữa 2 lần gửi (giây) */
-  cooldown?: number;
-  /** Mã vừa được gửi khi mở màn → bắt đầu đếm ngược ngay */
-  startCoolingDown?: boolean;
-  onResent?: () => void;
+  /** Số giây còn phải chờ — lấy từ useCooldown() ở component cha */
+  secondsLeft: number;
+  /** Gọi sau khi gửi lại thành công (cha khởi động lại bộ đếm) */
+  onResent: () => void;
 }
 
-export const ResendOtp: React.FC<ResendOtpProps> = ({
-  onResend,
-  cooldown = 60,
-  startCoolingDown = true,
-  onResent,
-}) => {
-  const [secondsLeft, setSecondsLeft] = useState(startCoolingDown ? cooldown : 0);
-
-  useEffect(() => {
-    if (secondsLeft <= 0) return;
-    const timer = window.setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
-    return () => window.clearTimeout(timer);
-  }, [secondsLeft]);
-
+export const ResendOtp: React.FC<ResendOtpProps> = ({ onResend, secondsLeft, onResent }) => {
   const resend = useMutation({
     mutationFn: onResend,
     onSuccess: (res) => {
       toast.success(res.message || 'Đã gửi lại mã OTP!');
-      setSecondsLeft(cooldown);
-      onResent?.();
+      onResent();
     },
     onError: (err) => toast.error(err.message),
   });
