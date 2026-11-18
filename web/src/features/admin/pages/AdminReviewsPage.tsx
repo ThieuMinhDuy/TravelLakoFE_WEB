@@ -1,10 +1,12 @@
 import React from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Card } from '../../../components/common/Card';
 import { DataTable, Column } from '../../../components/compound/DataTable';
 import { Review } from '../../../types/review';
 import './css/AdminPages.css';
 
 export const AdminReviewsPage: React.FC = () => {
+  useDocumentTitle('Quản lý Đánh giá');
   const columns: Column<Review>[] = [
     {
       key: 'user',

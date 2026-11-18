@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 import { DataTable, Column } from '../../../components/compound/DataTable';
@@ -7,6 +8,7 @@ import { Plus } from 'lucide-react';
 import './css/AdminPages.css';
 
 export const AdminPlacesPage: React.FC = () => {
+  useDocumentTitle('Quản lý Địa điểm');
   const [activeType, setActiveType] = useState<PlaceType>('attraction');
 
   const tabs: { type: PlaceType; label: string }[] = [

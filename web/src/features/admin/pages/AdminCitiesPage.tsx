@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 import { DataTable, Column } from '../../../components/compound/DataTable';
@@ -7,6 +8,7 @@ import { Plus } from 'lucide-react';
 import './css/AdminPages.css';
 
 export const AdminCitiesPage: React.FC = () => {
+  useDocumentTitle('Quản lý Thành phố');
   const columns: Column<City>[] = [
     {
       key: 'name',

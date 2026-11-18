@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { Link } from 'react-router-dom';
 import { buttonVariants } from '../components/common/buttonVariants';
 import { Card } from '../components/common/Card';
@@ -7,6 +8,7 @@ import './css/HomePage.css';
 import { OpenAuthLink } from '../features/auth/components/OpenAuthLink';
 
 export const HomePage: React.FC = () => {
+  useDocumentTitle();
   return (
     <div className="home-page">
       {/* Hero Welcome Section with Scenic Landscape Banner */}

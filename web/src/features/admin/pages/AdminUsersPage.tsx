@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 import { DataTable, Column } from '../../../components/compound/DataTable';
@@ -8,6 +9,7 @@ import { isAdminUser } from '../../../utils/auth';
 import './css/AdminPages.css';
 
 export const AdminUsersPage: React.FC = () => {
+  useDocumentTitle('Quản lý Người dùng');
   const columns: Column<User>[] = [
     {
       key: 'name',

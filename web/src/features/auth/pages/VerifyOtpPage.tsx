@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { MailCheck } from 'lucide-react';
@@ -21,6 +22,7 @@ import { authService } from '../services/authService';
 
 /** Xác thực email sau khi đăng ký — thành công sẽ đăng nhập luôn */
 export const VerifyOtpPage: React.FC = () => {
+  useDocumentTitle('Xác thực email');
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') ?? '';
   // Đến từ màn Login với "Ghi nhớ đăng nhập" bị bỏ chọn → remember=0

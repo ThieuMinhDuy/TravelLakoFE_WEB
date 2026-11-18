@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,6 +37,7 @@ type Step = 'otp' | 'password' | 'success';
  * kèm mật khẩu mới. Nếu mã sai/hết hạn, quay lại bước OTP và hiển thị lỗi.
  */
 export const ResetPasswordPage: React.FC = () => {
+  useDocumentTitle('Đặt lại mật khẩu');
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') ?? '';
   const { goTo, buildHref, state } = useAuthNavigation();

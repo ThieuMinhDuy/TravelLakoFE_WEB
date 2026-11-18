@@ -1,10 +1,12 @@
 import React from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 import { DownloadCloud, Sparkles } from 'lucide-react';
 import './css/AdminPages.css';
 
 export const AdminImportPage: React.FC = () => {
+  useDocumentTitle('Cào dữ liệu OSM');
   return (
     <div className="admin-page">
       <div>

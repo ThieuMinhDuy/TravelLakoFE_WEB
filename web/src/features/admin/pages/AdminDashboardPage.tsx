@@ -1,9 +1,11 @@
 import React from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Card } from '../../../components/common/Card';
 import { Users, MapPin, Compass, MessageSquare } from 'lucide-react';
 import './css/AdminPages.css';
 
 export const AdminDashboardPage: React.FC = () => {
+  useDocumentTitle('Tổng quan Quản trị');
   return (
     <div className="admin-page">
       <div>
