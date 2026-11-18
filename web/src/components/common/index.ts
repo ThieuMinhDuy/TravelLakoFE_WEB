@@ -8,3 +8,6 @@ export * from './Spinner';
 export * from './Skeleton';
 export * from './EmptyState';
 export * from './buttonVariants';
+export * from './Drawer';
+export * from './ErrorBoundary';
+export * from './StatusView';
