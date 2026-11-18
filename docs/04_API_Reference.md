@@ -13,13 +13,14 @@ Tài liệu này liệt kê toàn bộ hệ thống API Endpoints của dự án
 
 ## 1. API Xác thực người dùng (Authentication - `/api/auth`)
 
-Tất cả các API này phục vụ việc xác thực. Ở môi trường Web, token tự động lưu vào Cookie. Ở môi trường Mobile, token được trả về trong body và gửi lên qua header `Authorization: Bearer <token>`.
+Tất cả các API này phục vụ việc xác thực. Khi đăng nhập thành công (`login`, `verify-otp`, `google`), JWT được trả về trong body (`token`). **Cả Web và Mobile đều gửi token qua header `Authorization: Bearer <token>`.** Backend cũng ghi cookie `jwt` (httpOnly) nhưng Web không dùng: Frontend gọi API với `withCredentials: false` vì backend khác site (cookie bên thứ ba dễ bị chặn) và để tự kiểm soát "Ghi nhớ đăng nhập". Middleware `protect` đọc cookie trước, không có thì đọc header Bearer.
 
 | Phương thức | Endpoint | Yêu cầu Auth | Mô tả | Request Body / Parameters |
 | :--- | :--- | :--- | :--- | :--- |
 | **POST** | `/auth/register` | Không | Đăng ký tài khoản (Gửi mã OTP về email) | `{ name, email, password }` |
 | **POST** | `/auth/login` | Không | Đăng nhập tài khoản | `{ email, password }` |
-| **POST** | `/auth/logout` | Có (protect) | Đăng xuất (xóa cookie) | Không |
+| **POST** | `/auth/logout` | Không | Đăng xuất (xóa cookie `jwt` nếu có; client tự xóa token) | Không |
+| **POST** | `/auth/google` | Không | Đăng nhập / đăng ký bằng Google | `{ idToken }` (Google ID Token từ Google SDK) |
 | **POST** | `/auth/verify-otp` | Không | Nhập mã OTP để kích hoạt tài khoản | `{ email, otp }` |
 | **POST** | `/auth/resend-otp` | Không | Gửi lại mã kích hoạt OTP | `{ email }` |
 | **POST** | `/auth/forgot-password` | Không | Yêu cầu cấp OTP để quên mật khẩu | `{ email }` |

@@ -18,7 +18,20 @@ Chào mừng bạn đến với repository Frontend của dự án **TripMate** 
 
 ## 🎯 2. Các Mô Hình & Yêu Cầu Kỹ Thuật Bắt Buộc (Frontend)
 
-Mã nguồn Frontend đáp ứng đầy đủ các tiêu chuẩn kỹ thuật trong đề cương đánh giá của môn học:
+Mục này liệt kê các tiêu chuẩn kỹ thuật **dự án phải đạt** theo đề cương đánh giá của môn học. Trạng thái triển khai hiện tại:
+
+| Hạng mục | Trạng thái |
+|---|---|
+| Feature-based (`auth`, `admin`, `profile`) | ✅ Đã có. `places`, `trips`, `diary` chưa triển khai |
+| Zustand `useAuthStore`, `useUIStore` | ✅ Đã có. `useTripStore`, `useFilterStore` chưa có |
+| React Context (`ToastContext`, `ThemeContext`) | ⏳ Chưa có (thông báo đang dùng `sonner`) |
+| Compound Components (`FilterGroup`, `Tabs`) | ⏳ Chưa có. Đã có `DataTable`, `ConfirmDialog`, `ImageUploader` |
+| Generic hooks `usePagination`, `useDebounce`, `useDocumentTitle` | ⏳ Chưa có. Đã có `useBodyScrollLock`, `useFocusTrap` |
+| RBAC + `ProtectedRoute` | ✅ Đã có |
+| Lazy Loading | ✅ Admin, Hồ sơ, popup xác thực |
+| Kiểm thử Vitest + RTL | ✅ Đã cấu hình, 30 test. Độ phủ hiện ~9%, mục tiêu ≥ 50% |
+
+Chi tiết từng yêu cầu:
 
 ### 2.1. Mô hình Tổ chức Thư mục: Feature-based Architecture
 Thay vì gom nhóm mã nguồn chung chung theo loại file, dự án tổ chức theo **từng phân hệ nghiệp vụ độc lập (Feature)** nhằm đảm bảo tính module hóa cao, dễ mở rộng và độc lập:
@@ -47,7 +60,7 @@ Thay vì gom nhóm mã nguồn chung chung theo loại file, dự án tổ chứ
 * **Bảo vệ Route (Route Guard):** Sử dụng component `ProtectedRoute` kết hợp React Router và Zustand store để chặn truy cập trái phép, tự động chuyển hướng người dùng chưa đăng nhập về trang `/login` hoặc hiển thị trang từ chối quyền truy cập (403).
 
 ### 2.5. Tối Ưu Hiệu Năng (Performance)
-* **Code-Splitting & Lazy Loading:** Toàn bộ các trang nghiệp vụ đều được tách gói và tải lười thông qua `React.lazy()` và `<Suspense>`.
+* **Code-Splitting & Lazy Loading:** Các trang nghiệp vụ được tách gói và tải lười thông qua `React.lazy()` và `<Suspense>` (hiện áp dụng cho phân hệ Admin, trang Hồ sơ và popup xác thực; các trang mới phải tuân theo).
 * **Tối ưu Re-render:** Sử dụng có chọn lọc `React.memo`, `useMemo`, `useCallback` ở các component tính toán ngân sách và bảng Timeline lịch trình.
 * **Virtualization:** Tích hợp kỹ thuật ảo hóa danh sách (`@tanstack/react-virtual`) hoặc phân trang cho danh mục điểm đến có số lượng bản ghi lớn ($\ge 200$ mục).
 
@@ -72,7 +85,7 @@ web/
 │   │   ├── common/         # Button, Input, Modal, Table, Toast...
 │   │   ├── compound/       # Compound Components (FilterGroup, Tabs...)
 │   │   └── layout/         # Header, Footer, Sidebar
-│   ├── config/             # Axios instance với interceptors, constants
+│   ├── config/             # Biến môi trường, hằng số (upload ảnh...)
 │   ├── features/           # Cấu trúc thư mục theo tính năng (Feature-based)
 │   │   ├── admin/          # Phân hệ quản trị
 │   │   ├── auth/           # Xác thực, OTP
@@ -80,9 +93,10 @@ web/
 │   │   ├── places/         # Danh mục địa điểm, review
 │   │   └── trips/          # Kế hoạch & timeline chuyến đi
 │   ├── hooks/              # Custom Generic Hooks (useDebounce, usePagination...)
-│   ├── layouts/            # Khung bố cục (MainLayout, AuthLayout, AdminLayout)
+│   ├── layouts/            # Khung bố cục (MainLayout, AdminLayout) — màn auth là popup
 │   ├── routes/             # Định tuyến React Router & ProtectedRoute
-│   ├── services/           # Tầng gọi API client theo từng domain
+│   ├── lib/                # Khởi tạo thư viện dùng chung (QueryClient)
+│   ├── services/           # Axios client + interceptors, ApiError, upload
 │   ├── store/              # Zustand Global State
 │   ├── types/              # Kiểu dữ liệu TypeScript & DTOs
 │   ├── utils/              # Tiện ích, formatters, type guards
@@ -104,7 +118,7 @@ web/
 
 ### Yêu cầu môi trường:
 * **Node.js**: Phiên bản `18.x` hoặc `20.x` trở lên ([Tải tại đây](https://nodejs.org/)).
-* **Package Manager**: `npm` (đi kèm Node.js) hoặc `pnpm` / `yarn`.
+* **Package Manager**: `npm` (đi kèm Node.js). Dự án commit `package-lock.json`, không dùng `pnpm` / `yarn` để tránh lệch version.
 
 ### Các bước cài đặt:
 
@@ -125,8 +139,10 @@ web/
 
 3. **Cài đặt các gói thư viện (Dependencies):**
    ```bash
-   npm install
+   # Cài đúng version đã khóa trong package-lock.json
+   npm ci
    ```
+   Chỉ dùng `npm install <gói>` khi cần thêm / nâng cấp thư viện, rồi commit cả `package.json` lẫn `package-lock.json`.
 
 4. **Khởi chạy môi trường phát triển (Development Server):**
    ```bash
@@ -142,7 +158,7 @@ web/
 
 6. **Chạy kiểm thử tự động (Testing):**
    ```bash
-   # Chạy toàn bộ 15+ test cases:
+   # Chạy toàn bộ test cases (thư mục web/tests/):
    npm run test
 
    # Chạy test và xuất báo cáo độ phủ (Coverage):

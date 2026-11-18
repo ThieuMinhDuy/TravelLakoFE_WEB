@@ -14,7 +14,7 @@ Tài liệu này cung cấp cái nhìn tổng quan về hệ thống, kiến tr�
 ---
 
 ## 2. Kiến trúc Hệ thống (System Architecture)
-Hệ thống được phát triển theo mô hình **Client-Server** chuẩn **Kiến trúc B: SPA + NestJS REST API**:
+Hệ thống được phát triển theo mô hình **Client-Server** chuẩn **Kiến trúc B: SPA + Express REST API**:
 
 ```mermaid
 graph TD
@@ -23,8 +23,8 @@ graph TD
         Mobile["React Native / Expo App (Customer)"]
     end
 
-    subgraph Backend [NestJS Server]
-        API["NestJS REST API (Controllers, Services)"]
+    subgraph Backend [Express Server - Node.js]
+        API["Express REST API (Routes, Controllers, Middleware)"]
         Auth["JWT & Guards (RBAC)"]
         AI["Gemini AI Integration"]
         CDN["Cloudinary Image Handler"]
@@ -35,7 +35,7 @@ graph TD
         DB[(Collections/Tables: User, City, Trip, Places, Review, Chat)]
     end
 
-    Web -->|REST API - JWT Bearer / Cookie| API
+    Web -->|REST API - JWT Bearer| API
     Mobile -->|REST API - Bearer Token| API
     API --> Auth
     API --> DB
@@ -97,7 +97,7 @@ web/
 Dự án sử dụng cơ chế bảo mật **JWT (JSON Web Token)** để xác thực quyền truy cập qua giao thức REST API:
 
 ### A. Dành cho Web Frontend (React + Vite + TypeScript)
-*   **Khi đăng nhập thành công (`POST /api/auth/login`):** Backend NestJS trả về accessToken (và refreshToken) hoặc ghi cookie `httpOnly`. FE lưu token an toàn và cập nhật trạng thái người dùng vào Zustand `useAuthStore`.
+*   **Khi đăng nhập thành công (`POST /api/auth/login`):** Backend (Express) trả về JWT trong body (`token`, hạn 30 ngày). FE lưu token và thông tin người dùng vào Zustand `useAuthStore` (localStorage nếu chọn "Ghi nhớ đăng nhập", ngược lại sessionStorage), rồi gửi kèm mỗi request qua header `Authorization: Bearer <token>`.
 *   **Gửi Request từ Web:** Axios Interceptor tự động đính kèm `Bearer token` vào header `Authorization` trên mọi request:
     ```typescript
     // src/config/axios.ts

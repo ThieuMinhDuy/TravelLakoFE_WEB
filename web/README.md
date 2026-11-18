@@ -1,13 +1,13 @@
 # TripMate Web Frontend (SPA)
 
-Dự án Web Frontend của **TripMate** được xây dựng theo **Kiến trúc B: SPA + NestJS REST API**, sử dụng **React + Vite + TypeScript**.
+Dự án Web Frontend của **TripMate** được xây dựng theo **Kiến trúc B: SPA + Express REST API**, sử dụng **React + Vite + TypeScript**.
 
 ## 🚀 Công nghệ sử dụng
 
 - **Core Framework**: React 19 + TypeScript (Strict Mode)
 - **Build Tool**: Vite
-- **Routing**: React Router (hỗ trợ Lazy Loading & Route Guard)
-- **State Management**: Zustand (Global state) & React Context
+- **Routing**: React Router (Lazy Loading cho Admin/Hồ sơ/popup xác thực, Route Guard)
+- **State Management**: Zustand (Global state) + TanStack Query (server state)
 - **Styling**: Tailwind CSS v4
 - **API Client**: Axios (Cấu hình Interceptors tập trung)
 - **Testing**: Vitest + React Testing Library
@@ -23,7 +23,7 @@ web/
 │   │   ├── common/         # Button, Input, Modal, Toast...
 │   │   ├── layout/         # Header, Footer, Sidebar
 │   │   └── compound/       # Compound Components (FilterGroup, Tabs...)
-│   ├── config/             # Cấu hình Axios, biến hằng số
+│   ├── config/             # Biến môi trường, hằng số
 │   ├── features/           # Module hóa theo tính năng nghiệp vụ
 │   │   ├── admin/          # Quản trị (Địa điểm, người dùng, review)
 │   │   ├── auth/           # Đăng nhập, đăng ký, OTP
@@ -31,9 +31,10 @@ web/
 │   │   ├── places/         # Khám phá, lọc địa điểm, chi tiết
 │   │   └── trips/          # Lập lịch trình, quản lý chuyến đi
 │   ├── hooks/              # Custom Hooks (Generic hooks: usePagination, useDebounce...)
-│   ├── layouts/            # Layouts (MainLayout, AuthLayout, AdminLayout)
+│   ├── layouts/            # Layouts (MainLayout, AdminLayout) — màn auth là popup
 │   ├── routes/             # Định tuyến SPA & Protected Route (RBAC)
-│   ├── services/           # Tầng tích hợp API client
+│   ├── lib/                # QueryClient dùng chung
+│   ├── services/           # Axios client + interceptors, ApiError
 │   ├── store/              # Global state (Zustand)
 │   ├── types/              # TypeScript types / interfaces / DTOs
 │   ├── utils/              # Tiện ích, formatters, type guards
@@ -51,8 +52,8 @@ web/
 ## 🛠 Hướng dẫn chạy dự án
 
 ```bash
-# Cài đặt thư viện
-npm install
+# Cài đặt thư viện (đúng version trong package-lock.json)
+npm ci
 
 # Chạy môi trường phát triển (Dev)
 npm run dev
@@ -60,6 +61,7 @@ npm run dev
 # Kiểm tra kiểu và Build production
 npm run build
 
-# Chạy test
+# Chạy test / test kèm độ phủ
 npm run test
+npm run test:coverage
 ```
