@@ -1,26 +1,24 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { toast } from 'sonner';
 import { useAuthStore } from '../store/useAuthStore';
 import { isAdminUser } from '../utils/auth';
+import { ForbiddenPage } from '../pages/ForbiddenPage';
 
 export interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
+  /** Hiển thị khi đã đăng nhập nhưng không đủ quyền (mặc định: trang 403) */
+  forbiddenFallback?: React.ReactNode;
 }
 
-/** Báo không đủ quyền rồi về trang chủ. Toast nằm trong effect (không phải side effect lúc render);
- *  `id` cố định để StrictMode chạy effect 2 lần cũng chỉ hiện 1 thông báo. */
-const AdminAccessDenied: React.FC = () => {
-  useEffect(() => {
-    toast.error('Bạn không có quyền truy cập vào phân hệ Quản trị viên!', { id: 'admin-forbidden' });
-  }, []);
-  return <Navigate to="/" replace />;
-};
-
+/**
+ * - Chưa đăng nhập → mở popup đăng nhập, kèm `redirect` để quay lại sau khi đăng nhập
+ * - Đã đăng nhập nhưng thiếu quyền Admin → hiển thị 403 (giữ nguyên URL)
+ */
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requireAdmin = false,
+  forbiddenFallback = <ForbiddenPage />,
 }) => {
   const { isAuthenticated, user } = useAuthStore();
   const location = useLocation();
@@ -35,7 +33,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (requireAdmin && !isAdminUser(user)) {
-    return <AdminAccessDenied />;
+    return <>{forbiddenFallback}</>;
   }
 
   return <>{children}</>;

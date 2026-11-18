@@ -6,9 +6,13 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { GuestRedirect } from './GuestRedirect';
 import { useAuthStore } from '../store/useAuthStore';
 import { Spinner } from '../components/common/Spinner';
+import { ErrorBoundary } from '../components/common/ErrorBoundary';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { ScrollToTop } from './ScrollToTop';
 
 import { HomePage } from '../pages/HomePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { ForbiddenPage } from '../pages/ForbiddenPage';
 
 import { isAuthPath, type AuthModalState } from '../features/auth/authPaths';
 
@@ -46,12 +50,15 @@ const withSuspense = (element: React.ReactNode) => (
 );
 
 // Simple placeholder helper
-const PlaceholderPage: React.FC<{ title: string; desc: string }> = ({ title, desc }) => (
-  <div className="max-w-4xl mx-auto py-16 px-4 text-center">
-    <h2 className="text-3xl font-extrabold text-slate-900">{title}</h2>
-    <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">{desc}</p>
-  </div>
-);
+const PlaceholderPage: React.FC<{ title: string; desc: string }> = ({ title, desc }) => {
+  useDocumentTitle(title);
+  return (
+    <div className="max-w-4xl mx-auto py-16 px-4 text-center">
+      <h2 className="text-3xl font-extrabold text-slate-900">{title}</h2>
+      <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">{desc}</p>
+    </div>
+  );
+};
 
 /** Trang nền mặc định khi mở thẳng URL /login, /register... */
 const HOME_LOCATION: Location = {
@@ -89,9 +96,12 @@ export const AppRoutes: React.FC = () => {
     return () => window.clearTimeout(timer);
   }, [isAuthenticated]);
 
+  const pageLocation = backgroundLocation ?? location;
+
   return (
     <>
-    <Routes location={backgroundLocation ?? location}>
+    <ScrollToTop pathname={pageLocation.pathname} />
+    <Routes location={pageLocation}>
       {/* 1. Public Routes with MainLayout */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
@@ -181,7 +191,14 @@ export const AppRoutes: React.FC = () => {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute requireAdmin>
+          <ProtectedRoute
+            requireAdmin
+            forbiddenFallback={
+              <MainLayout>
+                <ForbiddenPage />
+              </MainLayout>
+            }
+          >
             {withSuspense(<AdminLayout />)}
           </ProtectedRoute>
         }
@@ -203,9 +220,12 @@ export const AppRoutes: React.FC = () => {
     {/* 4. Popup xác thực (Login, Register, OTP, Quên / Đặt lại mật khẩu) */}
     {isAuthOpen && isAuthenticated && <GuestRedirect location={location} />}
     {authModalMounted && (
-      <Suspense fallback={null}>
-        <AuthModalHost open={isAuthModalOpen} location={location} />
-      </Suspense>
+      // Lỗi trong popup (kể cả lỗi tải chunk) không được làm trắng trang phía sau
+      <ErrorBoundary fallback={() => null}>
+        <Suspense fallback={null}>
+          <AuthModalHost open={isAuthModalOpen} location={location} />
+        </Suspense>
+      </ErrorBoundary>
     )}
     </>
   );
