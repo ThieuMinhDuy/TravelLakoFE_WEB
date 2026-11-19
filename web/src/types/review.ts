@@ -1,6 +1,8 @@
 import { User } from './user';
+import type { ItemType } from './place';
 
-export type ReviewItemType = 'Attraction' | 'Hotel' | 'Restaurant' | 'Cafe';
+/** @deprecated dùng `ItemType` trong ./place */
+export type ReviewItemType = ItemType;
 
 export interface Review {
   _id: string;
@@ -8,7 +10,8 @@ export interface Review {
   itemType: ReviewItemType;
   itemId: string;
   rating: number;
-  comment?: string;
+  /** Backend bắt buộc có bình luận */
+  comment: string;
   createdAt?: string;
   updatedAt?: string;
 }

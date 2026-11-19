@@ -1,2 +1,7 @@
 export * from './apiClient';
 export * from './uploadService';
+export * from './apiError';
+export * from './tripService';
+export * from './favoriteService';
+export * from './cityService';
+export * from './placeService';

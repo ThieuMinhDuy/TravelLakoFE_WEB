@@ -13,6 +13,8 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
+  /** Ảnh bìa trang cá nhân (backend đang bổ sung) */
+  coverImage?: string;
   phone?: string;
   gender?: Gender;
   dateOfBirth?: string | null;
