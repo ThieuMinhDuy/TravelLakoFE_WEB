@@ -1,0 +1,50 @@
+/* ==========================================================================
+   TagSelect — chọn nhiều dạng thẻ
+   ========================================================================== */
+
+.ui-tag-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ui-tag-select__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.875rem;
+  border: 1px solid var(--color-borderGray, #E2E8F0);
+  border-radius: 9999px;
+  background-color: var(--color-surfaceWhite, #FFFFFF);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ui-tag-select__tag:hover:not(:disabled) {
+  border-color: #94A3B8;
+}
+
+.ui-tag-select__tag:focus-visible {
+  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline-offset: 2px;
+}
+
+.ui-tag-select__tag--selected {
+  border-color: var(--color-oceanBlue, #0369A1);
+  background-color: var(--color-oceanBlueLight, #F0F9FF);
+  color: var(--color-oceanBlue, #0369A1);
+}
+
+.ui-tag-select__tag:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ui-tag-select__check {
+  width: 0.875rem;
+  height: 0.875rem;
+}

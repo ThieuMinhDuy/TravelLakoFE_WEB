@@ -11,3 +11,8 @@ export * from './buttonVariants';
 export * from './Drawer';
 export * from './ErrorBoundary';
 export * from './StatusView';
+export * from './Avatar';
+export * from './Select';
+export * from './TagSelect';
+export * from './Pagination';
+export * from './RatingStars';

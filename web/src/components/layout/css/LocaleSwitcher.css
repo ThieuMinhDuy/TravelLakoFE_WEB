@@ -52,3 +52,27 @@
   color: #0F172A;
   background-color: #FFFFFF;
 }
+
+/* --- Biến thể nền sáng (trang Cài đặt tài khoản) --------------------- */
+.locale-switcher--light {
+  justify-content: flex-start;
+  font-size: 0.8125rem;
+  color: #475569;
+}
+
+.locale-switcher--light .locale-switcher__select {
+  max-width: min(22rem, 100%);
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  border-color: var(--color-borderGray, #E2E8F0);
+  border-radius: 0.75rem;
+  background-color: #FFFFFF;
+  color: #0F172A;
+}
+
+.locale-switcher--light .locale-switcher__select:hover {
+  border-color: #94A3B8;
+}
+
+.locale-switcher--light .locale-switcher__select:focus-visible {
+  outline-color: var(--color-oceanBlue, #0369A1);
+}

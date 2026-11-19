@@ -1,6 +1,7 @@
 import React, { useId, useMemo } from 'react';
 import { Globe } from 'lucide-react';
 import { useLocale } from '../../contexts/locale/LocaleContext';
+import { cn } from '../../utils/cn';
 import {
   APP_LOCALES,
   formatCurrencyVND,
@@ -16,7 +17,11 @@ const LOCALE_NAMES: Record<AppLocale, string> = {
 };
 
 /** Chọn định dạng hiển thị số tiền & ngày tháng; mỗi lựa chọn kèm ví dụ thật */
-export const LocaleSwitcher: React.FC<{ className?: string }> = ({ className }) => {
+export const LocaleSwitcher: React.FC<{
+  /** `dark`: trên nền tối (footer) · `light`: trên nền sáng (trang cài đặt) */
+  variant?: 'dark' | 'light';
+  className?: string;
+}> = ({ variant = 'dark', className }) => {
   const { locale, setLocale } = useLocale();
   const selectId = useId();
 
@@ -30,7 +35,7 @@ export const LocaleSwitcher: React.FC<{ className?: string }> = ({ className }) 
   }, []);
 
   return (
-    <div className={['locale-switcher', className].filter(Boolean).join(' ')}>
+    <div className={cn('locale-switcher', variant === 'light' && 'locale-switcher--light', className)}>
       <Globe className="locale-switcher__icon" aria-hidden="true" />
       <label htmlFor={selectId} className="locale-switcher__label">
         Định dạng hiển thị
