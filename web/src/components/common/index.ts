@@ -16,3 +16,5 @@ export * from './Select';
 export * from './TagSelect';
 export * from './Pagination';
 export * from './RatingStars';
+export * from './PasswordInput';
+export * from './PasswordChecklist';

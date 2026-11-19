@@ -56,6 +56,22 @@ describe('apiClient — chuẩn hóa lỗi thành ApiError', () => {
   });
 });
 
+describe('apiClient — phản hồi không phải JSON', () => {
+  it('nhận trang HTML (fallback của proxy / dev server, mã 200) → báo lỗi thay vì trả chuỗi HTML', async () => {
+    const htmlAdapter: AxiosAdapter = async (config) => ({
+      data: '<!doctype html><html></html>',
+      status: 200,
+      statusText: 'OK',
+      headers: { 'content-type': 'text/html; charset=utf-8' },
+      config,
+    });
+
+    const error = await apiClient.get('/trips', { adapter: htmlAdapter }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ code: 'INVALID_RESPONSE', status: 200 });
+  });
+});
+
 describe('authService — phân loại lỗi theo status', () => {
   it('đổi lỗi 401 khi đăng nhập sang tiếng Việt, vẫn giữ status', async () => {
     vi.spyOn(apiClient, 'post').mockRejectedValue(

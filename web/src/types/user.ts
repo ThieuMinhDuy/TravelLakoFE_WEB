@@ -21,6 +21,8 @@ export interface User {
   travelPreferences?: string[];
   favoriteBudget?: FavoriteBudget;
   authType?: 'local' | 'google';
+  /** Tài khoản đã có mật khẩu chưa (tài khoản Google có thể chưa có) — từ GET /auth/profile */
+  hasPassword?: boolean;
   googleId?: string | null;
   isVerified?: boolean;
   isAdmin?: boolean;

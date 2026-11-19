@@ -122,7 +122,11 @@ const Tab: React.FC<TabProps> = ({ value, disabled = false, badge, className, ch
       aria-controls={panelId(baseId, value)}
       tabIndex={isSelected ? 0 : -1}
       disabled={disabled}
-      onClick={() => select(value)}
+      onClick={(e) => {
+        select(value);
+        // Thanh tab cuộn ngang trên màn nhỏ → đưa tab vừa chọn vào vùng nhìn thấy
+        e.currentTarget.scrollIntoView?.({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+      }}
       className={cn('ui-tabs__tab', isSelected && 'ui-tabs__tab--active', className)}
     >
       {children}

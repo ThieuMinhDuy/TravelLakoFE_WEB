@@ -19,7 +19,7 @@ export const PopularCitiesSection: React.FC = () => {
 
   return (
     <section className="profile-section" aria-labelledby="popular-cities-title">
-      <header className="profile-section__header profile-section__header--center">
+      <header className="profile-section__header">
         <h2 id="popular-cities-title" className="profile-section__title">
           <MapPinned className="profile-section__title-icon" aria-hidden="true" />
           Điểm đến phổ biến

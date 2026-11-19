@@ -16,6 +16,11 @@ export const queryKeys = {
     mine: () => [...queryKeys.favorites.all, 'mine'] as const,
   },
 
+  reviews: {
+    all: ['reviews'] as const,
+    mine: () => [...queryKeys.reviews.all, 'mine'] as const,
+  },
+
   cities: {
     all: ['cities'] as const,
     list: () => [...queryKeys.cities.all, 'list'] as const,

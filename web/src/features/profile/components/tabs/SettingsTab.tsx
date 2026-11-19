@@ -16,6 +16,7 @@ import { useAuthStore } from '../../../../store/useAuthStore';
 import { cn } from '../../../../utils/cn';
 import type { User } from '../../../../types/user';
 import { profileService } from '../../services/profileService';
+import { ChangePasswordCard } from '../ChangePasswordCard';
 
 const MAX_INTERESTS = 6;
 
@@ -206,7 +207,10 @@ export const SettingsTab: React.FC<{ user: User }> = ({ user }) => {
         </div>
       </form>
 
-      {/* 3. Hiển thị — lưu ngay khi chọn, không cần bấm Lưu */}
+      {/* 3. Bảo mật — form riêng, lưu độc lập với thông tin cá nhân */}
+      <ChangePasswordCard user={user} />
+
+      {/* 4. Hiển thị — lưu ngay khi chọn, không cần bấm Lưu */}
       <section className="settings__card" aria-labelledby="settings-display">
         <header className="settings__card-header">
           <h2 id="settings-display" className="settings__card-title">Hiển thị</h2>

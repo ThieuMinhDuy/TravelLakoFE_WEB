@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CalendarDays, Heart, ImageIcon, Settings } from 'lucide-react';
+import { CalendarDays, Heart, ImageIcon, MessageSquare, Settings } from 'lucide-react';
 import { Tabs } from '../../../components/compound/Tabs';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { queryKeys } from '../../../lib/queryKeys';
@@ -10,18 +10,20 @@ import { authService } from '../../auth/services/authService';
 import { ProfileHeader } from '../components/ProfileHeader';
 import { FavoritesTab } from '../components/tabs/FavoritesTab';
 import { MemoriesTab } from '../components/tabs/MemoriesTab';
+import { ReviewsTab } from '../components/tabs/ReviewsTab';
 import { SettingsTab } from '../components/tabs/SettingsTab';
 import { TripsTab } from '../components/tabs/TripsTab';
 import { PlanWithAiBanner } from '../components/sections/PlanWithAiBanner';
 import { PopularCitiesSection } from '../components/sections/PopularCitiesSection';
 import { RecommendedSection } from '../components/sections/RecommendedSection';
-import { useMyFavorites, useMyTrips } from '../hooks/useProfileData';
+import { useMyFavorites, useMyReviews, useMyTrips } from '../hooks/useProfileData';
 import { useProfileTab, type ProfileTab } from '../hooks/useProfileTab';
 import './css/ProfilePage.css';
 
 const TAB_LABELS: Record<ProfileTab, string> = {
   trips: 'Chuyến đi',
   favorites: 'Yêu thích',
+  reviews: 'Đánh giá',
   memories: 'Kỷ niệm',
   settings: 'Cài đặt tài khoản',
 };
@@ -41,6 +43,7 @@ export const ProfilePage: React.FC = () => {
 
   const trips = useMyTrips();
   const favorites = useMyFavorites();
+  const reviews = useMyReviews();
 
   if (!user) return null; // ProtectedRoute đảm bảo đã đăng nhập
 
@@ -48,7 +51,7 @@ export const ProfilePage: React.FC = () => {
   const stats = {
     trips: trips.data ? countTrips(trips.data) : (user.stats?.trips ?? 0),
     favorites: favorites.data ? favorites.data.favorites.length : (user.stats?.favorites ?? 0),
-    reviews: user.stats?.reviews ?? 0,
+    reviews: reviews.data ? reviews.data.reviews.length : (user.stats?.reviews ?? 0),
   };
 
   return (
@@ -64,6 +67,10 @@ export const ProfilePage: React.FC = () => {
           <Tabs.Tab value="favorites" badge={stats.favorites}>
             <Heart className="w-4 h-4" aria-hidden="true" />
             Yêu thích
+          </Tabs.Tab>
+          <Tabs.Tab value="reviews" badge={stats.reviews}>
+            <MessageSquare className="w-4 h-4" aria-hidden="true" />
+            Đánh giá
           </Tabs.Tab>
           <Tabs.Tab value="memories">
             <ImageIcon className="w-4 h-4" aria-hidden="true" />
@@ -82,6 +89,9 @@ export const ProfilePage: React.FC = () => {
         </Tabs.Panel>
         <Tabs.Panel value="favorites">
           <FavoritesTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="reviews">
+          <ReviewsTab />
         </Tabs.Panel>
         <Tabs.Panel value="memories">
           <MemoriesTab />

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-export const PROFILE_TABS = ['trips', 'favorites', 'memories', 'settings'] as const;
+export const PROFILE_TABS = ['trips', 'favorites', 'reviews', 'memories', 'settings'] as const;
 export type ProfileTab = (typeof PROFILE_TABS)[number];
 
 const DEFAULT_TAB: ProfileTab = 'trips';

@@ -6,6 +6,7 @@ import { useLocale } from '../../contexts/locale/LocaleContext';
 import { cn } from '../../utils/cn';
 import { PLACE_TYPE_LABELS, getCityName, getPlacePrice } from '../../utils/place';
 import type { PlaceType, PlaceUnion } from '../../types/place';
+import { CardImage } from './CardImage';
 import './css/Cards.css';
 
 const TYPE_ICONS: Record<PlaceType, LucideIcon> = {
@@ -47,13 +48,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
   return (
     <article className={cn('card place-card', className)}>
       <div className="card__media">
-        {image ? (
-          <img src={image} alt={place.name} loading="lazy" decoding="async" className="card__img" />
-        ) : (
-          <div className="card__img card__img--placeholder" aria-hidden="true">
-            <Icon className="w-8 h-8" />
-          </div>
-        )}
+        <CardImage src={image} alt={place.name} className="card__img" fallbackIcon={<Icon className="w-8 h-8" />} />
         <span className="card__badge">
           <Icon className="w-3.5 h-3.5" aria-hidden="true" />
           {PLACE_TYPE_LABELS[type]}

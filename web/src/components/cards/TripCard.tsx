@@ -6,6 +6,7 @@ import { cn } from '../../utils/cn';
 import { getCityName, isPopulatedCity } from '../../utils/place';
 import { TRIP_STATUS_LABELS, getTripDays, getTripPlaceCount } from '../../utils/trip';
 import type { Trip, TripStatus } from '../../types/trip';
+import { CardImage } from './CardImage';
 import './css/Cards.css';
 
 export interface TripCardProps {
@@ -27,13 +28,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, status, to = `/trips/$
   return (
     <article className={cn('card trip-card', className)}>
       <div className="card__media">
-        {image ? (
-          <img src={image} alt={cityName} loading="lazy" decoding="async" className="card__img" />
-        ) : (
-          <div className="card__img card__img--placeholder" aria-hidden="true">
-            <MapIcon className="w-8 h-8" />
-          </div>
-        )}
+        <CardImage src={image} alt={cityName} className="card__img" fallbackIcon={<MapIcon className="w-8 h-8" />} />
         <span className={cn('card__badge', `trip-card__status--${status}`)}>{TRIP_STATUS_LABELS[status]}</span>
       </div>
 

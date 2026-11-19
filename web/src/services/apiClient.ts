@@ -41,7 +41,20 @@ interface ErrorBody {
 
 // Response Interceptor: Chuẩn hóa lỗi thành ApiError (giữ status) & xử lý 401
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // API luôn trả JSON. Nhận về trang HTML (dev server / proxy / CDN fallback với mã 200)
+    // → coi là lỗi, tránh đưa chuỗi HTML vào code đang chờ object dữ liệu.
+    const contentType = String(response.headers['content-type'] ?? '');
+    if (contentType.includes('text/html')) {
+      return Promise.reject(
+        new ApiError('Máy chủ trả về dữ liệu không hợp lệ. Vui lòng thử lại sau.', {
+          status: response.status,
+          code: 'INVALID_RESPONSE',
+        })
+      );
+    }
+    return response;
+  },
   (error: AxiosError<ErrorBody>) => {
     const status = error.response?.status ?? null;
     const data = error.response?.data;

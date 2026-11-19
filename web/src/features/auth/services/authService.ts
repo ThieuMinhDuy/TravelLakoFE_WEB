@@ -78,6 +78,19 @@ export const authService = {
 
   googleLogin: (idToken: string) => post<AuthUserResponse>('/auth/google', { idToken }),
 
+  /**
+   * PUT /auth/change-password — đổi mật khẩu (cần mật khẩu hiện tại) hoặc tạo mật khẩu lần đầu
+   * cho tài khoản Google. Sai mật khẩu hiện tại → 400; thử sai quá nhiều lần → 429.
+   */
+  changePassword: async (data: { currentPassword?: string; newPassword: string }): Promise<MessageResponse> => {
+    try {
+      const res = await apiClient.put<MessageResponse>('/auth/change-password', data);
+      return res.data;
+    } catch (error) {
+      throw toFriendlyError(error, '/auth/change-password');
+    }
+  },
+
   getProfile: async (): Promise<User> => {
     try {
       const res = await apiClient.get<User>('/auth/profile', { timeout: AUTH_TIMEOUT });

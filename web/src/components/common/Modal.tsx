@@ -10,6 +10,8 @@ export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  /** Tên của hộp thoại cho trình đọc màn hình khi không truyền `title` */
+  ariaLabel?: string;
   description?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
@@ -27,6 +29,7 @@ export const Modal: React.FC<ModalProps> = (props) =>
 const ModalDialog: React.FC<ModalProps> = ({
   onClose,
   title,
+  ariaLabel,
   description,
   children,
   footer,
@@ -59,6 +62,7 @@ const ModalDialog: React.FC<ModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
+        aria-label={title ? undefined : ariaLabel}
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
         className={cn('ui-modal__dialog', `ui-modal__dialog--${maxWidth}`, className)}

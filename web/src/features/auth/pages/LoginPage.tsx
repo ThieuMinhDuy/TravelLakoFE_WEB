@@ -18,7 +18,7 @@ import {
 } from '../components/AuthUI';
 import { useAuthModal } from '../components/AuthModalContext';
 import { GoogleAuthButton } from '../components/GoogleAuthButton';
-import { PasswordInput } from '../components/PasswordInput';
+import { PasswordInput } from '../../../components/common/PasswordInput';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
 import { useCompleteLogin } from '../hooks/useCompleteLogin';
 import { useSlowHint } from '../hooks/useSlowHint';

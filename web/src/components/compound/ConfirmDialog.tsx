@@ -28,7 +28,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   isLoading = false,
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} maxWidth="sm">
+    <Modal isOpen={isOpen} onClose={onClose} maxWidth="sm" ariaLabel={title}>
       <div className="ui-confirm-dialog__content">
         <div
           className={`ui-confirm-dialog__icon-box ${

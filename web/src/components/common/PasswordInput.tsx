@@ -1,6 +1,7 @@
 import { forwardRef, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { Input, type InputProps } from '../../../components/common/Input';
+import { Input, type InputProps } from './Input';
+import './css/PasswordInput.css';
 
 type PasswordInputProps = Omit<InputProps, 'type' | 'rightIcon'>;
 
@@ -16,7 +17,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>((p
       rightIcon={
         <button
           type="button"
-          className="auth-password-toggle"
+          className="ui-password-toggle"
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
           tabIndex={-1}

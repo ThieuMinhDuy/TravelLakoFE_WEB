@@ -16,8 +16,8 @@ import {
 } from '../components/AuthUI';
 import { useAuthModal } from '../components/AuthModalContext';
 import { GoogleAuthButton } from '../components/GoogleAuthButton';
-import { PasswordChecklist } from '../components/PasswordChecklist';
-import { PasswordInput } from '../components/PasswordInput';
+import { PasswordChecklist } from '../../../components/common/PasswordChecklist';
+import { PasswordInput } from '../../../components/common/PasswordInput';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
 import { useSlowHint } from '../hooks/useSlowHint';
 import { registerSchema, type RegisterValues } from '../schemas';

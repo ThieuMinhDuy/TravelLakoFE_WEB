@@ -17,8 +17,8 @@ import {
 } from '../components/AuthUI';
 import { useAuthModal } from '../components/AuthModalContext';
 import { OtpInput } from '../components/OtpInput';
-import { PasswordChecklist } from '../components/PasswordChecklist';
-import { PasswordInput } from '../components/PasswordInput';
+import { PasswordChecklist } from '../../../components/common/PasswordChecklist';
+import { PasswordInput } from '../../../components/common/PasswordInput';
 import { ResendOtp } from '../components/ResendOtp';
 import { slideVariants } from '../components/motion';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';

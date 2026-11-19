@@ -4,8 +4,10 @@ import { queryKeys } from '../../../lib/queryKeys';
 import { cityService } from '../../../services/cityService';
 import { favoriteService } from '../../../services/favoriteService';
 import { placeService } from '../../../services/placeService';
+import { reviewService } from '../../../services/reviewService';
 import { tripService } from '../../../services/tripService';
 import type { FavoriteListResponse } from '../../../types/favorite';
+import type { MyReviewListResponse } from '../../../types/review';
 
 /** Chuyến đi của tôi (backend chia sẵn upcoming / ongoing / past) */
 export const useMyTrips = () =>
@@ -14,6 +16,10 @@ export const useMyTrips = () =>
 /** Danh sách yêu thích của tôi */
 export const useMyFavorites = () =>
   useQuery({ queryKey: queryKeys.favorites.mine(), queryFn: favoriteService.getMyFavorites });
+
+/** Đánh giá của tôi */
+export const useMyReviews = () =>
+  useQuery({ queryKey: queryKeys.reviews.mine(), queryFn: reviewService.getMyReviews });
 
 /** Danh sách thành phố (ít thay đổi → giữ cache lâu) */
 export const useCities = () =>
@@ -76,6 +82,38 @@ export function useRemoveFavorite() {
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.favorites.all });
       // Số lượng yêu thích trên phần đầu trang lấy từ profile
+      void queryClient.invalidateQueries({ queryKey: queryKeys.profile });
+    },
+  });
+}
+
+/**
+ * Xóa đánh giá của tôi (sau khi người dùng xác nhận) — optimistic update như bỏ yêu thích:
+ * đánh giá biến mất ngay; API lỗi → khôi phục và báo lỗi.
+ */
+export function useDeleteReview() {
+  const queryClient = useQueryClient();
+  const toast = useToast();
+  const key = queryKeys.reviews.mine();
+
+  return useMutation({
+    mutationFn: reviewService.deleteMyReview,
+    onMutate: async (reviewId: string) => {
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<MyReviewListResponse>(key);
+      if (previous) {
+        const reviews = previous.reviews.filter((r) => r._id !== reviewId);
+        queryClient.setQueryData<MyReviewListResponse>(key, { total: reviews.length, reviews });
+      }
+      return { previous };
+    },
+    onError: (error, _id, context) => {
+      if (context?.previous) queryClient.setQueryData(key, context.previous);
+      toast.error('Không thể xóa đánh giá', { description: error.message });
+    },
+    onSuccess: () => toast.success('Đã xóa đánh giá'),
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.reviews.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.profile });
     },
   });
