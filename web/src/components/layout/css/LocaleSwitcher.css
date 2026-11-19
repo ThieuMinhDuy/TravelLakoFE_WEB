@@ -1,0 +1,54 @@
+/* ==========================================================================
+   LocaleSwitcher — chọn định dạng hiển thị (nằm trên nền tối của footer)
+   ========================================================================== */
+
+.locale-switcher {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  font-size: 0.75rem;
+  color: #9CA3AF;
+}
+
+.locale-switcher__icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+.locale-switcher__label {
+  white-space: nowrap;
+}
+
+.locale-switcher__select {
+  /* Co lại theo chỗ trống trên màn nhỏ thay vì tràn ra ngoài */
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: min(19rem, 100%);
+  padding: 0.3125rem 1.75rem 0.3125rem 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #E5E7EB;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.locale-switcher__select:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.locale-switcher__select:focus-visible {
+  outline: 2px solid #38BDF8;
+  outline-offset: 2px;
+}
+
+/* Danh sách tùy chọn của trình duyệt dùng nền sáng */
+.locale-switcher__select option {
+  color: #0F172A;
+  background-color: #FFFFFF;
+}

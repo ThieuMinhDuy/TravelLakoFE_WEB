@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useToast } from '../../../contexts/toast/ToastContext';
+import { useLocale } from '../../../contexts/locale/LocaleContext';
 import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
@@ -39,6 +40,7 @@ export const ProfilePage: React.FC = () => {
   const updateUser = useAuthStore((s) => s.updateUser);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
+  const { formatNumber } = useLocale();
 
   // Luôn lấy profile mới nhất (kèm thống kê) khi vào trang
   const profileQuery = useQuery({ queryKey: ['profile'], queryFn: authService.getProfile });
@@ -112,7 +114,7 @@ export const ProfilePage: React.FC = () => {
           </div>
           <div>
             <p className="profile-stat-card__label">Chuyến đi đã tạo</p>
-            <p className="profile-stat-card__value">{user?.stats?.trips || 0}</p>
+            <p className="profile-stat-card__value">{formatNumber(user?.stats?.trips ?? 0)}</p>
           </div>
         </Card>
 
@@ -122,7 +124,7 @@ export const ProfilePage: React.FC = () => {
           </div>
           <div>
             <p className="profile-stat-card__label">Địa điểm yêu thích</p>
-            <p className="profile-stat-card__value">{user?.stats?.favorites || 0}</p>
+            <p className="profile-stat-card__value">{formatNumber(user?.stats?.favorites ?? 0)}</p>
           </div>
         </Card>
 
@@ -132,7 +134,7 @@ export const ProfilePage: React.FC = () => {
           </div>
           <div>
             <p className="profile-stat-card__label">Đánh giá đã viết</p>
-            <p className="profile-stat-card__value">{user?.stats?.reviews || 0}</p>
+            <p className="profile-stat-card__value">{formatNumber(user?.stats?.reviews ?? 0)}</p>
           </div>
         </Card>
       </div>

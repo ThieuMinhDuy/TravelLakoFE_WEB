@@ -30,7 +30,7 @@ web/
 │   │   ├── diary/          # Nhật ký chuyến đi, feedback
 │   │   ├── places/         # Khám phá, lọc địa điểm, chi tiết
 │   │   └── trips/          # Lập lịch trình, quản lý chuyến đi
-│   ├── contexts/           # React Context (ToastContext)
+│   ├── contexts/           # React Context (LocaleContext, ToastContext)
 │   ├── hooks/              # Generic hooks: usePagination, useDebounce, useDocumentTitle...
 │   ├── layouts/            # Layouts (MainLayout, AdminLayout) — màn auth là popup
 │   ├── routes/             # Định tuyến SPA & Protected Route (RBAC)
