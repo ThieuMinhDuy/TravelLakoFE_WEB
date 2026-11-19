@@ -1,229 +1,104 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { CalendarDays, Heart, ImageIcon, Settings } from 'lucide-react';
+import { Tabs } from '../../../components/compound/Tabs';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import { useToast } from '../../../contexts/toast/ToastContext';
-import { useLocale } from '../../../contexts/locale/LocaleContext';
-import { Card } from '../../../components/common/Card';
-import { Button } from '../../../components/common/Button';
-import { Input } from '../../../components/common/Input';
-import { IMAGE_ACCEPT, validateImageFile } from '../../../config/upload';
-import { uploadService } from '../../../services/uploadService';
+import { queryKeys } from '../../../lib/queryKeys';
 import { useAuthStore } from '../../../store/useAuthStore';
-import type { User as UserModel } from '../../../types/user';
+import { countTrips } from '../../../utils/trip';
 import { authService } from '../../auth/services/authService';
-import { profileService } from '../services/profileService';
-import { User, Mail, Phone, Calendar, Heart, MapPin, MessageSquare } from 'lucide-react';
+import { ProfileHeader } from '../components/ProfileHeader';
+import { FavoritesTab } from '../components/tabs/FavoritesTab';
+import { MemoriesTab } from '../components/tabs/MemoriesTab';
+import { SettingsTab } from '../components/tabs/SettingsTab';
+import { TripsTab } from '../components/tabs/TripsTab';
+import { PlanWithAiBanner } from '../components/sections/PlanWithAiBanner';
+import { PopularCitiesSection } from '../components/sections/PopularCitiesSection';
+import { RecommendedSection } from '../components/sections/RecommendedSection';
+import { useMyFavorites, useMyTrips } from '../hooks/useProfileData';
+import { useProfileTab, type ProfileTab } from '../hooks/useProfileTab';
 import './css/ProfilePage.css';
 
-const profileSchema = z.object({
-  name: z.string().trim().min(2, 'Họ tên phải có ít nhất 2 ký tự').max(50, 'Họ tên tối đa 50 ký tự'),
-  phone: z
-    .string()
-    .trim()
-    .regex(/^(0\d{9})?$/, 'Số điện thoại gồm 10 chữ số và bắt đầu bằng 0'),
-  dateOfBirth: z.string(),
-});
-type ProfileValues = z.infer<typeof profileSchema>;
-
-const toFormValues = (user: UserModel | null): ProfileValues => ({
-  name: user?.name ?? '',
-  phone: user?.phone ?? '',
-  dateOfBirth: user?.dateOfBirth ? user.dateOfBirth.slice(0, 10) : '',
-});
+const TAB_LABELS: Record<ProfileTab, string> = {
+  trips: 'Chuyến đi',
+  favorites: 'Yêu thích',
+  memories: 'Kỷ niệm',
+  settings: 'Cài đặt tài khoản',
+};
 
 export const ProfilePage: React.FC = () => {
-  useDocumentTitle('Hồ sơ cá nhân');
+  const [tab, setTab] = useProfileTab();
+  useDocumentTitle(`${TAB_LABELS[tab]} · Hồ sơ cá nhân`);
+
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
-  const avatarInputRef = useRef<HTMLInputElement>(null);
-  const toast = useToast();
-  const { formatNumber } = useLocale();
 
   // Luôn lấy profile mới nhất (kèm thống kê) khi vào trang
-  const profileQuery = useQuery({ queryKey: ['profile'], queryFn: authService.getProfile });
+  const profileQuery = useQuery({ queryKey: queryKeys.profile, queryFn: authService.getProfile });
   useEffect(() => {
     if (profileQuery.data) updateUser(profileQuery.data);
   }, [profileQuery.data, updateUser]);
 
-  // `values` đồng bộ form theo store khi profile tải xong; keepDirtyValues giữ ô đang sửa dở
-  const formValues = useMemo(() => toFormValues(user), [user]);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isDirty },
-  } = useForm<ProfileValues>({
-    resolver: zodResolver(profileSchema),
-    values: formValues,
-    resetOptions: { keepDirtyValues: true },
-  });
+  const trips = useMyTrips();
+  const favorites = useMyFavorites();
 
-  const saveProfile = useMutation({
-    mutationFn: profileService.updateProfile,
-    onSuccess: (updated) => {
-      updateUser(updated);
-      toast.success('Đã lưu thông tin cá nhân!');
-    },
-    onError: (err) => toast.error(err.message),
-  });
+  if (!user) return null; // ProtectedRoute đảm bảo đã đăng nhập
 
-  const changeAvatar = useMutation({
-    mutationFn: async (file: File) => {
-      const { url } = await uploadService.uploadImage(file);
-      return profileService.updateProfile({ avatar: url });
-    },
-    onSuccess: (updated) => {
-      updateUser(updated);
-      toast.success('Đã cập nhật ảnh đại diện!');
-    },
-    onError: (err) => toast.error(err.message),
-  });
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = ''; // cho phép chọn lại cùng một file
-    if (!file) return;
-    const error = validateImageFile(file);
-    if (error) {
-      toast.error(error);
-      return;
-    }
-    changeAvatar.mutate(file);
+  // Ưu tiên số liệu từ dữ liệu đã tải (cập nhật ngay sau khi bỏ yêu thích), fallback về user.stats
+  const stats = {
+    trips: trips.data ? countTrips(trips.data) : (user.stats?.trips ?? 0),
+    favorites: favorites.data ? favorites.data.favorites.length : (user.stats?.favorites ?? 0),
+    reviews: user.stats?.reviews ?? 0,
   };
-
-  const onSubmit = ({ name, phone, dateOfBirth }: ProfileValues) =>
-    saveProfile.mutate({ name: name.trim(), phone: phone.trim(), dateOfBirth: dateOfBirth || null });
 
   return (
     <div className="profile-page">
-      {/* Page Header */}
-      <div>
-        <h1 className="profile-page__title">Hồ sơ cá nhân & Cài đặt</h1>
-        <p className="profile-page__subtitle">
-          Quản lý thông tin tài khoản, sở thích du lịch và cá nhân hóa trải nghiệm AI
-        </p>
-      </div>
+      <ProfileHeader user={user} stats={stats} onEditProfile={() => setTab('settings')} />
 
-      {/* User Stats Card */}
-      <div className="profile-stats">
-        <Card className="profile-stat-card">
-          <div className="profile-stat-card__icon profile-stat-card__icon--blue">
-            <MapPin className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="profile-stat-card__label">Chuyến đi đã tạo</p>
-            <p className="profile-stat-card__value">{formatNumber(user?.stats?.trips ?? 0)}</p>
-          </div>
-        </Card>
+      <Tabs value={tab} onValueChange={setTab} variant="pills" className="profile-tabs">
+        <Tabs.List aria-label="Mục trong hồ sơ">
+          <Tabs.Tab value="trips" badge={stats.trips}>
+            <CalendarDays className="w-4 h-4" aria-hidden="true" />
+            Chuyến đi
+          </Tabs.Tab>
+          <Tabs.Tab value="favorites" badge={stats.favorites}>
+            <Heart className="w-4 h-4" aria-hidden="true" />
+            Yêu thích
+          </Tabs.Tab>
+          <Tabs.Tab value="memories">
+            <ImageIcon className="w-4 h-4" aria-hidden="true" />
+            Kỷ niệm
+          </Tabs.Tab>
+          <Tabs.Tab value="settings">
+            <Settings className="w-4 h-4" aria-hidden="true" />
+            <span>
+              Cài đặt<span className="profile-tabs__long-label"> tài khoản</span>
+            </span>
+          </Tabs.Tab>
+        </Tabs.List>
 
-        <Card className="profile-stat-card">
-          <div className="profile-stat-card__icon profile-stat-card__icon--amber">
-            <Heart className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="profile-stat-card__label">Địa điểm yêu thích</p>
-            <p className="profile-stat-card__value">{formatNumber(user?.stats?.favorites ?? 0)}</p>
-          </div>
-        </Card>
+        <Tabs.Panel value="trips">
+          <TripsTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="favorites">
+          <FavoritesTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="memories">
+          <MemoriesTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="settings">
+          <SettingsTab user={user} />
+        </Tabs.Panel>
+      </Tabs>
 
-        <Card className="profile-stat-card">
-          <div className="profile-stat-card__icon profile-stat-card__icon--teal">
-            <MessageSquare className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="profile-stat-card__label">Đánh giá đã viết</p>
-            <p className="profile-stat-card__value">{formatNumber(user?.stats?.reviews ?? 0)}</p>
-          </div>
-        </Card>
-      </div>
-
-      {/* Profile Form Card */}
-      <Card className="profile-form-card">
-        <div className="profile-user-header">
-          <div className="profile-avatar">
-            {user?.avatar ? (
-              <img src={user.avatar} alt={user.name} className="profile-avatar__img" />
-            ) : (
-              user?.name?.charAt(0).toUpperCase() || 'U'
-            )}
-          </div>
-          <div>
-            <h3 className="profile-user-name">{user?.name || 'Tên người dùng'}</h3>
-            <p className="profile-user-email">{user?.email || 'email@example.com'}</p>
-            <input
-              ref={avatarInputRef}
-              type="file"
-              accept={IMAGE_ACCEPT}
-              onChange={handleAvatarChange}
-              className="hidden"
-              aria-label="Chọn ảnh đại diện"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              style={{ marginTop: '0.625rem' }}
-              isLoading={changeAvatar.isPending}
-              onClick={() => avatarInputRef.current?.click()}
-            >
-              {changeAvatar.isPending ? 'Đang tải ảnh…' : 'Đổi ảnh đại diện'}
-            </Button>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="profile-form" noValidate>
-          <div className="profile-form__grid">
-            <Input
-              label="Họ và tên"
-              autoComplete="name"
-              leftIcon={<User className="w-4 h-4" />}
-              error={errors.name?.message}
-              {...register('name')}
-            />
-            <Input
-              id="profile-email"
-              label="Địa chỉ Email"
-              value={user?.email ?? ''}
-              readOnly
-              disabled
-              leftIcon={<Mail className="w-4 h-4" />}
-            />
-          </div>
-
-          <div className="profile-form__grid">
-            <Input
-              label="Số điện thoại"
-              type="tel"
-              placeholder="0987654321"
-              autoComplete="tel"
-              leftIcon={<Phone className="w-4 h-4" />}
-              error={errors.phone?.message}
-              {...register('phone')}
-            />
-            <Input
-              label="Ngày sinh"
-              type="date"
-              autoComplete="bday"
-              leftIcon={<Calendar className="w-4 h-4" />}
-              error={errors.dateOfBirth?.message}
-              {...register('dateOfBirth')}
-            />
-          </div>
-
-          <div className="profile-form__actions">
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              isLoading={saveProfile.isPending}
-              disabled={!isDirty}
-            >
-              {saveProfile.isPending ? 'Đang lưu…' : 'Lưu thay đổi'}
-            </Button>
-          </div>
-        </form>
-      </Card>
+      {/* Khối khám phá — ẩn ở tab Cài đặt cho gọn */}
+      {tab !== 'settings' && (
+        <>
+          <RecommendedSection user={user} onSetPreferences={() => setTab('settings')} />
+          <PopularCitiesSection />
+          <PlanWithAiBanner />
+        </>
+      )}
     </div>
   );
 };
