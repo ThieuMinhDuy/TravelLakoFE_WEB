@@ -109,11 +109,11 @@ export const addPlaceThunk = createAsyncThunk(
 export const removePlaceThunk = createAsyncThunk(
   'trip/removePlace',
   async (
-    { tripId, dayId, placeId }: { tripId: string; dayId: string; placeId: string },
+    { tripId, subId }: { tripId: string; subId: string },
     { rejectWithValue }
   ) => {
     try {
-      return await tripService.removePlaceFromSchedule(tripId, dayId, placeId);
+      return await tripService.removePlaceFromSchedule(tripId, subId);
     } catch (err: unknown) {
       const error = err as Error;
       return rejectWithValue(error.message || 'Lỗi khi xóa địa điểm khỏi lịch trình');
@@ -125,11 +125,11 @@ export const removePlaceThunk = createAsyncThunk(
 export const checkInPlaceThunk = createAsyncThunk(
   'trip/checkInPlace',
   async (
-    { tripId, dayId, placeId }: { tripId: string; dayId: string; placeId: string },
+    { tripId, subId, visited }: { tripId: string; subId: string; visited: boolean },
     { rejectWithValue }
   ) => {
     try {
-      return await tripService.checkInPlace(tripId, dayId, placeId);
+      return await tripService.checkInPlace(tripId, subId, visited);
     } catch (err: unknown) {
       const error = err as Error;
       return rejectWithValue(error.message || 'Lỗi khi check-in địa điểm');

@@ -59,15 +59,14 @@ export async function addPlaceToSchedule(
   return res.data;
 }
 
-// ─── DELETE /api/trips/:tripId/schedule/:dayId/places/:placeId ───────────────
-/** Xóa địa điểm khỏi ngày cụ thể trong lịch trình */
+// ─── DELETE /api/trips/:tripId/schedule/places/:subId ───────────────────────
+/** Xóa địa điểm khỏi lịch trình bằng ID của subdocument */
 export async function removePlaceFromSchedule(
   tripId: string,
-  dayId: string,
-  placeId: string
+  subId: string
 ): Promise<TripDetail> {
   const res = await apiClient.delete<TripDetail>(
-    `${BASE}/${tripId}/schedule/${dayId}/places/${placeId}`
+    `${BASE}/${tripId}/schedule/places/${subId}`
   );
   return res.data;
 }
@@ -75,6 +74,7 @@ export async function removePlaceFromSchedule(
 // ─── PUT /api/trips/:id/schedule/reorder ─────────────────────────────────────
 /**
  * Gửi thứ tự mới sau khi kéo thả lên BE.
+ * Body: { day: number, placesOrder: string[] }
  * Dùng trong optimistic DnD — gọi SAU khi đã update UI.
  * Nếu lỗi → caller dispatch rollbackDnd().
  */
@@ -89,15 +89,16 @@ export async function reorderSchedule(
   return res.data;
 }
 
-// ─── PUT /api/trips/:tripId/schedule/:dayId/places/:placeId/checkin ──────────
-/** Check-in vào địa điểm (đánh dấu visited + ghi thời gian) */
+// ─── PATCH /api/trips/:tripId/schedule/places/:subId/check-in ────────────────
+/** Check-in vào địa điểm (đánh dấu visited = true / false) */
 export async function checkInPlace(
   tripId: string,
-  dayId: string,
-  placeId: string
+  subId: string,
+  visited: boolean
 ): Promise<TripDetail> {
-  const res = await apiClient.put<TripDetail>(
-    `${BASE}/${tripId}/schedule/${dayId}/places/${placeId}/checkin`
+  const res = await apiClient.patch<TripDetail>(
+    `${BASE}/${tripId}/schedule/places/${subId}/check-in`,
+    { visited }
   );
   return res.data;
 }

@@ -87,15 +87,15 @@ export interface CreateTripDTO {
 }
 
 export interface AddPlaceToScheduleDTO {
-  dayId: string;
+  day: number;
   placeType: SchedulePlaceType;
   placeId: string;
   note?: string;
 }
 
 export interface ReorderScheduleDTO {
-  dayId: string;
-  places: Array<{ placeId: string; order: number }>;
+  day: number;
+  placesOrder: string[];
 }
 
 export interface UpdateTripMetadataDTO {
