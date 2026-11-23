@@ -21,6 +21,7 @@ export interface TripSchedulePlaceProps {
   place: PopulatedPlaceInSchedule;
   index: number;
   dayId: string;
+  totalDays?: number;
 }
 
 /** Badge hiển thị loại địa điểm */
@@ -56,15 +57,37 @@ function PlaceTypeBadge({ type }: { type: string }) {
 }
 
 /**
+ * Hàm so sánh tùy chỉnh cho React.memo (Performance Optimization):
+ * Chỉ re-render item khi id, index, trạng thái check-in (visited), order hoặc ghi chú thay đổi.
+ * Ngăn chặn re-render hàng loạt tất cả địa điểm khác khi đang kéo 1 thẻ.
+ */
+function arePlacePropsEqual(
+  prevProps: TripSchedulePlaceProps,
+  nextProps: TripSchedulePlaceProps
+): boolean {
+  return (
+    prevProps.place._id === nextProps.place._id &&
+    prevProps.place.order === nextProps.place.order &&
+    prevProps.place.visited === nextProps.place.visited &&
+    prevProps.place.note === nextProps.place.note &&
+    prevProps.index === nextProps.index &&
+    prevProps.dayId === nextProps.dayId &&
+    prevProps.totalDays === nextProps.totalDays
+  );
+}
+
+/**
  * Sub-component: Card địa điểm có thể kéo thả (Draggable).
- * Được bọc React.memo để tối ưu hiệu năng render (không render lại khi kéo item khác).
+ * Được tối ưu hiệu năng tối đa bằng React.memo + arePlacePropsEqual và tăng tốc GPU phần cứng khi kéo.
  */
 export const TripSchedulePlace = memo(function TripSchedulePlace({
   place,
   index,
   dayId,
+  totalDays: propTotalDays,
 }: TripSchedulePlaceProps) {
-  const { onRemovePlace, onCheckInPlace, onPlaceClick, trip } = useTripScheduleContext();
+  const { onRemovePlace, onCheckInPlace, onPlaceClick, totalDays: contextTotalDays } =
+    useTripScheduleContext();
 
   const rawPlace = place.placeId;
   const placeData = typeof rawPlace === 'object' && rawPlace !== null ? rawPlace : null;
@@ -77,7 +100,7 @@ export const TripSchedulePlace = memo(function TripSchedulePlace({
   const placeRating = placeData?.rating || 0;
 
   // Tính chi phí tương ứng
-  const totalDays = trip.schedule.length || 1;
+  const totalDays = propTotalDays || contextTotalDays || 1;
   const cost = extractPlaceCost(place, totalDays);
 
   return (
@@ -87,6 +110,11 @@ export const TripSchedulePlace = memo(function TripSchedulePlace({
           ref={provided.innerRef}
           {...provided.draggableProps}
           data-testid="place-card"
+          style={{
+            ...provided.draggableProps.style,
+            // Kích hoạt tăng tốc phần cứng GPU và tối ưu compositing
+            willChange: snapshot.isDragging ? 'transform, opacity' : 'auto',
+          }}
           className={cn(
             'group relative flex items-center gap-3 p-3.5 mb-2.5 rounded-xl border bg-white dark:bg-zinc-900 transition-all duration-200 select-none shadow-xs',
             snapshot.isDragging
@@ -174,7 +202,7 @@ export const TripSchedulePlace = memo(function TripSchedulePlace({
                 onClick={() => onCheckInPlace(dayId, place._id, !place.visited)}
                 title={place.visited ? 'Hủy check-in' : 'Đánh dấu đã ghé thăm'}
                 className={cn(
-                  'p-1.5 rounded-lg transition-colors',
+                  'p-1.5 rounded-lg transition-colors cursor-pointer',
                   place.visited
                     ? 'text-emerald-600 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300'
                     : 'text-zinc-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
@@ -188,7 +216,7 @@ export const TripSchedulePlace = memo(function TripSchedulePlace({
                 type="button"
                 onClick={() => onRemovePlace(dayId, place._id)}
                 title="Xóa địa điểm khỏi lịch trình"
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -198,5 +226,4 @@ export const TripSchedulePlace = memo(function TripSchedulePlace({
       )}
     </Draggable>
   );
-});
-
+}, arePlacePropsEqual);

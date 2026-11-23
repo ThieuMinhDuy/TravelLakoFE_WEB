@@ -106,6 +106,7 @@ export const TripScheduleDay = memo(function TripScheduleDay({
                   place={place}
                   index={index}
                   dayId={droppableId}
+                  totalDays={trip.schedule.length || 1}
                 />
               ))
             )}

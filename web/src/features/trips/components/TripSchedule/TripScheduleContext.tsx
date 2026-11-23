@@ -3,6 +3,7 @@ import { TripDetail, PopulatedPlaceInSchedule } from '../../types/trip';
 
 export interface TripScheduleContextValue {
   trip: TripDetail;
+  totalDays: number;
   selectedDayIndex: number;
   setSelectedDayIndex: (index: number) => void;
   onRemovePlace: (dayId: string, subId: string) => void;
