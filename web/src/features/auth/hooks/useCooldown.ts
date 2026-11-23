@@ -13,7 +13,10 @@ export function useCooldown(seconds: number, startActive = true) {
     return () => window.clearTimeout(timer);
   }, [secondsLeft]);
 
-  const restart = useCallback(() => setSecondsLeft(seconds), [seconds]);
+  /** Bắt đầu lại; truyền số giây khi backend báo thời gian chờ cụ thể (`retryAfter`) */
+  const restart = useCallback((override?: number) => setSecondsLeft(override ?? seconds), [seconds]);
 
   return { secondsLeft, restart };
 }
+
+export type Cooldown = ReturnType<typeof useCooldown>;

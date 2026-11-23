@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '../../../contexts/toast/ToastContext';
-import { hasStatus } from '../../../services/apiError';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import { storage } from '../../../utils/storage';
@@ -53,18 +52,12 @@ export const LoginPage: React.FC = () => {
     mutationFn: authService.login,
     onSuccess: (res) => completeLogin(res, getValues('remember')),
     onError: (err, { email }) => {
-      // Tài khoản chưa xác thực email → gửi lại OTP và chuyển sang màn xác thực
+      // Tài khoản chưa xác thực email → chuyển sang màn xác thực; màn đó tự gửi mã (send=1)
+      // và tự đếm ngược theo retryAfter nếu mã vừa được gửi gần đây (OTP_COOLDOWN).
       if (isUnverifiedLoginError(err)) {
-        toast.info('Tài khoản chưa được xác thực', {
-          description: 'Chúng tôi đã gửi lại mã OTP tới email của bạn.',
-        });
-        authService.resendOtp(email).catch((e: unknown) => {
-          // 429: mã vừa được gửi chưa đủ 60 giây (mới đăng ký) → mã cũ vẫn dùng được, chỉ cần nhắc nhẹ
-          if (hasStatus(e, 429)) toast.info('Mã OTP vừa được gửi gần đây', { description: 'Hãy kiểm tra hộp thư của bạn.' });
-          else toast.error(e instanceof Error ? e.message : 'Không gửi được mã OTP');
-        });
+        toast.info('Tài khoản chưa được xác thực', { description: 'Hãy nhập mã OTP gửi tới email của bạn.' });
         // Giữ lựa chọn "Ghi nhớ đăng nhập" cho lần đăng nhập sau khi xác thực OTP
-        goTo('/verify-otp', { email, remember: getValues('remember') ? undefined : '0' });
+        goTo('/verify-otp', { email, send: '1', remember: getValues('remember') ? undefined : '0' });
         return;
       }
       shake();

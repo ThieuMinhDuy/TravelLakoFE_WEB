@@ -3,6 +3,8 @@ import { env } from '../config/env';
 import { useAuthStore } from '../store/useAuthStore';
 import { ApiError } from './apiError';
 import { queryClient } from '../lib/queryClient';
+import { queryKeys } from '../lib/queryKeys';
+import { sessionEvents } from '../lib/sessionEvents';
 
 /**
  * Xác thực bằng Bearer token (không dùng cookie):
@@ -64,9 +66,27 @@ apiClient.interceptors.response.use(
     // Không cần tự chuyển trang: ProtectedRoute sẽ đưa người dùng tới popup đăng nhập
     // (giữ nguyên SPA, không reload mất state).
     const url = error.config?.url ?? '';
-    if (status === 401 && !PUBLIC_AUTH_ENDPOINT.test(url) && useAuthStore.getState().token) {
+    const hasSession = !PUBLIC_AUTH_ENDPOINT.test(url) && Boolean(useAuthStore.getState().token);
+    if (status === 401 && hasSession) {
       useAuthStore.getState().logout();
       queryClient.clear();
+    }
+
+    // 403 của middleware `protect` / `admin`, nhận diện theo mã lỗi cố định của backend.
+    // Các 403 khác (vd: không phải chủ chuyến đi) giữ nguyên cho nơi gọi tự xử lý.
+    if (status === 403 && hasSession) {
+      if (data?.code === 'ACCOUNT_BLOCKED') {
+        // Bị khóa khi đang dùng: mọi request cần đăng nhập đều sẽ 403 → đăng xuất luôn
+        useAuthStore.getState().logout();
+        queryClient.clear();
+        sessionEvents.emit({ type: 'blocked', message });
+      } else if (data?.code === 'NOT_ADMIN' && useAuthStore.getState().user?.isAdmin) {
+        // Bị admin khác gỡ quyền: cập nhật store → ProtectedRoute(requireAdmin) tự hiện trang 403
+        useAuthStore.getState().updateUser({ isAdmin: false });
+        queryClient.removeQueries({ queryKey: queryKeys.admin.all });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.profile });
+        sessionEvents.emit({ type: 'admin-revoked', message });
+      }
     }
 
     return Promise.reject(

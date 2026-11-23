@@ -1,42 +1,25 @@
 import React from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { useToast } from '../../../contexts/toast/ToastContext';
-import type { MessageResponse } from '../../../types/api';
+import { cn } from '../../../utils/cn';
 
 interface ResendOtpProps {
-  onResend: () => Promise<MessageResponse>;
+  /** Gửi lại mã — thường là `mutate` của useOtpResend */
+  onResend: () => void;
+  isPending: boolean;
   /** Số giây còn phải chờ — lấy từ useCooldown() ở component cha */
   secondsLeft: number;
-  /** Gọi sau khi gửi lại thành công (cha khởi động lại bộ đếm) */
-  onResent: () => void;
+  /** Mã hiện tại không dùng được nữa (hết hạn / nhập sai quá số lần) → làm nút gửi lại nổi bật */
+  highlight?: boolean;
 }
 
-export const ResendOtp: React.FC<ResendOtpProps> = ({ onResend, secondsLeft, onResent }) => {
-  const toast = useToast();
-  const resend = useMutation({
-    mutationFn: onResend,
-    onSuccess: (res) => {
-      toast.success(res.message || 'Đã gửi lại mã OTP!');
-      onResent();
-    },
-    onError: (err) => toast.error(err.message),
-  });
-
-  return (
-    <p className="auth-resend">
-      Chưa nhận được email?{' '}
-      {secondsLeft > 0 ? (
-        <span className="auth-resend__countdown">Gửi lại sau {secondsLeft}s</span>
-      ) : (
-        <button
-          type="button"
-          className="auth-link auth-resend__btn"
-          onClick={() => resend.mutate()}
-          disabled={resend.isPending}
-        >
-          {resend.isPending ? 'Đang gửi…' : 'Gửi lại mã'}
-        </button>
-      )}
-    </p>
-  );
-};
+export const ResendOtp: React.FC<ResendOtpProps> = ({ onResend, isPending, secondsLeft, highlight = false }) => (
+  <p className={cn('auth-resend', highlight && 'auth-resend--highlight')}>
+    {highlight ? 'Mã cũ đã hết hiệu lực.' : 'Chưa nhận được email?'}{' '}
+    {secondsLeft > 0 ? (
+      <span className="auth-resend__countdown">Gửi lại sau {secondsLeft}s</span>
+    ) : (
+      <button type="button" className="auth-link auth-resend__btn" onClick={onResend} disabled={isPending}>
+        {isPending ? 'Đang gửi…' : highlight ? 'Gửi mã mới' : 'Gửi lại mã'}
+      </button>
+    )}
+  </p>
+);

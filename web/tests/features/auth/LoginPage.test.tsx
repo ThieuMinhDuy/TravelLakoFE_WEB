@@ -1,6 +1,5 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { toast } from 'sonner';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { authService } from '@/features/auth/services/authService';
 import { ApiError } from '@/services/apiError';
@@ -28,7 +27,10 @@ const fillAndSubmit = async (email: string, password: string) => {
 };
 
 describe('Màn Đăng nhập', () => {
-  afterEach(() => useAuthStore.getState().logout());
+  afterEach(() => {
+    useAuthStore.getState().logout();
+    vi.clearAllMocks();
+  });
 
   it('mật khẩu toàn dấu cách bị chặn ngay ở form, không gọi API', async () => {
     renderWithProviders(<LoginPage />, { route: '/login' });
@@ -38,9 +40,9 @@ describe('Màn Đăng nhập', () => {
     expect(authService.login).not.toHaveBeenCalled();
   });
 
-  it('sai email / mật khẩu (401) → hiện thông báo lỗi trong form', async () => {
+  it('INVALID_CREDENTIALS → hiện lỗi trong form', async () => {
     vi.mocked(authService.login).mockRejectedValue(
-      new ApiError('Email hoặc mật khẩu không chính xác!', { status: 401 })
+      new ApiError('Email hoặc mật khẩu không chính xác!', { status: 401, code: 'INVALID_CREDENTIALS' })
     );
     renderWithProviders(<LoginPage />, { route: '/login' });
     await fillAndSubmit('a@gmail.com', 'SaiMatKhau1');
@@ -48,32 +50,30 @@ describe('Màn Đăng nhập', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Email hoặc mật khẩu không chính xác!');
   });
 
-  it('tài khoản chưa xác thực (400) → gửi lại OTP và chuyển sang màn xác thực', async () => {
+  it('ACCOUNT_UNVERIFIED → sang màn OTP với send=1 (màn OTP tự gửi mã), giữ lựa chọn "Ghi nhớ"', async () => {
     vi.mocked(authService.login).mockRejectedValue(
-      new ApiError('Tài khoản chưa được xác thực.', { status: 400 })
+      new ApiError('Tài khoản chưa được xác thực.', { status: 400, code: 'ACCOUNT_UNVERIFIED' })
     );
-    vi.mocked(authService.resendOtp).mockResolvedValue({ message: 'ok' });
     renderWithProviders(<LoginPage />, { route: '/login' });
 
     await userEvent.click(screen.getByLabelText('Ghi nhớ đăng nhập')); // bỏ chọn
     await fillAndSubmit('moi@gmail.com', 'MatKhau1');
 
     await waitFor(() =>
-      expect(screen.getByTestId('location')).toHaveTextContent('/verify-otp?email=moi%40gmail.com&remember=0')
+      expect(screen.getByTestId('location')).toHaveTextContent('/verify-otp?email=moi%40gmail.com&send=1&remember=0')
     );
-    expect(authService.resendOtp).toHaveBeenCalledWith('moi@gmail.com');
+    expect(authService.resendOtp).not.toHaveBeenCalled();
   });
 
-  it('mã vừa gửi chưa đủ 60 giây (429) → nhắc nhẹ, không báo lỗi', async () => {
-    vi.mocked(authService.login).mockRejectedValue(new ApiError('chưa xác thực', { status: 400 }));
-    vi.mocked(authService.resendOtp).mockRejectedValue(
-      new ApiError('Vui lòng đợi 40 giây trước khi yêu cầu mã OTP mới!', { status: 429 })
+  it('400 khác (MISSING_FIELDS) không bị coi là "chưa xác thực": hiện lỗi, ở lại màn đăng nhập', async () => {
+    vi.mocked(authService.login).mockRejectedValue(
+      new ApiError('Vui lòng nhập Email và Mật khẩu!', { status: 400, code: 'MISSING_FIELDS' })
     );
     renderWithProviders(<LoginPage />, { route: '/login' });
     await fillAndSubmit('moi@gmail.com', 'MatKhau1');
 
-    await waitFor(() => expect(toast.info).toHaveBeenCalledWith('Mã OTP vừa được gửi gần đây', expect.anything()));
-    expect(toast.error).not.toHaveBeenCalled();
+    expect(await screen.findByRole('alert')).toHaveTextContent('Vui lòng nhập Email và Mật khẩu!');
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/login$/);
   });
 
   it('đăng nhập thành công, bỏ "Ghi nhớ" → phiên chỉ lưu trong sessionStorage', async () => {

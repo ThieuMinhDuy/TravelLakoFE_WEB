@@ -425,6 +425,18 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Mã cũ hết hiệu lực: khung nhẹ để người dùng thấy ngay nút gửi mã mới */
+.auth-resend--highlight {
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.75rem;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.auth-resend--highlight .auth-resend__btn {
+  font-weight: 700;
+}
+
 /* ---------------------------------------------------------------------------
    Ô nhập OTP
    --------------------------------------------------------------------------- */

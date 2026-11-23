@@ -8,6 +8,7 @@ import { Button } from '../../../components/common/Button';
 import { PasswordChecklist } from '../../../components/common/PasswordChecklist';
 import { PasswordInput } from '../../../components/common/PasswordInput';
 import { useToast } from '../../../contexts/toast/ToastContext';
+import { hasErrorCode } from '../../../services/apiError';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { getPasswordError } from '../../../utils/validators';
 import type { User } from '../../../types/user';
@@ -52,8 +53,17 @@ export const ChangePasswordCard: React.FC<{ user: User }> = ({ user }) => {
     handleSubmit,
     watch,
     reset,
+    setError,
     formState: { errors },
   } = useForm<PasswordValues>({ resolver: zodResolver(schema), defaultValues: EMPTY });
+
+  /** Lỗi của backend thuộc về một ô cụ thể → hiện ngay dưới ô đó thay vì ở khung lỗi chung */
+  const fieldOf = (error: unknown): keyof PasswordValues | null =>
+    hasErrorCode(error, 'CURRENT_PASSWORD_INCORRECT')
+      ? 'currentPassword'
+      : hasErrorCode(error, 'WEAK_PASSWORD', 'SAME_PASSWORD')
+        ? 'newPassword'
+        : null;
 
   const change = useMutation({
     mutationFn: authService.changePassword,
@@ -61,6 +71,10 @@ export const ChangePasswordCard: React.FC<{ user: User }> = ({ user }) => {
       toast.success(res.message || (hasPassword ? 'Đổi mật khẩu thành công!' : 'Đã tạo mật khẩu!'));
       updateUser({ hasPassword: true });
       reset(EMPTY);
+    },
+    onError: (error) => {
+      const field = fieldOf(error);
+      if (field) setError(field, { message: error.message }, { shouldFocus: true });
     },
   });
 
@@ -110,7 +124,7 @@ export const ChangePasswordCard: React.FC<{ user: User }> = ({ user }) => {
           />
         </div>
 
-        {change.error && (
+        {change.error && !fieldOf(change.error) && (
           <p className="settings__alert" role="alert">
             <AlertCircle className="w-4 h-4" aria-hidden="true" />
             {change.error.message}

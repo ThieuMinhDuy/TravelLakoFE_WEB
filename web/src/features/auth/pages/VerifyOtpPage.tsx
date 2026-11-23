@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { MailCheck } from 'lucide-react';
 import { Button } from '../../../components/common/Button';
+import { useToast } from '../../../contexts/toast/ToastContext';
+import { hasErrorCode } from '../../../services/apiError';
 import {
   AuthHeader,
   AuthItem,
+  AuthLink,
   BackToLogin,
   FormAlert,
   SlowServerHint,
@@ -17,35 +20,63 @@ import { ResendOtp } from '../components/ResendOtp';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
 import { useCompleteLogin } from '../hooks/useCompleteLogin';
 import { useCooldown } from '../hooks/useCooldown';
+import { OTP_RESEND_SECONDS, useOtpResend } from '../hooks/useOtpResend';
 import { useSlowHint } from '../hooks/useSlowHint';
-import { authService } from '../services/authService';
+import { authService, isOtpRenewRequired } from '../services/authService';
 
 /** Xác thực email sau khi đăng ký — thành công sẽ đăng nhập luôn */
 export const VerifyOtpPage: React.FC = () => {
   useDocumentTitle('Xác thực email');
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const email = searchParams.get('email') ?? '';
   // Đến từ màn Login với "Ghi nhớ đăng nhập" bị bỏ chọn → remember=0
   const remember = searchParams.get('remember') !== '0';
-  const { buildHref, state } = useAuthNavigation();
+  // Đến từ Login / Quên mật khẩu khi tài khoản chưa xác thực → màn này tự gửi mã (send=1)
+  const shouldSend = searchParams.get('send') === '1';
+  const { goTo, buildHref, state } = useAuthNavigation();
   const { shake } = useAuthModal();
+  const toast = useToast();
   const completeLogin = useCompleteLogin();
   const [otp, setOtp] = useState('');
-  // Mã vừa được gửi khi vào màn này → đếm ngược 60s ngay
-  const cooldown = useCooldown(60);
+  // Mã vừa được gửi khi vào màn này (sau đăng ký, hoặc gửi ngay bên dưới) → đếm ngược 60s
+  const cooldown = useCooldown(OTP_RESEND_SECONDS);
 
   const verify = useMutation({
     mutationFn: authService.verifyOtp,
     onSuccess: (res) => completeLogin(res, remember),
-    // Backend trả 400 cho cả "OTP sai/hết hạn" lẫn "đã xác thực trước đó" → hiển thị
-    // nguyên thông báo của backend; người dùng có thể quay lại đăng nhập bằng link bên dưới.
-    onError: () => {
+    onError: (error) => {
       setOtp('');
+      if (hasErrorCode(error, 'ACCOUNT_ALREADY_VERIFIED')) {
+        toast.info('Tài khoản đã được xác thực', { description: 'Hãy đăng nhập để tiếp tục.' });
+        goTo('/login', { email });
+        return;
+      }
       shake();
     },
   });
 
+  // Gửi mã mới thành công → bỏ lỗi của mã cũ
+  const resend = useOtpResend(() => authService.resendOtp(email), cooldown, () => verify.reset());
+
+  // Tự gửi mã một lần, rồi bỏ cờ khỏi URL để tải lại trang không gửi thêm mã
+  const autoSent = useRef(false);
+  useEffect(() => {
+    if (!shouldSend || !email || autoSent.current) return;
+    autoSent.current = true;
+    resend.mutate();
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('send');
+        return next;
+      },
+      { replace: true, state }
+    );
+  }, [shouldSend, email, resend, setSearchParams, state]);
+
   const slow = useSlowHint(verify.isPending);
+  const renewRequired = isOtpRenewRequired(verify.error);
+  const accountMissing = hasErrorCode(verify.error, 'USER_NOT_FOUND');
 
   const submit = (code: string) => {
     if (code.length === 6 && !verify.isPending) verify.mutate({ email, otp: code });
@@ -90,6 +121,13 @@ export const VerifyOtpPage: React.FC = () => {
         </AuthItem>
 
         <FormAlert message={verify.error?.message} />
+        {accountMissing && (
+          <AuthItem>
+            <p className="auth-switch">
+              Email này chưa có tài khoản. <AuthLink to="/register">Đăng ký ngay</AuthLink>
+            </p>
+          </AuthItem>
+        )}
 
         <AuthItem>
           <Button
@@ -114,9 +152,10 @@ export const VerifyOtpPage: React.FC = () => {
           Mở Gmail
         </a>
         <ResendOtp
-          onResend={() => authService.resendOtp(email)}
+          onResend={() => resend.mutate()}
+          isPending={resend.isPending}
           secondsLeft={cooldown.secondsLeft}
-          onResent={cooldown.restart}
+          highlight={renewRequired}
         />
       </AuthItem>
 

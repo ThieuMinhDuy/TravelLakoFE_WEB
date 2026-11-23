@@ -5,6 +5,7 @@ import { queryClient } from './lib/queryClient';
 import { ToastProvider } from './contexts/toast/ToastProvider';
 import { LocaleProvider } from './contexts/locale/LocaleProvider';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { SessionNotice } from './components/common/SessionNotice';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <LocaleProvider>
           <ToastProvider>
+            <SessionNotice />
             <BrowserRouter>
               <AppRoutes />
             </BrowserRouter>

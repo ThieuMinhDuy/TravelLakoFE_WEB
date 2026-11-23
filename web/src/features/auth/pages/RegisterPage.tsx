@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '../../../contexts/toast/ToastContext';
+import { hasErrorCode } from '../../../services/apiError';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import {
@@ -33,6 +34,7 @@ export const RegisterPage: React.FC = () => {
     register,
     handleSubmit,
     watch,
+    setError,
     formState: { errors },
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -45,8 +47,19 @@ export const RegisterPage: React.FC = () => {
       toast.success('Đã gửi mã xác thực!', { description: res.message });
       goTo('/verify-otp', { email: res.email });
     },
-    onError: () => shake(),
+    onError: (error) => {
+      shake();
+      // Lỗi thuộc về một ô → hiện ngay dưới ô đó
+      const field = hasErrorCode(error, 'EMAIL_EXISTS', 'INVALID_EMAIL')
+        ? 'email'
+        : hasErrorCode(error, 'WEAK_PASSWORD')
+          ? 'password'
+          : null;
+      if (field) setError(field, { message: error.message }, { shouldFocus: true });
+    },
   });
+
+  const fieldError = hasErrorCode(signUp.error, 'EMAIL_EXISTS', 'INVALID_EMAIL', 'WEAK_PASSWORD');
 
   const slow = useSlowHint(signUp.isPending);
 
@@ -102,7 +115,7 @@ export const RegisterPage: React.FC = () => {
           {errors.agree && <p className="ui-input-message--error auth-checkbox__error">{errors.agree.message}</p>}
         </AuthItem>
 
-        <FormAlert message={signUp.error?.message} />
+        <FormAlert message={signUp.error && !fieldError ? signUp.error.message : null} />
 
         <AuthItem>
           <Button type="submit" className="auth-btn" isLoading={signUp.isPending}>

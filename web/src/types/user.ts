@@ -51,5 +51,5 @@ export interface UpdateProfileDTO {
   dateOfBirth?: string | null;
   travelPreferences?: string[];
   favoriteBudget?: FavoriteBudget;
-  password?: string;
+  // Không có `password`: PUT /auth/profile kèm password trả 400 — đổi mật khẩu dùng /auth/change-password
 }

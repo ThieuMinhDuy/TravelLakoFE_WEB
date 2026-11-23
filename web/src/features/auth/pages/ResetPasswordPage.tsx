@@ -22,10 +22,12 @@ import { PasswordInput } from '../../../components/common/PasswordInput';
 import { ResendOtp } from '../components/ResendOtp';
 import { slideVariants } from '../components/motion';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
+import { hasErrorCode } from '../../../services/apiError';
 import { useCooldown } from '../hooks/useCooldown';
+import { OTP_RESEND_SECONDS, useOtpResend } from '../hooks/useOtpResend';
 import { useSlowHint } from '../hooks/useSlowHint';
 import { newPasswordSchema, type NewPasswordValues } from '../schemas';
-import { authService, isResetOtpError } from '../services/authService';
+import { authService, isOtpRenewRequired, isResetOtpError } from '../services/authService';
 
 type Step = 'otp' | 'password' | 'success';
 
@@ -47,8 +49,15 @@ export const ResetPasswordPage: React.FC = () => {
   const [direction, setDirection] = useState(1);
   const [otp, setOtp] = useState('');
   const [otpError, setOtpError] = useState<string | null>(null);
+  // Mã cũ hết hạn / bị hủy sau 5 lần sai → làm nổi bật nút gửi mã mới
+  const [renewRequired, setRenewRequired] = useState(false);
   // Đặt ở cha: quay lại bước OTP không làm bộ đếm gửi lại mã chạy lại từ đầu
-  const cooldown = useCooldown(60);
+  const cooldown = useCooldown(OTP_RESEND_SECONDS);
+  const resend = useOtpResend(() => authService.forgotPassword(email), cooldown, () => {
+    setOtp('');
+    setOtpError(null);
+    setRenewRequired(false);
+  });
 
   const goToStep = (next: Step, dir = 1) => {
     setDirection(dir);
@@ -60,8 +69,10 @@ export const ResetPasswordPage: React.FC = () => {
     onSuccess: () => goToStep('success'),
     onError: (err) => {
       shake();
+      // Chỉ lỗi của mã OTP mới quay về bước nhập mã; WEAK_PASSWORD hiện ngay ở ô mật khẩu mới
       if (isResetOtpError(err)) {
         setOtpError(err.message);
+        setRenewRequired(isOtpRenewRequired(err));
         setOtp('');
         goToStep('otp', -1);
       }
@@ -93,18 +104,21 @@ export const ResetPasswordPage: React.FC = () => {
             onNext={() => goToStep('password')}
             onInvalid={shake}
             resendSecondsLeft={cooldown.secondsLeft}
-            onResent={() => {
-              cooldown.restart();
-              setOtp('');
-              setOtpError(null);
-            }}
+            onResend={() => resend.mutate()}
+            resendPending={resend.isPending}
+            renewRequired={renewRequired}
           />
         )}
 
         {step === 'password' && (
           <PasswordStep
             isPending={reset.isPending}
-            error={reset.error && !isResetOtpError(reset.error) ? reset.error.message : null}
+            error={
+              reset.error && !isResetOtpError(reset.error) && !hasErrorCode(reset.error, 'WEAK_PASSWORD')
+                ? reset.error.message
+                : null
+            }
+            passwordError={hasErrorCode(reset.error, 'WEAK_PASSWORD') ? reset.error?.message : undefined}
             onSubmit={(newPassword) => reset.mutate({ email, otp, newPassword })}
             onBack={() => goToStep('otp', -1)}
             onInvalid={shake}
@@ -141,7 +155,9 @@ interface OtpStepProps {
   onNext: () => void;
   onInvalid: () => void;
   resendSecondsLeft: number;
-  onResent: () => void;
+  onResend: () => void;
+  resendPending: boolean;
+  renewRequired: boolean;
 }
 
 const OtpStep: React.FC<OtpStepProps> = ({
@@ -152,7 +168,9 @@ const OtpStep: React.FC<OtpStepProps> = ({
   onNext,
   onInvalid,
   resendSecondsLeft,
-  onResent,
+  onResend,
+  resendPending,
+  renewRequired,
 }) => {
   const next = () => (otp.length === 6 ? onNext() : onInvalid());
 
@@ -201,9 +219,10 @@ const OtpStep: React.FC<OtpStepProps> = ({
           Mở Gmail
         </a>
         <ResendOtp
-          onResend={() => authService.forgotPassword(email)}
+          onResend={onResend}
+          isPending={resendPending}
           secondsLeft={resendSecondsLeft}
-          onResent={onResent}
+          highlight={renewRequired}
         />
       </AuthItem>
 
@@ -217,6 +236,8 @@ const OtpStep: React.FC<OtpStepProps> = ({
 interface PasswordStepProps {
   isPending: boolean;
   error: string | null;
+  /** Lỗi của backend gắn vào ô mật khẩu mới (WEAK_PASSWORD) */
+  passwordError?: string;
   onSubmit: (newPassword: string) => void;
   onBack: () => void;
   onInvalid: () => void;
@@ -225,6 +246,7 @@ interface PasswordStepProps {
 const PasswordStep: React.FC<PasswordStepProps> = ({
   isPending,
   error,
+  passwordError,
   onSubmit,
   onBack,
   onInvalid,
@@ -260,7 +282,7 @@ const PasswordStep: React.FC<PasswordStepProps> = ({
             placeholder="Nhập mật khẩu mới"
             autoComplete="new-password"
             autoFocus
-            error={errors.newPassword?.message}
+            error={errors.newPassword?.message ?? passwordError}
             {...register('newPassword')}
           />
           <PasswordChecklist password={watch('newPassword')} />

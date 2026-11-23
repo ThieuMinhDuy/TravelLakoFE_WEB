@@ -1,7 +1,7 @@
 import { apiClient } from '../../../services/apiClient';
 import type { MessageResponse } from '../../../types/api';
 import type { User } from '../../../types/user';
-import { ApiError, hasStatus, isApiError } from '../../../services/apiError';
+import { ApiError, hasErrorCode, isApiError } from '../../../services/apiError';
 
 /** Render free có thể "ngủ" — request đầu tiên mất 30-50s để khởi động lại */
 const AUTH_TIMEOUT = 60_000;
@@ -14,7 +14,7 @@ export interface RegisterResponse extends MessageResponse {
 }
 
 /** Đổi lỗi kỹ thuật sang câu tiếng Việt thân thiện, vẫn giữ nguyên status/code */
-function toFriendlyError(error: unknown, url: string): ApiError {
+function toFriendlyError(error: unknown): ApiError {
   if (!isApiError(error)) {
     return new ApiError(error instanceof Error ? error.message : String(error), { cause: error });
   }
@@ -24,8 +24,9 @@ function toFriendlyError(error: unknown, url: string): ApiError {
     message = 'Máy chủ phản hồi quá lâu, vui lòng thử lại.';
   } else if (error.isNetworkError) {
     message = 'Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.';
-  } else if (url === '/auth/login' && error.status === 401) {
-    // Backend trả câu tiếng Anh "Invalid email or password"
+  } else if (hasErrorCode(error, 'INVALID_CREDENTIALS')) {
+    // Backend còn trả câu tiếng Anh "Invalid email or password" (sẽ dịch ở mục 13 của tài liệu 09).
+    // Chỉ đổi đúng mã này: 401 của đăng nhập Google có mã riêng và câu tiếng Việt.
     message = 'Email hoặc mật khẩu không chính xác!';
   }
 
@@ -39,21 +40,22 @@ async function post<T>(url: string, body?: unknown): Promise<T> {
     const res = await apiClient.post<T>(url, body, { timeout: AUTH_TIMEOUT });
     return res.data;
   } catch (error) {
-    throw toFriendlyError(error, url);
+    throw toFriendlyError(error);
   }
 }
 
-/**
- * POST /auth/login trả 400 duy nhất khi tài khoản chưa xác thực email
- * (sai mật khẩu → 401, bị khóa → 403). Chỉ dùng cho lỗi của API đăng nhập.
- */
-export const isUnverifiedLoginError = (error: unknown) => hasStatus(error, 400);
+/** Tài khoản chưa xác thực email (đăng nhập, quên mật khẩu) → gửi lại OTP và chuyển sang màn xác thực */
+export const isUnverifiedLoginError = (error: unknown) => hasErrorCode(error, 'ACCOUNT_UNVERIFIED');
 
 /**
- * POST /auth/reset-password trả 400 khi mã OTP sai hoặc hết hạn.
- * Các lỗi 400 khác (thiếu trường, mật khẩu yếu) đã được form chặn trước khi gửi.
+ * Lỗi thuộc về mã OTP (sai, hết hạn, nhập sai quá số lần). Lỗi 400 khác như `WEAK_PASSWORD`
+ * (mật khẩu mới yếu) không phải lỗi OTP.
  */
-export const isResetOtpError = (error: unknown) => hasStatus(error, 400);
+export const isResetOtpError = (error: unknown) =>
+  hasErrorCode(error, 'OTP_INVALID', 'OTP_EXPIRED', 'OTP_ATTEMPTS_EXCEEDED');
+
+/** Mã OTP không dùng được nữa (hết hạn / bị hủy sau 5 lần sai) → người dùng phải yêu cầu mã mới */
+export const isOtpRenewRequired = (error: unknown) => hasErrorCode(error, 'OTP_EXPIRED', 'OTP_ATTEMPTS_EXCEEDED');
 
 export const authService = {
   login: (data: { email: string; password: string }) =>
@@ -80,14 +82,15 @@ export const authService = {
 
   /**
    * PUT /auth/change-password — đổi mật khẩu (cần mật khẩu hiện tại) hoặc tạo mật khẩu lần đầu
-   * cho tài khoản Google. Sai mật khẩu hiện tại → 400; thử sai quá nhiều lần → 429.
+   * cho tài khoản Google. Lỗi: CURRENT_PASSWORD_INCORRECT, WEAK_PASSWORD, SAME_PASSWORD (400),
+   * RATE_LIMITED (429, có retryAfter).
    */
   changePassword: async (data: { currentPassword?: string; newPassword: string }): Promise<MessageResponse> => {
     try {
       const res = await apiClient.put<MessageResponse>('/auth/change-password', data);
       return res.data;
     } catch (error) {
-      throw toFriendlyError(error, '/auth/change-password');
+      throw toFriendlyError(error);
     }
   },
 
@@ -96,7 +99,7 @@ export const authService = {
       const res = await apiClient.get<User>('/auth/profile', { timeout: AUTH_TIMEOUT });
       return res.data;
     } catch (error) {
-      throw toFriendlyError(error, '/auth/profile');
+      throw toFriendlyError(error);
     }
   },
 };

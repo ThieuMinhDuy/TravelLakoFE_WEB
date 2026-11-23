@@ -12,6 +12,8 @@ export interface ImageUploaderProps {
   label?: string;
   aspectRatio?: 'square' | 'video' | 'wide';
   className?: string;
+  /** false: ẩn nút xóa, chỉ cho thay ảnh khác (vd: backend không cho xóa ảnh thành phố) */
+  removable?: boolean;
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -20,6 +22,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   label = 'Tải ảnh lên',
   aspectRatio = 'video',
   className,
+  removable = true,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const toast = useToast();
@@ -98,6 +101,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       {value ? (
         <div className={cn('ui-image-uploader__preview', aspectClass)}>
           <img src={value} alt={label || 'Ảnh đã tải lên'} className="ui-image-uploader__preview-img" />
+          {isUploading && (
+            <div className="ui-image-uploader__uploading" role="status">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span>Đang tải ảnh mới…</span>
+            </div>
+          )}
           <div className="ui-image-uploader__preview-overlay">
             <button
               type="button"
@@ -106,14 +115,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             >
               Thay đổi
             </button>
-            <button
-              type="button"
-              onClick={() => onChange('')}
-              className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700"
-              aria-label="Xóa ảnh"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            {removable && (
+              <button
+                type="button"
+                onClick={() => onChange('')}
+                className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700"
+                aria-label="Xóa ảnh"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
       ) : (

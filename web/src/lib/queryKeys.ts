@@ -30,4 +30,17 @@ export const queryKeys = {
     all: ['places'] as const,
     search: (keyword = '', cityId = '') => [...queryKeys.places.all, 'search', keyword, cityId] as const,
   },
+
+  /** Dữ liệu trang quản trị — tách riêng với key công khai vì API và quyền khác nhau */
+  admin: {
+    all: ['admin'] as const,
+    stats: () => [...queryKeys.admin.all, 'stats'] as const,
+    users: () => [...queryKeys.admin.all, 'users'] as const,
+    cities: () => [...queryKeys.admin.all, 'cities'] as const,
+    placesAll: () => [...queryKeys.admin.all, 'places'] as const,
+    places: (type: string, cityId = '') => [...queryKeys.admin.placesAll(), type, cityId] as const,
+    reviewsAll: () => [...queryKeys.admin.all, 'reviews'] as const,
+    reviews: (filters: object = {}) => [...queryKeys.admin.reviewsAll(), filters] as const,
+    vietnamCities: () => [...queryKeys.admin.all, 'vietnam-cities'] as const,
+  },
 } as const;

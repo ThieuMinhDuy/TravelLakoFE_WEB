@@ -19,7 +19,7 @@ import { useAuthModal } from '../components/AuthModalContext';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
 import { useSlowHint } from '../hooks/useSlowHint';
 import { forgotPasswordSchema, type ForgotPasswordValues } from '../schemas';
-import { authService } from '../services/authService';
+import { authService, isUnverifiedLoginError } from '../services/authService';
 
 export const ForgotPasswordPage: React.FC = () => {
   useDocumentTitle('Quên mật khẩu');
@@ -44,7 +44,15 @@ export const ForgotPasswordPage: React.FC = () => {
       toast.success(res.message);
       goTo('/reset-password', { email });
     },
-    onError: () => shake(),
+    onError: (error, email) => {
+      // Tài khoản chưa xác thực email thì không đặt lại mật khẩu được → xác thực trước (màn OTP tự gửi mã)
+      if (isUnverifiedLoginError(error)) {
+        toast.info('Tài khoản chưa được xác thực', { description: 'Hãy xác thực email trước khi đặt lại mật khẩu.' });
+        goTo('/verify-otp', { email, send: '1' });
+        return;
+      }
+      shake();
+    },
   });
 
   const slow = useSlowHint(forgot.isPending);
@@ -75,7 +83,7 @@ export const ForgotPasswordPage: React.FC = () => {
           />
         </AuthItem>
 
-        <FormAlert message={forgot.error?.message} />
+        <FormAlert message={forgot.error && !isUnverifiedLoginError(forgot.error) ? forgot.error.message : null} />
 
         <AuthItem>
           <Button type="submit" className="auth-btn" isLoading={forgot.isPending}>
