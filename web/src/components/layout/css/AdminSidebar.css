@@ -1,144 +1,239 @@
 /* ==========================================================================
-   AdminSidebar Component Styles
+   AdminSidebar — tấm kính nổi (kiểu sidebar iPadOS)
    ========================================================================== */
 
 .admin-sidebar {
-  height: 100vh;
   position: sticky;
-  top: 0;
+  top: 0.75rem;
   z-index: 40;
-  border-right: 1px solid var(--color-borderGray, #E2E8F0);
-  background-color: var(--color-surfaceWhite, #FFFFFF);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   width: 16rem;
+  height: calc(100dvh - 1.5rem);
+  margin: 0.75rem;
+  border-radius: 1.75rem;
+  overflow: hidden;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .admin-sidebar--collapsed {
-  width: 5rem;
+  width: 4.75rem;
 }
 
-/* Brand Header */
+/* Trong drawer: tấm kính là panel của Drawer, sidebar chỉ là nội dung */
+.admin-sidebar--drawer {
+  position: static;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* --------------------------------- Brand -------------------------------- */
+
 .admin-sidebar__header {
-  height: 4rem;
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--color-borderGray, #E2E8F0);
+  padding: 1.1rem 0.9rem 0.6rem;
 }
 
-.admin-sidebar__brand-link {
+.admin-sidebar__brand {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  overflow: hidden;
+  gap: 0.75rem;
+  padding: 0.25rem;
+  border-radius: 1rem;
   text-decoration: none;
+  color: inherit;
 }
 
-.admin-sidebar__brand-logo {
-  width: 2rem;
-  height: 2rem;
-  object-fit: contain;
+.admin-sidebar__brand:focus-visible {
+  outline: none;
+  box-shadow: var(--glass-focus);
+}
+
+.admin-sidebar__logo {
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.9rem;
+  background: linear-gradient(160deg, #ffffff 0%, rgb(255 255 255 / 0.7) 100%);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 2px 6px -2px rgb(15 23 42 / 0.15);
+}
+
+.admin-sidebar__logo img {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
 }
 
 .admin-sidebar__brand-text {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .admin-sidebar__brand-name {
+  font-size: 1.05rem;
   font-weight: 800;
-  font-size: 0.875rem;
-  color: #0F172A;
-  letter-spacing: -0.025em;
-  line-height: 1.25;
-}
-
-.admin-sidebar__brand-highlight {
-  color: var(--color-oceanBlue, #0369A1);
+  letter-spacing: -0.02em;
+  color: var(--glass-text);
 }
 
 .admin-sidebar__brand-tag {
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
   font-size: 0.625rem;
-  font-weight: 600;
-  color: #D97706;
-  letter-spacing: 0.05em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--glass-text-sub);
+  background: rgb(15 23 42 / 0.06);
 }
 
-/* Navigation Menu */
+/* ---------------------------------- Nav --------------------------------- */
+
 .admin-sidebar__nav {
   flex: 1;
-  padding: 1rem 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
   overflow-y: auto;
+  padding: 0.25rem 0.75rem 1rem;
+  scrollbar-width: thin;
 }
 
-.admin-sidebar__nav-item {
+.admin-sidebar__group + .admin-sidebar__group {
+  margin-top: 0.9rem;
+}
+
+.admin-sidebar__group-label {
+  margin: 0 0 0.35rem;
+  padding: 0 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--glass-text-muted);
+}
+
+.admin-sidebar__group-divider {
+  display: block;
+  height: 1px;
+  margin: 0.5rem 0.75rem 0.6rem;
+  background: rgb(15 23 42 / 0.08);
+}
+
+.admin-sidebar__item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.625rem 0.75rem;
-  border-radius: 0.75rem;
-  font-size: 0.75rem;
+  height: 2.75rem;
+  padding: 0 0.5rem;
+  margin-bottom: 0.2rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--glass-text-sub);
   text-decoration: none;
-  transition: all 0.15s ease-in-out;
+  transition: color 0.25s ease, background-color 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.admin-sidebar__nav-item:hover {
-  background-color: #F1F5F9;
-  color: #0F172A;
+.admin-sidebar__item:hover {
+  color: var(--glass-text);
+  background-color: rgb(255 255 255 / 0.35);
 }
 
-.admin-sidebar__nav-item--active {
-  background-color: var(--color-oceanBlueLight, #F0F9FF);
-  color: var(--color-oceanBlue, #0369A1);
-  font-weight: 700;
+.admin-sidebar__item:focus-visible {
+  outline: none;
+  box-shadow: var(--glass-focus);
 }
 
-.admin-sidebar__nav-item--collapsed {
-  justify-content: center;
-  padding-left: 0;
-  padding-right: 0;
+.admin-sidebar__item--active,
+.admin-sidebar__item--active:hover {
+  color: var(--glass-text);
+  background-color: transparent;
 }
 
-.admin-sidebar__nav-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+/* "Giọt kính" của mục đang chọn — trượt giữa các mục nhờ layoutId */
+.admin-sidebar .admin-sidebar__item .admin-sidebar__pill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 1rem;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    0 1px 2px rgb(15 23 42 / 0.06),
+    0 6px 16px -8px rgb(15 23 42 / 0.2);
+}
+
+.admin-sidebar__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.7rem;
+  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.admin-sidebar__nav-label {
+.admin-sidebar__icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.admin-sidebar__item--active .admin-sidebar__icon {
+  color: var(--glass-accent);
+}
+
+.admin-sidebar__label {
+  position: relative;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Footer / Meta */
+.admin-sidebar--collapsed .admin-sidebar__nav {
+  padding-inline: 0.85rem;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__item {
+  justify-content: center;
+  padding: 0;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__brand {
+  justify-content: center;
+}
+
+/* -------------------------------- Footer -------------------------------- */
+
 .admin-sidebar__footer {
-  padding: 1rem;
-  border-top: 1px solid var(--color-borderGray, #E2E8F0);
-  background-color: #F8FAFC;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.5rem 1.1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--glass-text-muted);
+  border-top: 1px solid rgb(255 255 255 / 0.5);
 }
 
-.admin-sidebar__footer-text {
-  font-size: 0.625rem;
-  color: #94A3B8;
-  line-height: 1.35;
-  margin: 0;
+.admin-sidebar__status-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgb(16 185 129 / 0.18);
 }
 
-/* Sidebar hiển thị bên trong Drawer trên màn nhỏ */
-.admin-sidebar--drawer {
-  position: static;
-  height: 100%;
-  width: 100%;
-  border-right: none;
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar {
+    transition: none;
+  }
 }

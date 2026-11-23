@@ -1,0 +1,193 @@
+/* ==========================================================================
+   Trang Người dùng
+   ========================================================================== */
+
+.admin-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.15rem 0.35rem 0.15rem 0.15rem;
+  margin: -0.15rem 0;
+  border: 0;
+  border-radius: 9999px;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+.admin-user-cell:hover .admin-user-cell__name {
+  color: var(--glass-accent);
+}
+
+.admin-user-cell:focus-visible {
+  outline: none;
+  box-shadow: var(--glass-focus);
+}
+
+.admin-user-cell__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-user-cell__name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--glass-text);
+  transition: color 0.2s ease;
+}
+
+.admin-user-cell__self {
+  padding: 0.05rem 0.4rem;
+  border-radius: 9999px;
+  background: rgb(15 23 42 / 0.07);
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--glass-text-sub);
+}
+
+.admin-user-cell__email {
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: var(--glass-text-muted);
+}
+
+.admin-user-auth {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--glass-text-sub);
+}
+
+/* ------------------------------ Drawer chi tiết -------------------------- */
+
+.admin-user-drawer {
+  width: min(28rem, calc(100vw - 1.5rem));
+}
+
+.admin-user-drawer .ui-drawer__body {
+  overflow-y: auto;
+}
+
+.admin-user-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem;
+}
+
+.admin-user-detail__hero {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-user-detail__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.admin-user-detail__identity h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--glass-text);
+}
+
+.admin-user-detail__identity p {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8125rem;
+  color: var(--glass-text-muted);
+}
+
+.admin-user-detail__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid rgb(255 255 255 / 0.8);
+  border-radius: 1.1rem;
+  background: rgb(255 255 255 / 0.55);
+}
+
+.admin-user-detail__heading {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--glass-text-muted);
+}
+
+.admin-user-detail__info {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.admin-user-detail__info > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  font-size: 0.8125rem;
+}
+
+.admin-user-detail__info > div + div {
+  border-top: 1px solid rgb(15 23 42 / 0.06);
+}
+
+.admin-user-detail__info dt {
+  flex-shrink: 0;
+  color: var(--glass-text-muted);
+}
+
+.admin-user-detail__info dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 600;
+  color: var(--glass-text);
+}
+
+.admin-user-detail__tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+.admin-user-detail__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-user-detail__form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.admin-user-detail__note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--glass-text-muted);
+}
+
+.admin-user-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

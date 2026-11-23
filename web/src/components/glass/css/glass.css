@@ -1,0 +1,177 @@
+/* ==========================================================================
+   Liquid Glass — hệ thống bề mặt kính cho khu quản trị
+   --------------------------------------------------------------------------
+   Chỉ có hiệu lực dưới [data-surface="admin"] (AdminLayout gắn lên <html>).
+   Mọi selector bọc trong :where() (độ ưu tiên 0) để class của component luôn ghi đè được
+   (vd: sidebar cần position: sticky thay vì relative),
+   nên áp được cả cho Modal / Drawer render qua portal mà không ảnh hưởng trang người dùng.
+
+   Cấu tạo một tấm kính:
+   1. Thân kính   : nền trắng trong suốt + backdrop-filter blur/saturate
+   2. Viền phản quang (::before): viền gradient sáng ở mép trên, mờ dần ở mép dưới
+   3. Vệt sáng (::after)        : ánh sáng mềm, đi theo con trỏ ở bề mặt tương tác
+   4. Khúc xạ (tùy chọn)        : .glass--lens dùng bộ lọc SVG — chỉ bật trên Chromium
+   ========================================================================== */
+
+:root[data-surface='admin'] {
+  /* Độ đục theo độ dày: bề mặt nhiều chữ (bảng, form) dùng thick để đủ tương phản */
+  --glass-thin: rgb(255 255 255 / 0.4);
+  --glass-regular: rgb(255 255 255 / 0.5);
+  --glass-thick: rgb(255 255 255 / 0.8);
+  --glass-solid: rgb(255 255 255 / 0.96);
+
+  --glass-blur: 24px;
+  --glass-saturate: 185%;
+  --glass-radius: 1.5rem;
+  --glass-radius-sm: 1rem;
+
+  --glass-border: rgb(255 255 255 / 0.55);
+  --glass-inner:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    inset 0 -1px 0 rgb(255 255 255 / 0.18);
+  --glass-shadow:
+    0 1px 2px rgb(15 23 42 / 0.05),
+    0 10px 30px -12px rgb(15 23 42 / 0.16),
+    0 30px 60px -30px rgb(3 105 161 / 0.25);
+  --glass-shadow-lift:
+    0 2px 4px rgb(15 23 42 / 0.06),
+    0 18px 40px -14px rgb(15 23 42 / 0.22),
+    0 40px 80px -36px rgb(3 105 161 / 0.32);
+
+  /* Chữ trên kính */
+  --glass-text: #0b1324;
+  --glass-text-sub: #3b4a61;
+  --glass-text-muted: #5b6b82;
+
+  /* Màu nhấn */
+  --glass-accent: #0369a1;
+  --glass-focus: 0 0 0 3px rgb(3 105 161 / 0.28);
+
+  --glass-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --glass-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------ Thân kính ------------------------------ */
+
+:where([data-surface='admin'] .glass) {
+  position: relative;
+  isolation: isolate;
+  background: var(--glass-regular);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-inner), var(--glass-shadow);
+  color: var(--glass-text);
+}
+
+:where([data-surface='admin'] .glass--thin) {
+  background: var(--glass-thin);
+}
+
+:where([data-surface='admin'] .glass--thick) {
+  background: var(--glass-thick);
+}
+
+/* Viền phản quang: gradient chỉ hiện ở vùng viền 1px nhờ mask-composite */
+:where([data-surface='admin'] .glass)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    165deg,
+    rgb(255 255 255 / 0.95) 0%,
+    rgb(255 255 255 / 0.35) 22%,
+    rgb(255 255 255 / 0) 50%,
+    rgb(255 255 255 / 0.12) 78%,
+    rgb(255 255 255 / 0.6) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Vệt sáng: mặc định ở mép trên; bề mặt tương tác cập nhật --mx/--my theo con trỏ */
+:where([data-surface='admin'] .glass)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    var(--sheen-size, 22rem) circle at var(--mx, 30%) var(--my, -40%),
+    rgb(255 255 255 / 0.55),
+    rgb(255 255 255 / 0) 60%
+  );
+  opacity: 0.7;
+  transition: opacity 0.4s var(--glass-ease);
+  pointer-events: none;
+}
+
+/* ----------------------- Bề mặt tương tác (thẻ, nút) --------------------- */
+
+:where([data-surface='admin'] .glass--interactive) {
+  transition:
+    transform 0.45s var(--glass-spring),
+    box-shadow 0.35s var(--glass-ease),
+    background-color 0.3s var(--glass-ease);
+}
+
+:where([data-surface='admin'] .glass--interactive:hover) {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-inner), var(--glass-shadow-lift);
+}
+
+:where([data-surface='admin'] .glass--interactive:hover)::after {
+  opacity: 1;
+}
+
+:where([data-surface='admin'] .glass--interactive:active) {
+  transform: translateY(0) scale(0.985);
+  transition-duration: 0.12s;
+}
+
+/* ------------------------- Khúc xạ thật (Chromium) ----------------------- */
+/* LiquidLensFilter gắn data-liquid-lens khi trình duyệt hỗ trợ url() trong backdrop-filter */
+
+:where(:root[data-surface='admin'][data-liquid-lens] .glass--lens) {
+  -webkit-backdrop-filter: url(#tm-liquid-lens) blur(10px) saturate(var(--glass-saturate));
+  backdrop-filter: url(#tm-liquid-lens) blur(10px) saturate(var(--glass-saturate));
+}
+
+/* ------------------------------ Fallback ------------------------------- */
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :where([data-surface='admin'] .glass),
+  :where([data-surface='admin'] .glass--thin),
+  :where([data-surface='admin'] .glass--thick) {
+    background: var(--glass-solid);
+  }
+}
+
+/* Người dùng bật "Giảm độ trong suốt" trong hệ điều hành → bề mặt đặc */
+@media (prefers-reduced-transparency: reduce) {
+  :where([data-surface='admin'] .glass),
+  :where([data-surface='admin'] .glass--thin),
+  :where([data-surface='admin'] .glass--thick),
+  :where(:root[data-surface='admin'][data-liquid-lens] .glass--lens) {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where([data-surface='admin'] .glass--interactive),
+  :where([data-surface='admin'] .glass--interactive:hover),
+  :where([data-surface='admin'] .glass--interactive:active) {
+    transform: none;
+    transition: none;
+  }
+}
