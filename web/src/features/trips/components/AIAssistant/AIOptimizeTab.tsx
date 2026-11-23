@@ -1,7 +1,6 @@
 import { useState, memo } from 'react';
 import { Route, Sparkles, CheckCircle2, ArrowUpDown } from 'lucide-react';
-import { TripDetail } from '../../types/trip';
-import { AIOptimizeResponse } from '../../types/ai';
+import { TripDetail, AIOptimizeResponse } from '../../../../types';
 
 export interface AIOptimizeTabProps {
   currentTrip?: TripDetail | null;

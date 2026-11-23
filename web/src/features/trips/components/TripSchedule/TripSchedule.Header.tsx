@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Calendar, MapPin, Sparkles, Share2 } from 'lucide-react';
 import { useTripScheduleContext } from './TripScheduleContext';
 import { formatDate } from '../../../../utils/formatters';
-import { useTripUIStoreApi } from '../../store/tripUIStore';
+import { useTripUIStoreApi } from '../../../../store/tripUIStore';
 import { City } from '../../../../types/city';
 
 export interface TripScheduleHeaderProps {

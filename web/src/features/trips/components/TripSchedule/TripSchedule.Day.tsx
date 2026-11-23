@@ -1,9 +1,8 @@
 import { memo, useMemo } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import { Calendar, Plus, MapPinOff } from 'lucide-react';
-import { PopulatedDaySchedule } from '../../types/trip';
+import { PopulatedDaySchedule, extractPlaceCost } from '../../../../types';
 import { formatDate, formatCurrencyVND } from '../../../../utils/formatters';
-import { extractPlaceCost } from '../../types/trip';
 import { TripSchedulePlace } from './TripSchedule.Place';
 import { useTripScheduleContext } from './TripScheduleContext';
 import { cn } from '../../../../utils/cn';

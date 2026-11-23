@@ -1,8 +1,11 @@
 // Feature: Trips
-// Barrel export — import từ '@/features/trips' là được tất cả
-export * from './types';
-export * from './services';
-export * from './store';
-export * from './hooks';
 export * from './components';
-
+export * from '../../types/trip';
+export * from '../../types/ai';
+export * from '../../services/tripService';
+export * from '../../services/aiService';
+export * from '../../store/tripSlice';
+export * from '../../store/tripSelectors';
+export * from '../../store/tripUIStore';
+export * from '../../hooks/useTripScheduleDnd';
+export * from '../../hooks/useAISuggestion';

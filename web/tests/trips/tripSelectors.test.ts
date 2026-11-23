@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   selectBudgetSummary,
   selectSortedSchedule,
-} from '../../src/features/trips/store/tripSelectors';
+} from '../../src/store/tripSelectors';
 import { RootState } from '../../src/store/reduxStore';
 import { mockTripDetail } from './mockTripData';
 

@@ -3,10 +3,10 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import tripReducer from '../../src/features/trips/store/tripSlice';
+import tripReducer from '../../src/store/tripSlice';
 import { TripSchedule } from '../../src/features/trips/components/TripSchedule';
 import { mockTripDetail } from './mockTripData';
-import { TripDetail } from '../../src/features/trips/types/trip';
+import { TripDetail } from '../../src/types/trip';
 
 describe('Compound Component: <TripSchedule>', () => {
   let queryClient: QueryClient;

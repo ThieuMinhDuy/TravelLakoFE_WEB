@@ -1,7 +1,7 @@
 import { ReactNode, useState, useMemo, lazy, Suspense } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
-import { TripDetail, PopulatedPlaceInSchedule } from '../../types/trip';
-import { useTripScheduleDnd } from '../../hooks/useTripScheduleDnd';
+import { TripDetail, PopulatedPlaceInSchedule } from '../../../../types';
+import { useTripScheduleDnd } from '../../../../hooks/useTripScheduleDnd';
 import { TripScheduleContext, TripScheduleContextValue } from './TripScheduleContext';
 import { TripScheduleHeader } from './TripSchedule.Header';
 import { TripScheduleBudget } from './TripSchedule.Budget';
@@ -9,7 +9,7 @@ import { TripScheduleDayTabs } from './TripSchedule.DayTabs';
 import { TripScheduleDay } from './TripSchedule.Day';
 import { TripSchedulePlace } from './TripSchedule.Place';
 import { AIAssistantFAB } from '../AIAssistant/AIAssistantFAB';
-import { useTripUIContext } from '../../store/tripUIStore';
+import { useTripUIContext } from '../../../../store/tripUIStore';
 
 // ─── Code Splitting (Tối ưu hiệu năng tải trang ban đầu) ─────────────────────
 // Lazy load AIAssistantPanel — chỉ tải JS chunk của AI khi người dùng mở panel

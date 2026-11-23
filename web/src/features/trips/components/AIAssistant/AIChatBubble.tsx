@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Bot, User, Sparkles } from 'lucide-react';
-import { ChatMessage } from '../../types/ai';
+import { ChatMessage } from '../../../../types';
 import { formatDate } from '../../../../utils/formatters';
 import { cn } from '../../../../utils/cn';
 

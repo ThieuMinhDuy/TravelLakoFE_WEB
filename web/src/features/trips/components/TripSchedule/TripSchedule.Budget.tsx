@@ -10,7 +10,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useAppSelector } from '../../../../store/reduxStore';
-import { selectBudgetSummary } from '../../store/tripSelectors';
+import { selectBudgetSummary } from '../../../../store/tripSelectors';
 import { formatCurrencyVND } from '../../../../utils/formatters';
 import { cn } from '../../../../utils/cn';
 

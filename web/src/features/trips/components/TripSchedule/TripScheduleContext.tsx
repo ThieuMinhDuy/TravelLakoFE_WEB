@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { TripDetail, PopulatedPlaceInSchedule } from '../../types/trip';
+import { TripDetail, PopulatedPlaceInSchedule } from '../../../../types';
 
 export interface TripScheduleContextValue {
   trip: TripDetail;

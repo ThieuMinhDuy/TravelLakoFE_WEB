@@ -5,13 +5,13 @@ import tripReducer, {
   reorderPlacesOptimistic,
   reorderScheduleThunk,
   TripState,
-} from '../../src/features/trips/store/tripSlice';
-import * as tripService from '../../src/features/trips/services/tripService';
+} from '../../src/store/tripSlice';
+import * as tripService from '../../src/services/tripService';
 import { mockTripDetail } from './mockTripData';
 import { configureStore } from '@reduxjs/toolkit';
 
 // Mock tripService
-vi.mock('../../src/features/trips/services/tripService');
+vi.mock('../../src/services/tripService');
 
 describe('Redux Toolkit: tripSlice & Optimistic UI DnD', () => {
   let initialState: TripState;

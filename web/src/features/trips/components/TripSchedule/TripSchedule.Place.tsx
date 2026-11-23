@@ -11,9 +11,8 @@ import {
   Utensils,
   Coffee,
 } from 'lucide-react';
-import { PopulatedPlaceInSchedule } from '../../types/trip';
+import { PopulatedPlaceInSchedule, extractPlaceCost } from '../../../../types';
 import { formatCurrencyVND } from '../../../../utils/formatters';
-import { extractPlaceCost } from '../../types/trip';
 import { cn } from '../../../../utils/cn';
 import { useTripScheduleContext } from './TripScheduleContext';
 

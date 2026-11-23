@@ -1,4 +1,4 @@
-import { TripDetail, PopulatedPlaceInSchedule } from '../../src/features/trips/types/trip';
+import { TripDetail, PopulatedPlaceInSchedule } from '../../src/types/trip';
 
 /** Tạo mock địa điểm */
 export const createMockPlace = (

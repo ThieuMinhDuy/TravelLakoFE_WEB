@@ -1,6 +1,6 @@
 import { useState, memo } from 'react';
 import { Sparkles, Compass, Check, Calendar, ArrowRight } from 'lucide-react';
-import { AISuggestionResponse } from '../../types/ai';
+import { AISuggestionResponse } from '../../../../types';
 import { formatCurrencyVND } from '../../../../utils/formatters';
 
 export interface AISuggestTabProps {

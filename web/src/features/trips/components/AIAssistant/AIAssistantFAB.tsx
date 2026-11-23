@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Sparkles, Bot } from 'lucide-react';
-import { useTripUIStoreApi, useTripUIContext } from '../../store/tripUIStore';
+import { useTripUIStoreApi, useTripUIContext } from '../../../../store/tripUIStore';
 import { cn } from '../../../../utils/cn';
 
 /**
