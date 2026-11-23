@@ -8,12 +8,15 @@ import { TripScheduleBudget } from './TripSchedule.Budget';
 import { TripScheduleDayTabs } from './TripSchedule.DayTabs';
 import { TripScheduleDay } from './TripSchedule.Day';
 import { TripSchedulePlace } from './TripSchedule.Place';
+import { AIAssistantPanel } from '../AIAssistant/AIAssistantPanel';
+import { AIAssistantFAB } from '../AIAssistant/AIAssistantFAB';
 
 export interface TripScheduleProps {
   trip: TripDetail;
   children?: ReactNode;
   onPlaceClick?: (place: PopulatedPlaceInSchedule) => void;
   onAddPlaceClick?: (dayNumber: number) => void;
+  showAIAssistant?: boolean;
 }
 
 /**
@@ -26,6 +29,7 @@ export function TripScheduleRoot({
   children,
   onPlaceClick,
   onAddPlaceClick,
+  showAIAssistant = true,
 }: TripScheduleProps) {
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(-1); // -1: hiển thị tất cả các ngày
   const { onDragStart, onDragEnd, handleRemovePlace, handleCheckInPlace } =
@@ -61,7 +65,7 @@ export function TripScheduleRoot({
   return (
     <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
       <TripScheduleContext.Provider value={contextValue}>
-        <div className="w-full max-w-5xl mx-auto">
+        <div className="w-full max-w-5xl mx-auto relative">
           {children ? (
             children
           ) : (
@@ -81,6 +85,14 @@ export function TripScheduleRoot({
               </div>
             </>
           )}
+
+          {/* Trợ lý ảo AI Assistant Panel và nút FAB */}
+          {showAIAssistant && (
+            <>
+              <AIAssistantPanel currentTrip={trip} />
+              <AIAssistantFAB />
+            </>
+          )}
         </div>
       </TripScheduleContext.Provider>
     </DragDropContext>
@@ -94,6 +106,8 @@ export const TripSchedule = Object.assign(TripScheduleRoot, {
   DayTabs: TripScheduleDayTabs,
   Day: TripScheduleDay,
   Place: TripSchedulePlace,
+  AIPanel: AIAssistantPanel,
+  AIFAB: AIAssistantFAB,
 });
 
 export default TripSchedule;
