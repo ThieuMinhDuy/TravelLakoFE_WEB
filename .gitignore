@@ -61,3 +61,5 @@ web/.env
 mobile/.env
 mobile/.expo-shared/
 mobile/web-build/
+# Repo backend riêng, clone cạnh để chạy local, không thuộc repo frontend
+TravelLakoBE/

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '../../../contexts/toast/ToastContext';
+import { hasStatus } from '../../../services/apiError';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
 import { storage } from '../../../utils/storage';
@@ -57,7 +58,11 @@ export const LoginPage: React.FC = () => {
         toast.info('Tài khoản chưa được xác thực', {
           description: 'Chúng tôi đã gửi lại mã OTP tới email của bạn.',
         });
-        authService.resendOtp(email).catch((e: Error) => toast.error(e.message));
+        authService.resendOtp(email).catch((e: unknown) => {
+          // 429: mã vừa được gửi chưa đủ 60 giây (mới đăng ký) → mã cũ vẫn dùng được, chỉ cần nhắc nhẹ
+          if (hasStatus(e, 429)) toast.info('Mã OTP vừa được gửi gần đây', { description: 'Hãy kiểm tra hộp thư của bạn.' });
+          else toast.error(e instanceof Error ? e.message : 'Không gửi được mã OTP');
+        });
         // Giữ lựa chọn "Ghi nhớ đăng nhập" cho lần đăng nhập sau khi xác thực OTP
         goTo('/verify-otp', { email, remember: getValues('remember') ? undefined : '0' });
         return;

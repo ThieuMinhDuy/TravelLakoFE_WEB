@@ -18,7 +18,9 @@ const strongPasswordField = z.string().superRefine((value, ctx) => {
 
 export const loginSchema = z.object({
   email: emailField,
-  password: z.string().min(1, 'Vui lòng nhập mật khẩu'),
+  // Chặn mật khẩu toàn dấu cách: backend trả 400 cho trường hợp này, mà 400 ở API đăng nhập
+  // được FE hiểu là "tài khoản chưa xác thực" → phải chặn ngay từ form
+  password: z.string().refine((v) => v.trim() !== '', 'Vui lòng nhập mật khẩu'),
   remember: z.boolean(),
 });
 export type LoginValues = z.infer<typeof loginSchema>;
