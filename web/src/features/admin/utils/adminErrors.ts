@@ -4,7 +4,7 @@ import type { DeleteCityBlockedByTrips, DeleteCityConflict } from '../../../type
 /**
  * Câu tiếng Anh backend còn trả (kể cả khi đi kèm mã, vd CITY_EXISTS) → tiếng Việt.
  * Chỉ dùng để HIỂN THỊ; nhận diện loại lỗi luôn dựa vào `code`.
- * Gỡ bảng này khi backend dịch xong (mục 13 của tài liệu 09). So khớp theo tiền tố vì một số câu có phần đuôi thay đổi.
+ * Gỡ bảng này khi backend dịch xong các câu tiếng Anh. So khớp theo tiền tố vì một số câu có phần đuôi thay đổi.
  */
 const MESSAGE_MAP: [prefix: string, vi: string][] = [
   ['City already exists', 'Thành phố này đã tồn tại'],

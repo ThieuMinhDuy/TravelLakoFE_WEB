@@ -63,3 +63,6 @@ mobile/.expo-shared/
 mobile/web-build/
 # Repo backend riêng, clone cạnh để chạy local, không thuộc repo frontend
 TravelLakoBE/
+# Tài liệu trao đổi qua lại với backend, chỉ giữ ở máy
+docs/08_Admin_Frontend_Guide.md
+docs/09_Backend_Update_FE_Tasks.md

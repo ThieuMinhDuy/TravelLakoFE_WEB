@@ -25,7 +25,7 @@ function toFriendlyError(error: unknown): ApiError {
   } else if (error.isNetworkError) {
     message = 'Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.';
   } else if (hasErrorCode(error, 'INVALID_CREDENTIALS')) {
-    // Backend còn trả câu tiếng Anh "Invalid email or password" (sẽ dịch ở mục 13 của tài liệu 09).
+    // Backend còn trả câu tiếng Anh "Invalid email or password"; bỏ dòng này khi backend dịch sang tiếng Việt.
     // Chỉ đổi đúng mã này: 401 của đăng nhập Google có mã riêng và câu tiếng Việt.
     message = 'Email hoặc mật khẩu không chính xác!';
   }

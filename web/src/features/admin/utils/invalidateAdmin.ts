@@ -6,7 +6,7 @@ const invalidate = (qc: QueryClient, keys: QueryKey[]) =>
 
 /**
  * Dữ liệu admin liên quan chéo nhau (xóa thành phố xóa luôn địa điểm, xóa đánh giá đổi rating...).
- * Gom quy tắc invalidate (tài liệu 08, mục 3) vào một chỗ để không trang nào làm thiếu.
+ * Gom quy tắc invalidate vào một chỗ để không trang nào làm thiếu.
  */
 export const invalidateAdmin = {
   /** Xóa kèm (cascade) xóa luôn địa điểm, đánh giá, yêu thích và gỡ khỏi lịch trình chuyến đi */

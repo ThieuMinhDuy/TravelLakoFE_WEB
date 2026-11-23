@@ -21,7 +21,7 @@ import type {
 export const IMPORT_TIMEOUT_MS = 120_000;
 
 /**
- * Lớp bảo vệ thêm: backend đã ngừng trả `otp` (tài liệu 09, mục 1), nhưng vẫn loại `otp` / `password`
+ * Lớp bảo vệ thêm: backend đã ngừng trả `otp`, nhưng vẫn loại `otp` / `password`
  * nếu chúng xuất hiện, để dữ liệu nhạy cảm không vào cache React Query, DevTools hay log.
  */
 const stripSecrets = <T extends object>(doc: T): T => {

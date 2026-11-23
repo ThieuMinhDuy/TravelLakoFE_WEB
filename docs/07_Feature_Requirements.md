@@ -69,26 +69,29 @@ Thành viên sở hữu toàn bộ quyền của Khách vãng lai và các tính
 ## 3. Phân hệ Quản trị viên (Admin Portal - Web Chỉ định)
 Vai trò quản lý hệ thống, kiểm duyệt nội dung và làm giàu dữ liệu.
 
+> Giao diện web: `web/src/features/admin/` (phong cách Liquid Glass, xem tài liệu 06 mục 6).
+
 ### Bảng điều khiển (Dashboard Stats)
-- [ ] **Thống kê tổng quan**: Tổng số tài khoản, tổng số chuyến đi đã tạo, tổng số đánh giá.
-- [ ] **Thống kê phân loại**: Số lượng địa điểm theo từng nhóm (Khách sạn, Điểm tham quan, Nhà hàng, Quán cafe).
+- [x] **Thống kê tổng quan**: Tổng số tài khoản, tổng số chuyến đi đã tạo, tổng số đánh giá.
+- [x] **Thống kê phân loại**: Số lượng địa điểm theo từng nhóm (Khách sạn, Điểm tham quan, Nhà hàng, Quán cafe).
 
 ### Quản lý Thành phố (City CRUD)
-- [ ] **Thêm mới thành phố**: Tên, mô tả, hình ảnh banner, tọa độ địa lý.
-- [ ] **Chỉnh sửa / Xóa thành phố**: Thay đổi thông tin hoặc xóa thành phố khỏi hệ thống.
+- [x] **Thêm mới thành phố**: Tên, mô tả, hình ảnh banner, tọa độ địa lý.
+- [x] **Chỉnh sửa / Xóa thành phố**: Thay đổi thông tin hoặc xóa thành phố khỏi hệ thống.
 
 ### Quản lý Địa điểm du lịch (Place CRUD)
-- [ ] **CRUD Địa điểm**: Thêm mới, chỉnh sửa, xóa địa điểm thuộc cả 4 nhóm (Attraction, Hotel, Restaurant, Cafe) với các trường dữ liệu đặc thù tương ứng.
+- [x] **CRUD Địa điểm**: Thêm mới, chỉnh sửa, xóa địa điểm thuộc cả 4 nhóm (Attraction, Hotel, Restaurant, Cafe) với các trường dữ liệu đặc thù tương ứng.
 
 ### Quản lý Người dùng & Tài khoản
-- [ ] **Xem danh sách**: Xem chi tiết toàn bộ người dùng trong hệ thống.
-- [ ] **Khóa / Mở khóa tài khoản**: Block/Unblock tài khoản vi phạm tiêu chuẩn cộng đồng.
-- [ ] **Xóa tài khoản**: Xóa tài khoản người dùng khỏi hệ thống.
+- [x] **Xem danh sách**: Xem chi tiết toàn bộ người dùng trong hệ thống.
+- [x] **Khóa / Mở khóa tài khoản**: Block/Unblock tài khoản vi phạm tiêu chuẩn cộng đồng.
+- [x] **Xóa tài khoản**: Xóa tài khoản người dùng khỏi hệ thống.
 
 ### Kiểm duyệt Đánh giá (Review Moderation)
-- [ ] **Xem toàn bộ đánh giá**: Hỗ trợ lọc nhanh theo Thành phố, theo loại địa điểm, hoặc theo ID địa điểm cụ thể.
-- [ ] **Xóa đánh giá**: Xóa bỏ các đánh giá không phù hợp, chứa từ ngữ thô tục hoặc spam.
+- [x] **Xem toàn bộ đánh giá**: Hỗ trợ lọc nhanh theo Thành phố, theo loại địa điểm, hoặc theo ID địa điểm cụ thể.
+- [x] **Xóa đánh giá**: Xóa bỏ các đánh giá không phù hợp, chứa từ ngữ thô tục hoặc spam.
 
 ### Công cụ Import tự động (OSM + AI Data Seeding)
-- [ ] **Cào dữ liệu OpenStreetMap (OSM)**: Nhập tên thành phố, hệ thống tự động cào dữ liệu thực tế (kinh độ, vĩ độ, địa chỉ, tên địa điểm).
-- [ ] **Làm giàu dữ liệu bằng AI**: Sử dụng Gemini AI viết mô tả hấp dẫn bằng tiếng Việt, phân loại chính xác nhóm địa điểm, và gán giá phòng/giá vé tham khảo phù hợp rồi lưu vào database.
+- [x] **Cào dữ liệu OpenStreetMap (OSM)**: Nhập tên thành phố, hệ thống tự động cào dữ liệu thực tế (kinh độ, vĩ độ, địa chỉ, tên địa điểm).
+- [x] **Làm giàu dữ liệu bằng AI**: Sử dụng Gemini AI viết mô tả hấp dẫn bằng tiếng Việt, phân loại chính xác nhóm địa điểm, và gán giá phòng/giá vé tham khảo phù hợp rồi lưu vào database.
+  > **Trạng thái (24/11):** Gemini viết mô tả và giá tham khảo; khi Gemini lỗi, địa điểm dùng mô tả mẫu. Trang Import hiện số địa điểm do AI viết / dùng mô tả mẫu. Ảnh vẫn là ảnh minh họa, điểm đánh giá bắt đầu từ 0.

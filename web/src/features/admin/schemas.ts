@@ -3,7 +3,7 @@ import type { CreateCityDTO } from '../../types/city';
 import type { CreatePlaceDTO } from '../../types/place';
 
 /*
- * Cùng giới hạn và câu báo lỗi với backend (tài liệu 09, mục 3.6) để người dùng thấy lỗi ngay ở form;
+ * Cùng giới hạn và câu báo lỗi với validate của backend để người dùng thấy lỗi ngay ở form;
  * backend vẫn kiểm tra lại và trả 400 VALIDATION_ERROR nếu dữ liệu sai.
  * Các ô số trong form trả về `number | undefined` (rỗng → undefined), không phải chuỗi.
  */

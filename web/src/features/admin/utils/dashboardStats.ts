@@ -2,7 +2,7 @@ import type { AdminReview } from '../../../types/admin';
 import type { City } from '../../../types/city';
 
 /*
- * API thống kê chỉ trả số đếm, không có số liệu theo thời gian (tài liệu 08, mục 4).
+ * API thống kê (GET /admin/dashboard/stats) chỉ trả số đếm, không có số liệu theo thời gian.
  * Các chuỗi theo tháng dưới đây tính phía client từ `createdAt` của danh sách users / reviews.
  */
 

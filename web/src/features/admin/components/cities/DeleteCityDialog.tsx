@@ -17,7 +17,7 @@ type Stage =
   | { kind: 'blocked'; cityId: string; message: string };
 
 /**
- * Xóa thành phố (tài liệu 09, mục 3.1):
+ * Xóa thành phố:
  * 1. Xác nhận → DELETE.
  *    - CITY_HAS_TRIPS: còn chuyến đi của người dùng → báo không thể xóa (backend kiểm tra điều này trước).
  *    - CITY_HAS_PLACES: còn địa điểm → bước 2.
