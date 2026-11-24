@@ -148,6 +148,24 @@ describe('authService — phân loại lỗi theo mã', () => {
     });
   });
 
+  it('lỗi: mất mạng (không có phản hồi) → câu tiếng Việt dễ hiểu thay cho "Network Error"', async () => {
+    vi.spyOn(apiClient, 'post').mockRejectedValue(new ApiError('Network Error', { status: null }));
+    await expect(authService.register({ name: 'A', email: 'a@gmail.com', password: 'MatKhau1' })).rejects.toMatchObject({
+      message: 'Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.',
+      status: null,
+    });
+  });
+
+  it('lỗi: máy chủ phản hồi quá lâu (ECONNABORTED, vd Render đang khởi động) → câu tiếng Việt', async () => {
+    vi.spyOn(apiClient, 'post').mockRejectedValue(
+      new ApiError('timeout of 60000ms exceeded', { status: null, code: 'ECONNABORTED' })
+    );
+    await expect(authService.login({ email: 'a@gmail.com', password: 'MatKhau1' })).rejects.toMatchObject({
+      message: 'Máy chủ phản hồi quá lâu, vui lòng thử lại.',
+      code: 'ECONNABORTED',
+    });
+  });
+
   it('chỉ ACCOUNT_UNVERIFIED là "chưa xác thực"; WEAK_PASSWORD không phải lỗi OTP', () => {
     expect(isUnverifiedLoginError(new ApiError('x', { status: 400, code: 'ACCOUNT_UNVERIFIED' }))).toBe(true);
     expect(isUnverifiedLoginError(new ApiError('x', { status: 400, code: 'MISSING_FIELDS' }))).toBe(false);

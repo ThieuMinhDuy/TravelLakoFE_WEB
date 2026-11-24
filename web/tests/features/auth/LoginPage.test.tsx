@@ -94,4 +94,39 @@ describe('Màn Đăng nhập', () => {
     expect(sessionStorage.getItem('tripmate_auth')).toContain('jwt-123');
     expect(localStorage.getItem('tripmate_auth')).toBeNull();
   });
+
+  it('lỗi: tài khoản bị khóa (ACCOUNT_BLOCKED) → báo lỗi, không đăng nhập, không sang màn OTP', async () => {
+    vi.mocked(authService.login).mockRejectedValue(
+      new ApiError('Tài khoản của bạn đã bị khóa!', { status: 403, code: 'ACCOUNT_BLOCKED' })
+    );
+    renderWithProviders(<LoginPage />, { route: '/login' });
+    await fillAndSubmit('bi.khoa@gmail.com', 'MatKhau1');
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Tài khoản của bạn đã bị khóa!');
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/login$/);
+  });
+
+  it('lỗi: đăng nhập sai quá nhiều lần (RATE_LIMITED 429) → hiện thông báo của máy chủ', async () => {
+    vi.mocked(authService.login).mockRejectedValue(
+      new ApiError('Bạn đã thử đăng nhập quá nhiều lần, vui lòng thử lại sau 15 phút.', {
+        status: 429,
+        code: 'RATE_LIMITED',
+        data: { retryAfter: 900 },
+      })
+    );
+    renderWithProviders(<LoginPage />, { route: '/login' });
+    await fillAndSubmit('a@gmail.com', 'MatKhau1');
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('thử đăng nhập quá nhiều lần');
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
+  });
+
+  it('lỗi: email sai định dạng → chặn ngay ở form, không gọi API', async () => {
+    renderWithProviders(<LoginPage />, { route: '/login' });
+    await fillAndSubmit('khong-phai-email', 'MatKhau1');
+
+    expect(await screen.findByText('Email không hợp lệ')).toBeInTheDocument();
+    expect(authService.login).not.toHaveBeenCalled();
+  });
 });

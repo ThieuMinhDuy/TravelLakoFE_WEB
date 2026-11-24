@@ -68,6 +68,30 @@ describe('Màn xác thực OTP', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Bạn đã nhập sai quá 5 lần');
     expect(screen.getByText(/Mã cũ đã hết hiệu lực/)).toBeInTheDocument();
   });
+
+  it('lỗi: nhập sai mã (OTP_INVALID) → hiện số lần thử còn lại, xóa trắng ô để nhập lại', async () => {
+    vi.mocked(authService.verifyOtp).mockRejectedValue(
+      new ApiError('Mã OTP không chính xác! Bạn còn 4 lần thử.', { status: 400, code: 'OTP_INVALID' })
+    );
+    renderWithProviders(<VerifyOtpPage />, { route: '/verify-otp?email=moi%40gmail.com' });
+
+    await typeOtp('111111');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Bạn còn 4 lần thử');
+    expect(screen.getByLabelText('Mã OTP 6 số')).toHaveValue('');
+    // Mã sai nhưng vẫn còn hiệu lực → không bắt gửi mã mới
+    expect(screen.queryByText(/Mã cũ đã hết hiệu lực/)).not.toBeInTheDocument();
+  });
+
+  it('lỗi: mã đã hết hạn (OTP_EXPIRED) → báo lỗi và nhắc gửi mã mới', async () => {
+    vi.mocked(authService.verifyOtp).mockRejectedValue(
+      new ApiError('Mã OTP đã hết hạn!', { status: 400, code: 'OTP_EXPIRED' })
+    );
+    renderWithProviders(<VerifyOtpPage />, { route: '/verify-otp?email=moi%40gmail.com' });
+
+    await typeOtp('123456');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Mã OTP đã hết hạn!');
+    expect(screen.getByText(/Mã cũ đã hết hiệu lực/)).toBeInTheDocument();
+  });
 });
 
 describe('Quên / đặt lại mật khẩu', () => {
@@ -99,6 +123,31 @@ describe('Quên / đặt lại mật khẩu', () => {
     expect(await screen.findByText('Mật khẩu phải tối thiểu 6 ký tự...')).toBeInTheDocument();
     expect(screen.getByLabelText('Mật khẩu mới')).toBeInTheDocument();
     expect(screen.queryByLabelText('Mã OTP 6 số')).not.toBeInTheDocument();
+  });
+
+  it('lỗi: quên mật khẩu với email chưa đăng ký (USER_NOT_FOUND) → báo lỗi, ở lại trang', async () => {
+    vi.mocked(authService.forgotPassword).mockRejectedValue(
+      new ApiError('Không tìm thấy tài khoản với email này!', { status: 404, code: 'USER_NOT_FOUND' })
+    );
+    renderWithProviders(<ForgotPasswordPage />, { route: '/forgot-password' });
+
+    await userEvent.type(screen.getByLabelText('Địa chỉ email'), 'chua.co@gmail.com');
+    await userEvent.click(screen.getByRole('button', { name: /Gửi mã/ }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Không tìm thấy tài khoản với email này!');
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/forgot-password$/);
+  });
+
+  it('lỗi: mật khẩu nhập lại không khớp → chặn ở form, không gọi API', async () => {
+    renderWithProviders(<ResetPasswordPage />, { route: '/reset-password?email=moi%40gmail.com' });
+
+    await typeOtp('123456');
+    await userEvent.type(await screen.findByLabelText('Mật khẩu mới'), 'MatKhau1');
+    await userEvent.type(screen.getByLabelText('Nhập lại mật khẩu'), 'MatKhau2');
+    await userEvent.click(screen.getByRole('button', { name: 'Đặt lại mật khẩu' }));
+
+    expect(await screen.findByText('Mật khẩu nhập lại không khớp')).toBeInTheDocument();
+    expect(authService.resetPassword).not.toHaveBeenCalled();
   });
 });
 
