@@ -62,13 +62,15 @@ export type BackendErrorCode =
   | 'CITY_EXISTS'
   | 'CITY_NOT_FOUND'
   | 'CITY_HAS_PLACES'
-  | 'CITY_HAS_TRIPS';
+  | 'CITY_HAS_TRIPS'
+  | 'OSM_UNAVAILABLE'
+  | 'GEOCODE_FAILED';
 
 /** Lỗi API có mã backend thuộc một trong các mã cho trước */
 export const hasErrorCode = (error: unknown, ...codes: BackendErrorCode[]): boolean =>
   isApiError(error) && codes.includes(error.code as BackendErrorCode);
 
-/** Số giây phải đợi của lỗi 429 (`OTP_COOLDOWN` / `RATE_LIMITED`); null nếu backend không gửi */
+/** Số giây nên đợi trước khi thử lại (`OTP_COOLDOWN`, `RATE_LIMITED`, `OSM_UNAVAILABLE`); null nếu backend không gửi */
 export const getRetryAfter = (error: unknown): number | null => {
   const value = isApiError(error) ? (error.data as { retryAfter?: unknown } | undefined)?.retryAfter : undefined;
   return typeof value === 'number' && value > 0 ? Math.ceil(value) : null;

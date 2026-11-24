@@ -162,7 +162,8 @@ export interface AdminReviewFilters {
  * POST /admin/import/osm
  * - cityId: thành phố đã có trong DB
  * - cityName: tìm theo tên (không phân biệt hoa thường); chưa có thì backend tự tạo thành phố mới
- * `limit` là số địa điểm tối đa cho MỖI loại.
+ * `limit` là số địa điểm MỚI (chưa có trong hệ thống) tối đa cho MỖI loại: import lại sẽ lấy thêm địa điểm khác.
+ * Số thực tế có thể ít hơn khi khu vực không đủ địa điểm (hay gặp ở điểm tham quan).
  */
 export type ImportOsmDTO = { cityId: string; limit?: number } | { cityName: string; limit?: number };
 
@@ -186,8 +187,13 @@ export interface ImportEnrichment {
   failedTypes: ItemType[];
 }
 
+/** Nguồn dữ liệu của lần import: Overpass (chính) | Nominatim (dự phòng khi Overpass quá tải, không có địa điểm dạng khu vực) */
+export type ImportSource = 'overpass' | 'nominatim';
+
 export interface ImportStatsResponse {
   message: string;
+  /** Không có ở bản backend cũ */
+  source?: ImportSource;
   stats?: ImportStats;
   enrichment?: ImportEnrichment;
 }

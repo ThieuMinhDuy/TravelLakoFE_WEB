@@ -17,7 +17,6 @@ const MESSAGE_MAP: [prefix: string, vi: string][] = [
   ['Cannot delete the last administrator', 'Không thể xóa quản trị viên cuối cùng'],
   ['Invalid place type', 'Loại địa điểm không hợp lệ'],
   ['Please provide either cityId or cityName', 'Vui lòng chọn thành phố'],
-  ['All OpenStreetMap Overpass servers', 'Máy chủ OpenStreetMap đang bận, vui lòng thử lại sau ít phút'],
 ];
 
 /**
@@ -31,6 +30,7 @@ export function adminErrorMessage(error: unknown, fallback = 'Đã xảy ra lỗ
   if (isApiError(error)) {
     if (error.code === 'ECONNABORTED') return 'Máy chủ phản hồi quá lâu, vui lòng thử lại';
     if (error.status === 500) return 'Máy chủ gặp sự cố, vui lòng thử lại sau';
+    if (hasErrorCode(error, 'OSM_UNAVAILABLE')) return 'Máy chủ OpenStreetMap đang bận, vui lòng thử lại sau ít phút';
   }
 
   const match = MESSAGE_MAP.find(([prefix]) => error.message.startsWith(prefix));

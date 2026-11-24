@@ -9,18 +9,22 @@ import {
   Coffee,
   DownloadCloud,
   Hotel,
+  Info,
   Landmark,
   Loader2,
   MapPin,
   RotateCcw,
   Sparkles,
   Utensils,
+  X,
 } from 'lucide-react';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
+import { useCooldown } from '../../../hooks/useCooldown';
+import { getRetryAfter, hasErrorCode } from '../../../services/apiError';
 import { Button } from '../../../components/common/Button';
 import { buttonVariants } from '../../../components/common/buttonVariants';
 import { cn } from '../../../utils/cn';
-import type { ImportEnrichment, ImportOsmDTO, ImportStats } from '../../../types/admin';
+import type { ImportEnrichment, ImportOsmDTO, ImportSource, ImportStats } from '../../../types/admin';
 import { PLACE_TYPE_LABELS, toPlaceType } from '../../../utils/place';
 import { toSearchKey } from '../../../utils/searchKey';
 import { AdminPageHeader } from '../components/AdminPageHeader';
@@ -34,12 +38,19 @@ import '../../../components/common/css/Input.css';
 import './css/AdminPages.css';
 import './css/AdminImport.css';
 
-/** Các bước ước lượng theo thời gian (API chỉ trả kết quả một lần ở cuối) */
+/**
+ * Các bước ước lượng theo thời gian (API chỉ trả kết quả một lần ở cuối).
+ * Backend chờ OpenStreetMap tối đa 90 giây nên bước AI chỉ hiện từ giây 100; bước AI không bao giờ làm import
+ * thất bại (Gemini lỗi thì backend dùng mô tả mẫu), lỗi OSM_UNAVAILABLE luôn thuộc bước lấy dữ liệu.
+ */
 const STEPS = [
   { from: 0, label: 'Tìm tọa độ thành phố' },
-  { from: 4, label: 'Lấy dữ liệu từ OpenStreetMap' },
-  { from: 20, label: 'AI viết mô tả, giá tham khảo & lưu địa điểm' },
+  { from: 4, label: 'Lấy dữ liệu từ OpenStreetMap (có thể mất tới 1,5 phút)' },
+  { from: 100, label: 'AI viết mô tả, giá tham khảo & lưu địa điểm' },
 ] as const;
+const OSM_STEP = 1;
+/** Backend không gửi retryAfter thì vẫn đợi chừng này giây trước khi cho thử lại */
+const OSM_RETRY_DEFAULT_SECONDS = 60;
 
 const RESULT_ITEMS: { key: keyof ImportStats; label: string; icon: React.ElementType }[] = [
   { key: 'attractionsImported', label: 'Điểm tham quan', icon: Landmark },
@@ -52,6 +63,7 @@ interface ImportResult {
   cityName: string;
   stats: ImportStats;
   enrichment?: ImportEnrichment;
+  source?: ImportSource;
   durationSec: number;
 }
 
@@ -82,12 +94,15 @@ export const AdminImportPage: React.FC = () => {
   const vnQuery = useVietnamCities();
   const importOsm = useImportOsm();
   const [result, setResult] = useState<ImportResult | null>(null);
+  // OSM_UNAVAILABLE → khóa nút "Thử lại" đến hết thời gian backend khuyên đợi (retryAfter)
+  const retryCooldown = useCooldown(0, false);
 
   const {
     control,
     handleSubmit,
     watch,
     setValue,
+    setError,
     formState: { errors },
   } = useForm<ImportFormValues>({
     resolver: zodResolver(importFormSchema),
@@ -152,11 +167,26 @@ export const AdminImportPage: React.FC = () => {
           cityName,
           stats,
           enrichment: res.enrichment,
+          source: res.source,
           durationSec: Math.round((Date.now() - startedAt) / 1000),
         });
       },
+      onError: (error) => {
+        if (hasErrorCode(error, 'OSM_UNAVAILABLE')) {
+          retryCooldown.restart(getRetryAfter(error) ?? OSM_RETRY_DEFAULT_SECONDS);
+        }
+        // Không tìm được tọa độ: báo ngay ở ô thành phố (câu của backend đã là tiếng Việt), cần chọn tên khác
+        if (hasErrorCode(error, 'GEOCODE_FAILED')) {
+          setError('target', { message: error.message });
+        }
+      },
     });
   };
+
+  const osmBusy = hasErrorCode(importOsm.error, 'OSM_UNAVAILABLE');
+  // GEOCODE_FAILED đã hiện ở ô thành phố, không cần khung lỗi / nút "Thử lại"
+  const showErrorPanel = importOsm.isError && !running && !hasErrorCode(importOsm.error, 'GEOCODE_FAILED');
+  const retryWait = retryCooldown.secondsLeft;
 
   return (
     <div className="admin-page">
@@ -225,7 +255,7 @@ export const AdminImportPage: React.FC = () => {
               <div className="admin-import__field">
                 <div className="admin-import__limit-head">
                   <label htmlFor="import-limit" className="ui-select-label">
-                    Số địa điểm tối đa mỗi loại
+                    Số địa điểm mới tối đa mỗi loại
                   </label>
                   <output htmlFor="import-limit" className="admin-import__limit-value">
                     {field.value}
@@ -244,8 +274,9 @@ export const AdminImportPage: React.FC = () => {
                   style={{ '--fill': `${((field.value - IMPORT_LIMIT.min) / (IMPORT_LIMIT.max - IMPORT_LIMIT.min)) * 100}%` } as React.CSSProperties}
                 />
                 <p className="ui-select-message--helper">
-                  4 loại × {field.value} → tối đa {field.value * 4} địa điểm. Địa điểm đã có (trùng tên trong cùng thành
-                  phố) sẽ được bỏ qua.
+                  4 loại × {field.value} → tối đa {field.value * 4} địa điểm mới. Địa điểm đã có (trùng tên trong cùng
+                  thành phố) được bỏ qua, nên import lại sẽ lấy thêm địa điểm khác. Khu vực ít địa điểm (nhất là điểm
+                  tham quan) có thể nhận ít hơn.
                 </p>
               </div>
             )}
@@ -276,7 +307,10 @@ export const AdminImportPage: React.FC = () => {
               Điểm đánh giá bắt đầu từ 0. Hãy rà lại ở trang Địa điểm trước khi công bố.
             </p>
           </div>
-          <p className="admin-import__note">Thường mất 30–60 giây. Máy chủ miễn phí có thể cần thêm thời gian khởi động.</p>
+          <p className="admin-import__note">
+            Có thể mất tới 2–3 phút: máy chủ OpenStreetMap miễn phí hay quá tải, máy chủ của hệ thống cũng có thể cần
+            khoảng 1 phút để khởi động.
+          </p>
         </aside>
       </div>
 
@@ -288,38 +322,33 @@ export const AdminImportPage: React.FC = () => {
             </h2>
             <span className="admin-import__elapsed">{elapsed}s</span>
           </header>
-          <ol className="admin-import__steps">
-            {STEPS.map((step, i) => (
-              <li
-                key={step.label}
-                className={cn(i < stepIndex && 'is-done', i === stepIndex && 'is-active')}
-                aria-current={i === stepIndex ? 'step' : undefined}
-              >
-                <span className="admin-import__step-icon">
-                  {i < stepIndex ? <Check /> : i === stepIndex ? <Loader2 className="animate-spin" /> : i + 1}
-                </span>
-                {step.label}
-              </li>
-            ))}
-          </ol>
+          <ImportSteps current={stepIndex} />
           <p className="admin-import__note">Vui lòng không đóng trang trong lúc import.</p>
         </section>
       )}
 
-      {importOsm.isError && !running && (
+      {showErrorPanel && (
         <section className="admin-import__error glass" role="alert">
           <AlertTriangle aria-hidden="true" />
           <div>
             <h2>Import thất bại</h2>
-            <p>{adminErrorMessage(importOsm.error, 'Không import được dữ liệu')}</p>
+            <p>
+              {osmBusy
+                ? retryWait > 0
+                  ? `Máy chủ OpenStreetMap đang bận. Vui lòng thử lại sau ${retryWait} giây.`
+                  : 'Máy chủ OpenStreetMap đang bận. Bạn có thể thử lại.'
+                : adminErrorMessage(importOsm.error, 'Không import được dữ liệu')}
+            </p>
+            {osmBusy && <ImportSteps current={OSM_STEP} failed />}
           </div>
           <Button
             variant="outline"
             size="sm"
             leftIcon={<RotateCcw className="w-4 h-4" />}
+            disabled={retryWait > 0}
             onClick={handleSubmit(onSubmit)}
           >
-            Thử lại
+            {retryWait > 0 ? `Thử lại sau ${retryWait}s` : 'Thử lại'}
           </Button>
         </section>
       )}
@@ -334,13 +363,13 @@ export const AdminImportPage: React.FC = () => {
                     Đã thêm <strong>{result.stats.totalImported}</strong> địa điểm cho {result.cityName}
                   </>
                 ) : (
-                  <>Không có địa điểm mới cho {result.cityName}</>
+                  <>Không còn địa điểm mới cho {result.cityName}</>
                 )}
               </h2>
               <p>
                 {result.stats.totalImported > 0
-                  ? `Hoàn tất sau ${result.durationSec} giây.`
-                  : 'Các địa điểm tìm được đều đã có trong hệ thống. Thử tăng số lượng mỗi loại để lấy thêm.'}
+                  ? `Hoàn tất sau ${result.durationSec} giây. Import lại để lấy thêm địa điểm.`
+                  : 'Không còn địa điểm mới trong khu vực này: các địa điểm tìm được đều đã có trong hệ thống.'}
               </p>
             </div>
             {resultCity && result.stats.totalImported > 0 && (
@@ -353,6 +382,13 @@ export const AdminImportPage: React.FC = () => {
               </Link>
             )}
           </header>
+          {result.source === 'nominatim' && (
+            <p className="admin-import__ai" role="note">
+              <Info aria-hidden="true" />
+              Máy chủ OpenStreetMap chính đang quá tải nên đã dùng nguồn dự phòng. Có thể thiếu một số điểm tham quan
+              dạng khu vực (hồ, công viên); import lại sau để bổ sung.
+            </p>
+          )}
           {result.enrichment && result.stats.totalImported > 0 && <EnrichmentSummary enrichment={result.enrichment} />}
           <dl className="admin-import__stats">
             {RESULT_ITEMS.map(({ key, label, icon: Icon }) => (
@@ -370,6 +406,31 @@ export const AdminImportPage: React.FC = () => {
     </div>
   );
 };
+
+/** Danh sách bước: trước `current` là xong; `current` đang chạy, hoặc bị lỗi khi `failed` */
+const ImportSteps: React.FC<{ current: number; failed?: boolean }> = ({ current, failed = false }) => (
+  <ol className={cn('admin-import__steps', failed && 'admin-import__steps--compact')}>
+    {STEPS.map((step, i) => {
+      const state = i < current ? 'done' : i === current ? (failed ? 'failed' : 'active') : 'todo';
+      return (
+        <li
+          key={step.label}
+          className={cn(state !== 'todo' && `is-${state}`)}
+          aria-current={state === 'active' ? 'step' : undefined}
+        >
+          <span className="admin-import__step-icon">
+            {state === 'done' && <Check />}
+            {state === 'active' && <Loader2 className="animate-spin" />}
+            {state === 'failed' && <X />}
+            {state === 'todo' && i + 1}
+          </span>
+          {step.label}
+          {state === 'failed' && <span className="sr-only"> (lỗi ở bước này)</span>}
+        </li>
+      );
+    })}
+  </ol>
+);
 
 /** Phần do AI viết và phần dùng mô tả mẫu trong lần import vừa xong */
 const EnrichmentSummary: React.FC<{ enrichment: ImportEnrichment }> = ({ enrichment }) => {

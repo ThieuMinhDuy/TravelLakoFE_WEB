@@ -17,8 +17,12 @@ import type {
   ImportStatsResponse,
 } from '../../../types/admin';
 
-/** Import OSM: geocode + thử tối đa 3 máy chủ Overpass + lưu từng địa điểm → có thể mất 30–60 giây */
-export const IMPORT_TIMEOUT_MS = 120_000;
+/**
+ * Import OSM có thể mất tới 2–3 phút: Render khởi động (~50 giây) + tìm tọa độ (tối đa 10 giây)
+ * + Overpass (tối đa 90 giây) + AI viết mô tả (tối đa 25 giây) + lưu → đặt 210 giây theo khuyến nghị của backend.
+ * FE tự hủy sớm thì backend vẫn import xong nhưng admin lại thấy báo lỗi.
+ */
+export const IMPORT_TIMEOUT_MS = 210_000;
 
 /**
  * Lớp bảo vệ thêm: backend đã ngừng trả `otp`, nhưng vẫn loại `otp` / `password`

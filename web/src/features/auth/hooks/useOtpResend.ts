@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useToast } from '../../../contexts/toast/ToastContext';
 import { getRetryAfter, hasErrorCode } from '../../../services/apiError';
 import type { MessageResponse } from '../../../types/api';
-import type { Cooldown } from './useCooldown';
+import type { Cooldown } from '../../../hooks/useCooldown';
 
 /** Thời gian chờ mặc định giữa hai lần gửi mã (khớp backend) khi lỗi không kèm `retryAfter` */
 export const OTP_RESEND_SECONDS = 60;

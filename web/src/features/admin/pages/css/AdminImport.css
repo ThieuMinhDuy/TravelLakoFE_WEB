@@ -242,6 +242,36 @@
   color: #047857;
 }
 
+.admin-import__steps li.is-failed {
+  font-weight: 600;
+  color: var(--glass-text);
+}
+
+.admin-import__steps li.is-failed .admin-import__step-icon {
+  background: rgb(220 38 38 / 0.1);
+  color: #dc2626;
+}
+
+/* Bản thu gọn đặt trong khung lỗi: cho biết import dừng ở bước nào */
+.admin-import__steps--compact {
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.admin-import__steps--compact li {
+  font-size: 0.8125rem;
+}
+
+.admin-import__steps--compact .admin-import__step-icon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.admin-import__steps--compact .admin-import__step-icon svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
 /* Kết quả */
 .admin-import__stats {
   display: grid;

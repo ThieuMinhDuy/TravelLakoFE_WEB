@@ -19,7 +19,7 @@ import { OtpInput } from '../components/OtpInput';
 import { ResendOtp } from '../components/ResendOtp';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
 import { useCompleteLogin } from '../hooks/useCompleteLogin';
-import { useCooldown } from '../hooks/useCooldown';
+import { useCooldown } from '../../../hooks/useCooldown';
 import { OTP_RESEND_SECONDS, useOtpResend } from '../hooks/useOtpResend';
 import { useSlowHint } from '../hooks/useSlowHint';
 import { authService, isOtpRenewRequired } from '../services/authService';

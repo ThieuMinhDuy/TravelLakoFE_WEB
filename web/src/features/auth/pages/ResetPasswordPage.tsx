@@ -23,7 +23,7 @@ import { ResendOtp } from '../components/ResendOtp';
 import { slideVariants } from '../components/motion';
 import { useAuthNavigation } from '../hooks/useAuthNavigation';
 import { hasErrorCode } from '../../../services/apiError';
-import { useCooldown } from '../hooks/useCooldown';
+import { useCooldown } from '../../../hooks/useCooldown';
 import { OTP_RESEND_SECONDS, useOtpResend } from '../hooks/useOtpResend';
 import { useSlowHint } from '../hooks/useSlowHint';
 import { newPasswordSchema, type NewPasswordValues } from '../schemas';
