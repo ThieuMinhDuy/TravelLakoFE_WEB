@@ -36,7 +36,7 @@
 }
 
 .ui-tabs__tab:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .ui-tabs__tab--active .ui-tabs__badge {
-  background-color: var(--color-oceanBlue, #0369A1);
+  background-color: var(--color-brand);
   color: #FFFFFF;
 }
 
@@ -69,7 +69,7 @@
 }
 
 .ui-tabs__panel:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 4px;
   border-radius: 0.5rem;
 }
@@ -85,8 +85,8 @@
 }
 
 .ui-tabs--underline .ui-tabs__tab--active {
-  color: var(--color-oceanBlue, #0369A1);
-  border-bottom-color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-brand);
+  border-bottom-color: var(--color-brand);
 }
 
 /* --- Biến thể pills -------------------------------------------------- */
@@ -104,6 +104,6 @@
 
 .ui-tabs--pills .ui-tabs__tab--active {
   background-color: var(--color-surfaceWhite, #FFFFFF);
-  color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-brand);
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
 }

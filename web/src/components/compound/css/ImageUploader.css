@@ -85,8 +85,8 @@
 
 .ui-image-uploader__dropzone:focus-visible {
   outline: none;
-  border-color: var(--color-oceanBlue, #0369A1);
-  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.15);
+  border-color: var(--color-brand);
+  box-shadow: var(--focus-ring);
 }
 
 .ui-image-uploader__dropzone:disabled {
@@ -95,8 +95,8 @@
 
 /* Đang kéo ảnh vào vùng thả */
 .ui-image-uploader__dropzone--dragging {
-  border-color: var(--color-oceanBlue, #0369A1);
-  background-color: var(--color-oceanBlueLight, #F0F9FF);
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-soft);
 }
 
 .ui-image-uploader__icon-box {

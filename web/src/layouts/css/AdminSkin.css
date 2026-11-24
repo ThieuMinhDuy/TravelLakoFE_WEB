@@ -11,7 +11,7 @@
 [data-surface='admin'] .ui-card {
   border: 1px solid var(--glass-border);
   border-radius: var(--glass-radius);
-  background: rgb(255 255 255 / 0.55);
+  background: var(--glass-regular);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow: var(--glass-inner), var(--glass-shadow);
@@ -20,7 +20,7 @@
 /* --------------------------------- Button -------------------------------- */
 
 [data-surface='admin'] .ui-button {
-  border-radius: 9999px;
+  border-radius: var(--radius-control);
   transition:
     transform 0.35s var(--glass-spring),
     background 0.2s ease,
@@ -37,11 +37,11 @@
   border-color: transparent;
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.2),
-    0 2px 6px -2px rgb(3 105 161 / 0.4);
+    0 2px 6px -2px rgb(var(--brand-rgb) / 0.4);
 }
 
 [data-surface='admin'] .ui-button--primary:hover:not(:disabled) {
-  background: #075985;
+  background: var(--color-brand-hover);
 }
 
 [data-surface='admin'] .ui-button--danger {
@@ -54,7 +54,7 @@
 [data-surface='admin'] .ui-button--outline,
 [data-surface='admin'] .ui-button--secondary {
   border: 1px solid rgb(255 255 255 / 0.75);
-  background: rgb(255 255 255 / 0.55);
+  background: var(--glass-regular);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
   backdrop-filter: blur(12px) saturate(160%);
   color: var(--glass-text);
@@ -70,7 +70,7 @@
 }
 
 [data-surface='admin'] .ui-button--ghost:hover:not(:disabled) {
-  background: rgb(255 255 255 / 0.55);
+  background: var(--glass-regular);
 }
 
 [data-surface='admin'] .ui-button:focus-visible {
@@ -84,7 +84,7 @@
 [data-surface='admin'] .ui-textarea,
 [data-surface='admin'] .ui-data-table__search-input {
   border: 1px solid rgb(15 23 42 / 0.1);
-  border-radius: 0.9rem;
+  border-radius: var(--radius-control);
   background: rgb(255 255 255 / 0.72);
   box-shadow: inset 0 1px 2px rgb(15 23 42 / 0.05);
   color: var(--glass-text);
@@ -94,7 +94,7 @@
 [data-surface='admin'] .ui-select:focus,
 [data-surface='admin'] .ui-textarea:focus,
 [data-surface='admin'] .ui-data-table__search-input:focus {
-  border-color: rgb(3 105 161 / 0.55);
+  border-color: rgb(var(--brand-rgb) / 0.55);
   background: rgb(255 255 255 / 0.95);
   box-shadow: var(--glass-focus);
 }
@@ -130,7 +130,7 @@
 }
 
 [data-surface='admin'] .ui-badge--primary {
-  background: rgb(224 242 254 / 0.85);
+  background: var(--color-brand-soft);
 }
 
 [data-surface='admin'] .ui-badge--success {
@@ -151,7 +151,7 @@
 
 [data-surface='admin'] .ui-data-table__container {
   border: 1px solid var(--glass-border);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-card);
   background: rgb(255 255 255 / 0.62);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
 }
@@ -162,7 +162,7 @@
 }
 
 [data-surface='admin'] .ui-data-table__thead {
-  background: rgb(255 255 255 / 0.55);
+  background: var(--glass-regular);
   border-bottom: 1px solid rgb(15 23 42 / 0.07);
   color: var(--glass-text-muted);
 }
@@ -187,7 +187,7 @@
 }
 
 [data-surface='admin'] .ui-data-table__pagination-btn {
-  border-radius: 9999px;
+  border-radius: var(--radius-control);
   border-color: rgb(255 255 255 / 0.8);
   background: rgb(255 255 255 / 0.6);
   padding: 0.35rem;
@@ -203,7 +203,7 @@
 
 [data-surface='admin'] .ui-modal__dialog {
   border: 1px solid rgb(255 255 255 / 0.7);
-  border-radius: 1.75rem;
+  border-radius: var(--radius-card);
   background: rgb(255 255 255 / 0.82);
   -webkit-backdrop-filter: blur(30px) saturate(190%);
   backdrop-filter: blur(30px) saturate(190%);
@@ -230,7 +230,7 @@
   top: 0.75rem;
   bottom: 0.75rem;
   border: 1px solid rgb(255 255 255 / 0.7);
-  border-radius: 1.75rem;
+  border-radius: var(--radius-card);
   overflow: hidden;
   background: rgb(255 255 255 / 0.8);
   -webkit-backdrop-filter: blur(30px) saturate(190%);

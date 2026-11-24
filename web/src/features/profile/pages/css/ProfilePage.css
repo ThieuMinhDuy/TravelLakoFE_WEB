@@ -3,22 +3,16 @@
    ========================================================================== */
 
 .profile-page {
-  max-width: 80rem;
+  max-width: var(--layout-content-width);
   margin: 0 auto;
-  padding: 0 1rem 4rem;
-}
-
-@media (min-width: 640px) {
-  .profile-page {
-    padding: 0 2rem 5rem;
-  }
+  padding: 0 var(--layout-gutter) 4rem;
 }
 
 /* --------------------------------------------------------------------------
    1. Phần đầu trang (ảnh bìa + thông tin)
    -------------------------------------------------------------------------- */
 .profile-hero {
-  margin: 0 -1rem;
+  margin: 0 calc(-1 * var(--layout-gutter));
 }
 
 @media (min-width: 640px) {
@@ -95,19 +89,19 @@
   height: 2.25rem;
   border: 2px solid #FFFFFF;
   border-radius: 9999px;
-  background-color: var(--color-oceanBlue, #0369A1);
+  background-color: var(--color-brand);
   color: #FFFFFF;
   cursor: pointer;
   transition: background-color 0.15s, transform 0.15s;
 }
 
 .profile-hero__avatar-btn:hover:not(:disabled) {
-  background-color: var(--color-oceanBlueDark, #075985);
+  background-color: var(--color-brand-hover);
   transform: scale(1.06);
 }
 
 .profile-hero__avatar-btn:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -169,7 +163,7 @@
 }
 
 .profile-hero__edit-btn:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -205,10 +199,10 @@
   gap: 0.25rem;
   padding: 0.1875rem 0.625rem;
   border-radius: 9999px;
-  background-color: var(--color-oceanBlueLight, #F0F9FF);
+  background-color: var(--color-brand-soft);
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-brand);
 }
 
 .profile-hero__tag--budget {
@@ -303,7 +297,7 @@
   gap: 0.25rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-brand);
   text-decoration: none;
 }
 
@@ -352,7 +346,7 @@
 }
 
 .memories-grid__item:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -415,7 +409,7 @@
 }
 
 .memory-viewer__btn:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -525,13 +519,13 @@
 }
 
 .budget-option:focus-within {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
 .budget-option--selected {
-  border-color: var(--color-oceanBlue, #0369A1);
-  background-color: var(--color-oceanBlueLight, #F0F9FF);
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-soft);
 }
 
 /* Radio thật ẩn đi nhưng vẫn nhận focus / bàn phím */
@@ -548,7 +542,7 @@
 }
 
 .budget-option--selected .budget-option__label {
-  color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-brand);
 }
 
 .budget-option__hint {
@@ -604,7 +598,7 @@
   padding: 0.875rem 1.25rem;
   border: 1px dashed #93C5FD;
   border-radius: 0.875rem;
-  background-color: var(--color-oceanBlueLight, #F0F9FF);
+  background-color: var(--color-brand-soft);
 }
 
 .profile-section__notice p {
@@ -628,8 +622,8 @@
   padding: 2rem 1.5rem;
   border-radius: 1.5rem;
   background:
-    radial-gradient(circle at 85% 20%, rgba(13, 148, 136, 0.35), transparent 45%),
-    linear-gradient(135deg, #0F172A, #0B3B5C);
+    radial-gradient(circle at 85% 20%, rgb(var(--brand-rgb) / 0.2), transparent 45%),
+    linear-gradient(135deg, #252B32, #453426);
   color: #FFFFFF;
 }
 
@@ -650,7 +644,7 @@
   height: 3.5rem;
   border-radius: 1rem;
   background-color: rgba(255, 255, 255, 0.12);
-  color: #5EEAD4;
+  color: var(--color-brand);
 }
 
 .ai-banner__text {
@@ -699,7 +693,7 @@
   padding: 0.4375rem 0.875rem;
   border: none;
   border-radius: 0.625rem;
-  background-color: #FA8B02;
+  background-color: var(--color-brand);
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -780,8 +774,8 @@
   height: 5.5rem;
   overflow: hidden;
   border-radius: 0.75rem;
-  background: linear-gradient(135deg, #E0F2FE, #CCFBF1);
-  color: var(--color-oceanBlue, #0369A1);
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
 }
 
 @media (min-width: 640px) {
@@ -828,7 +822,7 @@
 }
 
 .review-item__name a:hover {
-  color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-brand);
 }
 
 .review-item__meta {
@@ -858,7 +852,7 @@
 }
 
 .review-item__delete:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 

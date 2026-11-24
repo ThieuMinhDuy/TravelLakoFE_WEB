@@ -97,7 +97,7 @@
 }
 
 .ui-drawer__close:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 

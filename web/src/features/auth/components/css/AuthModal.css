@@ -4,13 +4,13 @@
    ========================================================================== */
 
 .auth-modal {
-  --auth-orange: #ff8a00;
-  --auth-orange-hover: #f07800;
-  --auth-orange-soft: #ffe9cf;
-  --auth-orange-ring: rgba(255, 138, 0, 0.18);
-  --auth-text: #1f2937;
-  --auth-text-muted: #6b7280;
-  --auth-border: #e5e7eb;
+  --auth-orange: var(--color-brand);
+  --auth-orange-hover: var(--color-brand-hover);
+  --auth-orange-soft: var(--color-brand-soft);
+  --auth-orange-ring: rgb(var(--brand-rgb) / 0.2);
+  --auth-text: var(--color-textMain);
+  --auth-text-muted: var(--color-textSub);
+  --auth-border: var(--color-borderGray);
 
   position: fixed;
   inset: 0;
@@ -31,7 +31,7 @@
   max-width: 25rem;
   margin: auto;
   background-color: #ffffff;
-  border-radius: 1rem;
+  border-radius: var(--radius-card);
   box-shadow:
     0 24px 60px -12px rgba(0, 0, 0, 0.35),
     0 8px 20px -8px rgba(0, 0, 0, 0.15);
@@ -48,7 +48,7 @@
   width: 2rem;
   height: 2rem;
   border: none;
-  border-radius: 9999px;
+  border-radius: var(--radius-control);
   background: transparent;
   color: #9ca3af;
   cursor: pointer;
@@ -64,7 +64,7 @@
 /* Khung đo chiều cao — co giãn mượt khi chuyển màn */
 .auth-modal__viewport {
   overflow: hidden;
-  border-radius: 1rem;
+  border-radius: var(--radius-card);
 }
 
 .auth-modal__content {
@@ -94,7 +94,7 @@
   width: 2.5rem;
   height: 2.5rem;
   margin-bottom: 0.875rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-control);
   background-color: var(--auth-orange-soft);
   color: var(--auth-orange);
   box-shadow: 0 0 0 6px #fff6ec;
@@ -160,7 +160,7 @@
 }
 
 .auth-modal .ui-input {
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   border-color: var(--auth-border);
   padding: 0.6875rem 0.875rem;
   font-size: 0.875rem;
@@ -234,12 +234,12 @@
   width: 100%;
   gap: 0.5rem;
   padding: 0.6875rem 1rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-control);
   border: none;
   background-color: var(--auth-orange);
   color: #ffffff;
   font-size: 0.9375rem;
-  box-shadow: 0 6px 16px -6px rgba(255, 138, 0, 0.6);
+  box-shadow: 0 6px 16px -6px rgb(var(--brand-rgb) / 0.3);
 }
 
 .auth-modal .ui-button.auth-btn:hover:not(:disabled) {
@@ -262,7 +262,7 @@
   align-items: flex-start;
   gap: 0.5rem;
   padding: 0.625rem 0.75rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   background-color: #fef2f2;
   border: 1px solid #fecaca;
   color: #b91c1c;
@@ -319,7 +319,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-control);
   background-color: rgba(255, 255, 255, 0.92);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -334,7 +334,7 @@
   width: 100%;
   padding: 0.625rem 1rem;
   border: 1px solid #d1d5db;
-  border-radius: 9999px;
+  border-radius: var(--radius-control);
   background-color: #ffffff;
   color: #374151;
   font-size: 0.875rem;

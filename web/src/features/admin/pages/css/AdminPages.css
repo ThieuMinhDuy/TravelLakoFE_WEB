@@ -84,8 +84,8 @@
   width: 3rem;
   height: 3rem;
   border-radius: 1rem;
-  color: var(--glass-accent, #0369a1);
-  background: rgb(3 105 161 / 0.08);
+  color: var(--glass-accent, var(--color-brand));
+  background: rgb(var(--brand-rgb) / 0.08);
 }
 
 .admin-stat-card__icon svg {
@@ -187,7 +187,7 @@
 }
 
 .admin-search input:focus {
-  border-color: rgb(3 105 161 / 0.55);
+  border-color: rgb(var(--brand-rgb) / 0.55);
   background: rgb(255 255 255 / 0.95);
   box-shadow: var(--glass-focus);
 }
@@ -339,7 +339,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.3rem 0.35rem 0.3rem 0.85rem;
-  border: 1px solid rgb(3 105 161 / 0.25);
+  border: 1px solid rgb(var(--brand-rgb) / 0.25);
   border-radius: 9999px;
   background: rgb(255 255 255 / 0.75);
   font-size: 0.8125rem;

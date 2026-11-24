@@ -29,14 +29,14 @@
 }
 
 .ui-tag-select__tag:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
 .ui-tag-select__tag--selected {
-  border-color: var(--color-oceanBlue, #0369A1);
-  background-color: var(--color-oceanBlueLight, #F0F9FF);
-  color: var(--color-oceanBlue, #0369A1);
+  border-color: var(--color-brand-text);
+  background-color: var(--color-brand-soft);
+  color: var(--color-brand-text);
 }
 
 .ui-tag-select__tag:disabled {

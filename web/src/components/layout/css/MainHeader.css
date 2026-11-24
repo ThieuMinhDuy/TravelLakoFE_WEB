@@ -30,23 +30,16 @@
 
 /* 3-Part Main Container */
 .main-header__container {
-  max-width: 84rem;
+  max-width: var(--layout-content-width);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  padding-left: var(--layout-gutter);
+  padding-right: var(--layout-gutter);
   height: 4.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .main-header__container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
 }
 
 /* ==========================================================================
@@ -88,7 +81,7 @@
 }
 
 .main-header__brand-highlight {
-  color: #FA8B02;
+  color: var(--color-brand);
 }
 
 /* ==========================================================================
@@ -134,7 +127,7 @@
 /* Active Nav Indicator with Orange Underline */
 .main-header__nav-link--active {
   color: #FFFFFF;
-  border-bottom-color: #FA8B02;
+  border-bottom-color: var(--color-brand);
   font-weight: 700;
 }
 
@@ -219,7 +212,7 @@
 
 .main-header__search-input:focus {
   background-color: rgba(255, 255, 255, 0.25);
-  border-color: #FA8B02;
+  border-color: var(--color-brand);
   box-shadow: 0 0 0 2px rgba(250, 139, 2, 0.3);
 }
 
@@ -306,7 +299,7 @@
 }
 
 .main-header__signup-btn {
-  background-color: #FA8B02;
+  background-color: var(--color-brand);
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.875rem;
@@ -323,7 +316,7 @@
 }
 
 .main-header__signup-btn:hover {
-  background-color: #D37816;
+  background-color: var(--color-brand-hover);
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(250, 139, 2, 0.45);
 }
@@ -358,7 +351,7 @@
   width: 2rem;
   height: 2rem;
   border-radius: 9999px;
-  background-color: #FA8B02;
+  background-color: var(--color-brand);
   color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -587,9 +580,9 @@
 }
 
 .mobile-nav__search-input:focus {
-  border-color: var(--color-oceanBlue, #0369A1);
+  border-color: var(--color-brand);
   background-color: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.15);
+  box-shadow: var(--focus-ring);
 }
 
 .mobile-nav__list {
@@ -618,11 +611,11 @@
 }
 
 .mobile-nav__link:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: -2px;
 }
 
 .mobile-nav__link--active {
-  background-color: var(--color-oceanBlueLight, #F0F9FF);
-  color: var(--color-oceanBlue, #0369A1);
+  background-color: var(--color-brand-soft);
+  color: var(--color-brand);
 }

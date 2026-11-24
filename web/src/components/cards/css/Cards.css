@@ -8,24 +8,24 @@
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--color-borderGray, #E2E8F0);
-  border-radius: 1rem;
+  border-radius: var(--radius-card);
   background-color: var(--color-surfaceWhite, #FFFFFF);
   transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .card:hover {
-  box-shadow: 0 12px 28px -12px rgba(15, 23, 42, 0.2);
+  box-shadow: var(--card-shadow-hover);
   transform: translateY(-2px);
 }
 
 .card:focus-within {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
 .card__media {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--card-image-ratio);
   overflow: hidden;
   background-color: var(--color-bgSubtle, #F1F5F9);
 }
@@ -45,8 +45,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #E0F2FE, #CCFBF1);
-  color: var(--color-oceanBlue, #0369A1);
+  background: var(--color-brand-soft);
+  color: var(--color-brand-text);
 }
 
 .card__badge {
@@ -88,7 +88,7 @@
 }
 
 .card__fav-btn:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -105,12 +105,12 @@
   flex: 1;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0.875rem 1rem 1rem;
+  padding: var(--card-padding);
 }
 
 .card__title {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.35;
   color: #0F172A;
@@ -171,7 +171,7 @@
 }
 
 /* --- TripCard ------------------------------------------------------- */
-.trip-card__status--upcoming { color: var(--color-oceanBlue, #0369A1); }
+.trip-card__status--upcoming { color: var(--color-brand-text); }
 .trip-card__status--ongoing { color: var(--color-coastalTeal, #0D9488); }
 .trip-card__status--past { color: #64748B; }
 
@@ -203,7 +203,7 @@
   display: block;
   aspect-ratio: 3 / 2;
   overflow: hidden;
-  border-radius: 1rem;
+  border-radius: var(--radius-card);
   background-color: var(--color-bgSubtle, #F1F5F9);
 }
 
@@ -215,7 +215,7 @@
 }
 
 .city-card__media:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -262,11 +262,11 @@
 }
 
 .city-card__link:hover {
-  color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-brand-text);
 }
 
 .city-card__link:focus-visible {
-  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
   border-radius: 0.25rem;
 }
@@ -275,19 +275,19 @@
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
-  gap: 1.25rem;
+  gap: var(--grid-gap);
 }
 
 /* Skeleton của thẻ khi đang tải */
 .card-skeleton {
   border: 1px solid var(--color-borderGray, #E2E8F0);
-  border-radius: 1rem;
+  border-radius: var(--radius-card);
   overflow: hidden;
   background-color: #FFFFFF;
 }
 
 .card-skeleton__media {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--card-image-ratio);
 }
 
 .card-skeleton__body {

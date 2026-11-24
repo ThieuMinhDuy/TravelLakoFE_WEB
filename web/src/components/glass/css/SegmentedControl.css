@@ -44,7 +44,7 @@
 
 .glass-segmented__item:focus-visible {
   outline: none;
-  box-shadow: var(--glass-focus, 0 0 0 3px rgb(3 105 161 / 0.28));
+  box-shadow: var(--glass-focus, var(--focus-ring));
 }
 
 .glass-segmented__item:disabled {
@@ -92,6 +92,6 @@
 }
 
 .glass-segmented__item--selected .glass-segmented__count {
-  background: rgb(3 105 161 / 0.12);
-  color: var(--glass-accent, #0369a1);
+  background: rgb(var(--brand-rgb) / 0.12);
+  color: var(--glass-accent, var(--color-brand));
 }

@@ -4,7 +4,7 @@
 
 .ui-spinner {
   animation: spin 1s linear infinite;
-  color: var(--color-oceanBlue, #0369A1);
+  color: var(--color-brand);
 }
 
 .ui-spinner--sm {

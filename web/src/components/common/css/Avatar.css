@@ -9,7 +9,7 @@
   flex-shrink: 0;
   overflow: hidden;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #FA8B02, #F59E0B);
+  background: linear-gradient(135deg, var(--color-brand), #F59E0B);
   color: #FFFFFF;
   font-weight: 700;
   user-select: none;

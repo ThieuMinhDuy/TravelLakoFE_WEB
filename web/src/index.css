@@ -1,34 +1,59 @@
 @import "tailwindcss";
 
 @theme {
-  --color-oceanBlue: #0369A1;
-  --color-oceanBlueDark: #075985;
-  --color-oceanBlueLight: #F0F9FF;
-  --color-softSky: #F0F9FF;
+  --color-brand: #FA8B02;
+  --color-brand-hover: #D87200;
+  --color-brand-text: #9A4E00;
+  --color-brand-soft: #FFF6E9;
+  --color-brand-border: #F6D6AC;
+
+  /* Tương thích class Tailwind của các nhánh cũ; code mới dùng brand. */
+  --color-oceanBlue: var(--color-brand);
+  --color-oceanBlueDark: var(--color-brand-hover);
+  --color-oceanBlueLight: var(--color-brand-soft);
+  --color-softSky: var(--color-brand-soft);
 
   --color-coastalTeal: #0D9488;
   --color-coastalTealLight: #CCFBF1;
 
-  --color-sunsetOrange: #D97706;
-  --color-sunsetOrangeDark: #B45309;
-  --color-sunsetOrangeLight: #FEF3C7;
-  --color-sunsetSand: #D97706;
+  --color-sunsetOrange: var(--color-brand);
+  --color-sunsetOrangeDark: var(--color-brand-hover);
+  --color-sunsetOrangeLight: var(--color-brand-soft);
+  --color-sunsetSand: var(--color-brand);
 
   --color-slateDark: #0F172A;
   --color-slateMuted: #475569;
   --color-grayBg: #FAFAFA;
-  --color-borderGray: #E2E8F0;
+  --color-borderGray: #E9E9E6;
   --color-surfaceWhite: #FFFFFF;
   --color-bgSubtle: #F1F5F9;
 
   --color-bgApp: #FAFAFA;
-  --color-textMain: #0F172A;
-  --color-textSub: #475569;
+  --color-textMain: #252B32;
+  --color-textSub: #667078;
 
   --font-sans: "Open Sans", system-ui, -apple-system, sans-serif;
   --font-heading: "Open Sans", sans-serif;
   --font-script: "Podcast", "Caveat", cursive;
   --font-calendar: "Inter", "Poppins", sans-serif;
+}
+
+:root {
+  --brand-rgb: 250 139 2;
+  --layout-content-width: 77.5rem;
+  --layout-gutter: 1.25rem;
+  --control-height: 2.75rem;
+  --radius-control: 0.75rem;
+  --radius-card: 1rem;
+  --card-image-ratio: 4 / 3;
+  --card-padding: 1.125rem;
+  --grid-gap: 1.5rem;
+  --card-shadow-hover: 0 12px 28px -12px rgb(37 43 50 / 0.2);
+  --focus-ring: 0 0 0 3px rgb(var(--brand-rgb) / 0.2);
+}
+
+@media (min-width: 640px) {
+  :root { --layout-gutter: 2rem; }
 }
 
 body {

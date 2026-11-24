@@ -86,7 +86,7 @@
 .ui-multi-upload__btn:focus-visible,
 .ui-multi-upload__add:focus-visible {
   outline: 2px solid #ffffff;
-  box-shadow: 0 0 0 4px rgb(3 105 161 / 0.6);
+  box-shadow: 0 0 0 4px rgb(var(--brand-rgb) / 0.6);
 }
 
 .ui-multi-upload__btn {
@@ -116,7 +116,7 @@
 }
 
 .ui-multi-upload__btn--cover:hover {
-  background: rgb(3 105 161 / 0.9);
+  background: rgb(var(--brand-rgb) / 0.9);
 }
 
 .ui-multi-upload__cover {
@@ -146,7 +146,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: #0369a1;
+  background: var(--color-brand);
   transition: width 0.2s ease;
 }
 
@@ -176,9 +176,9 @@
 
 .ui-multi-upload__add:hover,
 .ui-multi-upload__add--over {
-  border-color: #0369a1;
+  border-color: var(--color-brand);
   background: rgb(255 255 255 / 0.85);
-  color: #0369a1;
+  color: var(--color-brand);
 }
 
 @media (hover: none) {

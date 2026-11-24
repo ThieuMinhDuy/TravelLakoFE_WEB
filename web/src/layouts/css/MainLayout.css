@@ -29,7 +29,7 @@
   width: 3.25rem;
   height: 3.25rem;
   border-radius: 9999px;
-  background-color: var(--color-oceanBlue, #0369A1);
+  background-color: var(--color-brand);
   color: #FFFFFF;
   border: none;
   cursor: pointer;
@@ -41,7 +41,7 @@
 }
 
 .main-layout__ai-bubble:hover {
-  background-color: var(--color-oceanBlueDark, #075985);
+  background-color: var(--color-brand-hover);
   transform: scale(1.05);
 }
 

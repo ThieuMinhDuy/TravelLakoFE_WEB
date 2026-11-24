@@ -3,7 +3,7 @@
    ========================================================================== */
 
 .ui-card {
-  border-radius: 1rem;
+  border-radius: var(--radius-card);
   border: 1px solid var(--color-borderGray, #E2E8F0);
   background-color: var(--color-surfaceWhite, #FFFFFF);
   padding: 1.5rem;

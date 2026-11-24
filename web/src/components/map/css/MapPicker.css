@@ -40,7 +40,7 @@
   height: 24px;
   border: 3px solid #ffffff;
   border-radius: 50% 50% 50% 0;
-  background: var(--glass-accent, #0369a1);
+  background: var(--glass-accent, var(--color-brand));
   box-shadow: 0 4px 10px rgb(15 23 42 / 0.35);
   transform: rotate(-45deg);
 }

@@ -61,8 +61,8 @@
 }
 
 .ui-data-table__search-input:focus {
-  border-color: var(--color-oceanBlue, #0369A1);
-  box-shadow: 0 0 0 2px rgba(3, 105, 161, 0.15);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 2px rgb(var(--brand-rgb) / 0.15);
 }
 
 .ui-data-table__actions {
