@@ -1,4 +1,5 @@
 export * from './useBodyScrollLock';
+export * from './useCooldown';
 export * from './useDebounce';
 export * from './useDocumentTitle';
 export * from './useFocusTrap';

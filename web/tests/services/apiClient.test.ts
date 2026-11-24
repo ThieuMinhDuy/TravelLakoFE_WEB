@@ -36,14 +36,24 @@ describe('apiClient — chuẩn hóa lỗi thành ApiError', () => {
     expect(hasStatus(error, 403, 404)).toBe(true);
   });
 
-  it('401 ở API cần đăng nhập → đăng xuất phía client và xóa cache', async () => {
+  it('401 ở API cần đăng nhập → đăng xuất, xóa cache, báo "phiên hết hạn" đúng một lần', async () => {
     useAuthStore.getState().setAuth({ _id: '1', name: 'A', email: 'a@gmail.com' }, 'expired', true);
     queryClient.setQueryData(['profile'], { name: 'A' });
+    const listener = vi.fn();
+    const unsubscribe = sessionEvents.subscribe(listener);
 
-    await apiClient.get('/trips', { adapter: failWith(401, { message: 'Token hết hạn' }) }).catch(() => undefined);
+    // Hai request cùng lúc đều nhận 401 → chỉ báo một lần
+    const adapter = failWith(401, { message: 'Token hết hạn' });
+    await Promise.all([
+      apiClient.get('/trips', { adapter }).catch(() => undefined),
+      apiClient.get('/favorites', { adapter }).catch(() => undefined),
+    ]);
+    unsubscribe();
 
     expect(useAuthStore.getState().isAuthenticated).toBe(false);
     expect(queryClient.getQueryData(['profile'])).toBeUndefined();
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledWith({ type: 'expired' });
   });
 
   it('401 khi sai mật khẩu ở /auth/login KHÔNG đăng xuất phiên hiện tại', async () => {

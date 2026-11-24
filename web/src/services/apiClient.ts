@@ -70,6 +70,7 @@ apiClient.interceptors.response.use(
     if (status === 401 && hasSession) {
       useAuthStore.getState().logout();
       queryClient.clear();
+      sessionEvents.emit({ type: 'expired' });
     }
 
     // 403 của middleware `protect` / `admin`, nhận diện theo mã lỗi cố định của backend.

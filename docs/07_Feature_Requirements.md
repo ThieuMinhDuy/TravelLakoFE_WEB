@@ -8,11 +8,13 @@ Tài liệu này đóng vai trò là danh sách kiểm tra (Checklist) toàn b�
 Đây là người dùng mới truy cập ứng dụng, có quyền xem các thông tin công khai để khám phá dịch vụ.
 
 ### Quản lý Tài khoản Cơ bản
-- [ ] **Đăng ký tài khoản**: Form nhập Tên, Email, Mật khẩu.
-- [ ] **Xác thực tài khoản (OTP)**: Nhập mã OTP 6 số gửi về Email sau khi đăng ký thành công.
-- [ ] **Gửi lại mã OTP**: Nút yêu cầu gửi lại mã xác thực nếu quá hạn 60 giây.
-- [ ] **Đăng nhập hệ thống**: Form đăng nhập bằng Email và Mật khẩu.
-- [ ] **Khôi phục mật khẩu**: Yêu cầu khôi phục mật khẩu thông qua mã OTP (Forgot & Reset Password).
+- [x] **Đăng ký tài khoản**: Form nhập Tên, Email, Mật khẩu.
+- [x] **Xác thực tài khoản (OTP)**: Nhập mã OTP 6 số gửi về Email sau khi đăng ký thành công.
+- [x] **Gửi lại mã OTP**: Nút yêu cầu gửi lại mã xác thực nếu quá hạn 60 giây.
+- [x] **Đăng nhập hệ thống**: Form đăng nhập bằng Email và Mật khẩu.
+- [x] **Khôi phục mật khẩu**: Yêu cầu khôi phục mật khẩu thông qua mã OTP (Forgot & Reset Password).
+
+> Giao diện web: `web/src/features/auth/` (các màn auth là popup phủ lên trang đang xem). Có thêm đăng nhập Google và "Ghi nhớ đăng nhập".
 
 ### Khám phá Điểm đến (Cities)
 - [ ] **Danh sách thành phố**: Xem tất cả các thành phố đang được hệ thống hỗ trợ (Đà Nẵng, Hà Nội, TP.HCM...).
@@ -36,10 +38,12 @@ Tài liệu này đóng vai trò là danh sách kiểm tra (Checklist) toàn b�
 Thành viên sở hữu toàn bộ quyền của Khách vãng lai và các tính năng tương tác cá nhân hóa sâu.
 
 ### Quản lý Hồ sơ Cá nhân (Profile)
-- [ ] **Cập nhật thông tin**: Thay đổi ảnh đại diện (Avatar), số điện thoại, ngày sinh, giới tính.
-- [ ] **Thiết lập sở thích du lịch**: Lưu thông tin Sở thích (Travel Preferences) và Ngân sách mong muốn (Favorite Budget) để AI cá nhân hóa gợi ý.
-- [ ] **Thay đổi mật khẩu**: Form đổi mật khẩu bảo mật trong trang cá nhân.
-- [ ] **Tải lên hình ảnh**: Tải ảnh cá nhân/avatar lên server thông qua Cloudinary.
+- [x] **Cập nhật thông tin**: Thay đổi ảnh đại diện (Avatar), số điện thoại, ngày sinh, giới tính.
+- [x] **Thiết lập sở thích du lịch**: Lưu thông tin Sở thích (Travel Preferences) và Ngân sách mong muốn (Favorite Budget) để AI cá nhân hóa gợi ý.
+- [x] **Thay đổi mật khẩu**: Form đổi mật khẩu bảo mật trong trang cá nhân.
+- [x] **Tải lên hình ảnh**: Tải ảnh cá nhân/avatar lên server thông qua Cloudinary.
+
+> Giao diện web: `web/src/features/profile/` (`/profile`, tab lưu trên URL `?tab=`): Chuyến đi, Yêu thích (bỏ yêu thích ngay trên thẻ), Đánh giá (xóa đánh giá của mình), Kỷ niệm (ảnh nhật ký), Cài đặt tài khoản; kèm khối gợi ý theo sở thích và ngân sách. Đổi được cả ảnh bìa; tài khoản Google tạo được mật khẩu.
 
 ### Quản lý Địa điểm Yêu thích (Favorites)
 - [ ] **Thêm yêu thích**: Lưu địa điểm bất kỳ vào danh sách yêu thích cá nhân (bật/tắt nút trái tim).

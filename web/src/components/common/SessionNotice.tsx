@@ -9,7 +9,9 @@ export const SessionNotice = () => {
   useEffect(
     () =>
       sessionEvents.subscribe((event) => {
-        if (event.type === 'blocked') {
+        if (event.type === 'expired') {
+          toast.info('Phiên đăng nhập đã hết hạn', { description: 'Vui lòng đăng nhập lại để tiếp tục.' });
+        } else if (event.type === 'blocked') {
           toast.error(event.message, { description: 'Bạn đã được đăng xuất. Liên hệ quản trị viên nếu có nhầm lẫn.' });
         } else {
           toast.warning('Bạn không còn quyền quản trị', {

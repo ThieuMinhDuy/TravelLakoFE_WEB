@@ -18,8 +18,7 @@ const strongPasswordField = z.string().superRefine((value, ctx) => {
 
 export const loginSchema = z.object({
   email: emailField,
-  // Chặn mật khẩu toàn dấu cách: backend trả 400 cho trường hợp này, mà 400 ở API đăng nhập
-  // được FE hiểu là "tài khoản chưa xác thực" → phải chặn ngay từ form
+  // Chặn mật khẩu toàn dấu cách ngay từ form: backend coi là thiếu mật khẩu (400), không cần gọi API
   password: z.string().refine((v) => v.trim() !== '', 'Vui lòng nhập mật khẩu'),
   remember: z.boolean(),
 });

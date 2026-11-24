@@ -3,6 +3,8 @@
  * lên giao diện (toast). Giữ apiClient không phụ thuộc thư viện toast.
  */
 export type SessionEvent =
+  /** Token hết hạn / không hợp lệ (401) → đã đăng xuất, popup đăng nhập sẽ mở nếu trang cần đăng nhập */
+  | { type: 'expired' }
   /** Tài khoản bị khóa khi đang dùng → đã đăng xuất */
   | { type: 'blocked'; message: string }
   /** Bị gỡ quyền admin khi đang ở trang quản trị → ProtectedRoute chuyển sang 403 */

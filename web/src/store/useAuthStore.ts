@@ -7,14 +7,12 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  isInitialized: boolean;
 
   // Actions
   /** remember: true → lưu lâu dài (localStorage), false → chỉ trong phiên trình duyệt */
   setAuth: (user: User, token?: string, remember?: boolean) => void;
   updateUser: (partial: Partial<User>) => void;
   logout: () => void;
-  setInitialized: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -23,7 +21,6 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
-      isInitialized: false,
 
       setAuth: (user, token, remember) => {
         // Phải đặt cờ trước khi set() để persist ghi vào đúng nơi lưu trữ
@@ -32,7 +29,6 @@ export const useAuthStore = create<AuthState>()(
           user,
           token: token ?? get().token,
           isAuthenticated: true,
-          isInitialized: true,
         });
       },
 
@@ -44,10 +40,7 @@ export const useAuthStore = create<AuthState>()(
           user: null,
           token: null,
           isAuthenticated: false,
-          isInitialized: true,
         }),
-
-      setInitialized: () => set({ isInitialized: true }),
     }),
     {
       name: 'tripmate_auth',

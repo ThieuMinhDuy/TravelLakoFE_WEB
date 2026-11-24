@@ -26,12 +26,12 @@ Mục này liệt kê các tiêu chuẩn kỹ thuật **dự án phải đạt**
 | Zustand `useAuthStore`, `useUIStore` | ✅ Đã có. `useTripStore`, `useFilterStore` chưa có |
 | React Context | ✅ `LocaleContext` (định dạng hiển thị số / tiền / ngày, lưu lựa chọn), `ToastContext` (`useToast()`), Context nội bộ của `Tabs`. Không làm dark mode nên không có `ThemeContext` |
 | Compound Components | ✅ `Tabs` (`Tabs.List` / `Tabs.Tab` / `Tabs.Panel`). `FilterGroup` làm cùng feature `places` |
-| Generic hooks | ✅ `usePagination<T>`, `useDebounce<T>`, `useDocumentTitle`, `useMediaQuery`, `useBodyScrollLock`, `useFocusTrap` |
-| RBAC + `ProtectedRoute` | ✅ Đã có, kèm trang 403 riêng |
+| Generic hooks | ✅ `usePagination<T>`, `useDebounce<T>`, `useUrlFilters<T>` (bộ lọc admin lưu trên URL), `useCooldown`, `useDocumentTitle`, `useMediaQuery`, `useBodyScrollLock`, `useFocusTrap` |
+| RBAC + `ProtectedRoute` | ✅ Đã có, kèm trang 403 riêng. Ma trận chi tiết ở mục 5 |
 | Xử lý lỗi | ✅ `ErrorBoundary` cấp app và cấp layout, tự tải lại khi lỗi tải chunk |
 | Responsive | ✅ Menu mobile (drawer) cho trang chính và trang Admin |
 | Lazy Loading | ✅ Admin, Hồ sơ, popup xác thực |
-| Kiểm thử Vitest + RTL | ✅ Đã cấu hình, 59 test. Độ phủ tổng còn thấp, mục tiêu ≥ 50% |
+| Kiểm thử Vitest + RTL | ✅ 109 test (unit, tương tác người dùng, bất đồng bộ có mock API). Coverage thư mục logic: 75% dòng, 85% nhánh, 63% hàm; ngưỡng tối thiểu 50% được kiểm tra tự động khi chạy `npm run test:coverage` |
 
 Chi tiết từng yêu cầu:
 
@@ -167,13 +167,41 @@ web/
    # Chạy test và xuất báo cáo độ phủ (Coverage):
    npm run test:coverage
    ```
+   Coverage đo trên thư mục logic (`services`, `store`, `utils`, `hooks`, `lib`, `contexts` và `hooks` / `utils` / `services` / `schemas` của từng feature), báo lỗi nếu dưới 50%. Báo cáo HTML nằm ở `web/coverage/index.html`.
 
 ---
 
-## 👥 5. Phân Quyền Kiểm Thử (Theo Ma Trận RBAC)
+## 👥 5. Phân Quyền (Ma Trận RBAC)
 
-| Vai trò | Quyền hạn trên giao diện |
-|---|---|
-| **Admin** | Truy cập phân hệ `/admin`, quản trị địa điểm, kiểm duyệt đánh giá, xem thống kê |
-| **Member** | Đăng nhập tài khoản, tạo và sắp xếp lịch trình, lưu yêu thích, viết review & nhật ký |
-| **Guest** | Xem công khai danh sách điểm đến, tìm kiếm, xem chi tiết địa điểm |
+### 5.1. Tài khoản demo
+
+Tạo bằng script seed của backend (`npm run seed:vietnam` trong repo backend, **xóa toàn bộ dữ liệu cũ** nên chỉ chạy trên database local / database thử):
+
+| Vai trò | Email | Mật khẩu |
+|---|---|---|
+| Admin | `admin@travel.com` | `admin123` |
+| Thành viên | `customer@travel.com` | `user123` |
+| Khách | Không cần đăng nhập | |
+
+Bản triển khai trên Render dùng mật khẩu riêng, nhóm gửi kèm khi nộp bài.
+
+### 5.2. Ma trận quyền
+
+| Chức năng | Khách | Thành viên | Admin |
+|---|:---:|:---:|:---:|
+| Trang chủ, xem thành phố / địa điểm / đánh giá | ✅ | ✅ | ✅ |
+| Đăng ký, đăng nhập, quên mật khẩu | ✅ | | |
+| Hồ sơ cá nhân, đổi mật khẩu, ảnh đại diện | | ✅ | ✅ |
+| Yêu thích, chuyến đi, nhật ký, viết / xóa đánh giá **của mình** | | ✅ | ✅ |
+| Trang quản trị `/admin` (thống kê, người dùng, thành phố, địa điểm, đánh giá, import) | | | ✅ |
+| Khóa / cấp quyền / xóa tài khoản người khác | | | ✅ (không áp dụng cho chính mình) |
+
+### 5.3. Các lớp bảo vệ
+
+| Lớp | Cách làm | Vị trí |
+|---|---|---|
+| Giao diện | Ẩn menu Quản trị với người không phải Admin; nút khóa / xóa chính mình bị vô hiệu | `MainHeader`, `AdminUsersPage` |
+| Route (FE) | `ProtectedRoute`: chưa đăng nhập → popup đăng nhập kèm `?redirect=`; thiếu quyền Admin → trang 403 | `web/src/routes/ProtectedRoute.tsx` |
+| Tầng gọi API (FE) | Gắn Bearer token; 401 → đăng xuất, báo hết phiên; 403 `ACCOUNT_BLOCKED` → đăng xuất; 403 `NOT_ADMIN` → gỡ quyền, chuyển 403 | `web/src/services/apiClient.ts` |
+| Middleware (BE) | `protect` kiểm tra JWT và tài khoản bị khóa; `admin` kiểm tra `isAdmin` cho mọi route `/api/admin/*` | `backend/middleware/authMiddleware.js` |
+| Xử lý dữ liệu (BE) | Kiểm tra quyền sở hữu (chỉ xóa đánh giá / sửa chuyến đi của mình), admin không tự khóa / xóa / gỡ quyền chính mình | các controller `customer/*`, `admin/userController.js` |
