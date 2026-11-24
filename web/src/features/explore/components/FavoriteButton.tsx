@@ -4,7 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import type { PlaceType } from '../../../types/place';
 import { useAuthStore } from '../../../store/useAuthStore';
-import { exploreKeys, useFavorites } from '../hooks/useExploreQueries';
+import { useFavorites } from '../hooks/useExploreQueries';
+import { invalidateRelated } from '../../../lib/invalidateRelated';
 import { exploreApi } from '../services/exploreApi';
 import { messageOf, toItemType } from '../utils';
 
@@ -17,7 +18,7 @@ export function FavoriteButton({
   itemId: string;
   withLabel?: boolean;
 }) {
-  const { isAuthenticated, user } = useAuthStore();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const query = useFavorites();
   const favorite = query.data?.find(
     (f) =>
@@ -39,9 +40,7 @@ export function FavoriteButton({
         : exploreApi.addFavorite(kind, itemId);
     },
     onSuccess: async () => {
-      await client.invalidateQueries({
-        queryKey: exploreKeys.favorites(user?._id),
-      });
+      await invalidateRelated.afterFavorite(client);
       toast.success(favorite ? 'Đã bỏ lưu địa điểm.' : 'Đã lưu địa điểm.');
     },
     onError: (error) => toast.error(messageOf(error)),
@@ -58,6 +57,7 @@ export function FavoriteButton({
         if (!isAuthenticated) {
           navigate(
             `/login?redirect=${encodeURIComponent(location.pathname + location.search)}`,
+            { state: { backgroundLocation: location } },
           );
           return;
         }

@@ -19,16 +19,20 @@ export const queryKeys = {
   reviews: {
     all: ['reviews'] as const,
     mine: () => [...queryKeys.reviews.all, 'mine'] as const,
+    forPlace: (type: string, id: string) => [...queryKeys.reviews.all, 'place', type, id] as const,
   },
 
   cities: {
     all: ['cities'] as const,
     list: () => [...queryKeys.cities.all, 'list'] as const,
+    detail: (id: string) => [...queryKeys.cities.all, 'detail', id] as const,
   },
 
   places: {
     all: ['places'] as const,
     search: (keyword = '', cityId = '') => [...queryKeys.places.all, 'search', keyword, cityId] as const,
+    filtered: (filters: object) => [...queryKeys.places.all, 'filtered', filters] as const,
+    detail: (type: string, id: string) => [...queryKeys.places.all, 'detail', type, id] as const,
   },
 
   /** Dữ liệu trang quản trị — tách riêng với key công khai vì API và quyền khác nhau */

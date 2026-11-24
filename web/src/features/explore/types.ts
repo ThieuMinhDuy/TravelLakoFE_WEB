@@ -1,4 +1,3 @@
-import type { City } from '../../types/city';
 import type { PlaceType, PlaceUnion } from '../../types/place';
 import type { ReviewItemType } from '../../types/review';
 
@@ -26,21 +25,4 @@ export interface ExploreReview {
   rating: number;
   comment?: string;
   createdAt?: string;
-}
-export type CityPayload = Pick<
-  City,
-  'name' | 'description' | 'image' | 'coordinates'
->;
-export interface PlacePayload {
-  name: string;
-  city: string;
-  description: string;
-  address: string;
-  images: string[];
-  coordinates: { lat: number; lng: number };
-  admissionFee?: number;
-  pricePerNight?: number;
-  price?: number;
-  stars?: number;
-  cuisineType?: string;
 }

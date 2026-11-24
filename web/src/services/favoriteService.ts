@@ -5,8 +5,8 @@ import type { ItemType } from '../types/place';
 
 export const favoriteService = {
   /** GET /api/favorites — danh sách yêu thích (địa điểm đã populate kèm tên thành phố) */
-  getMyFavorites: async (): Promise<FavoriteListResponse> => {
-    const res = await apiClient.get<FavoriteListResponse>('/favorites');
+  getMyFavorites: async ({ signal }: { signal?: AbortSignal } = {}): Promise<FavoriteListResponse> => {
+    const res = await apiClient.get<FavoriteListResponse>('/favorites', { signal });
     return res.data;
   },
 

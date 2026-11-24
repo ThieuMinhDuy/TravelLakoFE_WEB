@@ -1,13 +1,15 @@
 import { useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { OpenAuthLink } from '../../auth/components/OpenAuthLink';
 import { Star, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { PlaceType } from '../../../types/place';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { ConfirmDialog } from '../../../components/compound/ConfirmDialog';
 import { exploreApi } from '../services/exploreApi';
-import { exploreKeys } from '../hooks/useExploreQueries';
+import { queryKeys } from '../../../lib/queryKeys';
+import { invalidateRelated } from '../../../lib/invalidateRelated';
 import { messageOf } from '../utils';
 import { Status } from './ExploreUI';
 
@@ -26,18 +28,10 @@ export function ReviewSection({
   const client = useQueryClient();
   const location = useLocation();
   const query = useQuery({
-    queryKey: exploreKeys.reviews(kind, itemId),
+    queryKey: queryKeys.reviews.forPlace(kind, itemId),
     queryFn: ({ signal }) => exploreApi.reviews(kind, itemId, signal),
   });
-  const refresh = async () => {
-    await Promise.all([
-      client.invalidateQueries({ queryKey: exploreKeys.reviews(kind, itemId) }),
-      client.invalidateQueries({
-        queryKey: ['explore', 'place', kind, itemId],
-      }),
-      client.invalidateQueries({ queryKey: ['explore', 'places'] }),
-    ]);
-  };
+  const refresh = () => invalidateRelated.afterReview(client);
   const create = useMutation({
     mutationFn: () => exploreApi.addReview(kind, itemId, rating, comment),
     onSuccess: async () => {
@@ -148,11 +142,11 @@ export function ReviewSection({
       )}
       {!isAuthenticated ? (
         <p className="explore-signin-note">
-          <Link
+          <OpenAuthLink
             to={`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`}
           >
             Đăng nhập
-          </Link>{' '}
+          </OpenAuthLink>{' '}
           để viết đánh giá và chia sẻ chuyến đi của bạn.
         </p>
       ) : ownReview ? (

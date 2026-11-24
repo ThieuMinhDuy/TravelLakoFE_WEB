@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink, MapPin, Star } from 'lucide-react';
 import { exploreApi } from '../services/exploreApi';
+import { queryKeys } from '../../../lib/queryKeys';
 import {
   CardSkeletons,
   ExploreFrame,
@@ -27,7 +28,7 @@ export function PlaceDetailPage() {
   const valid = isPlaceKind(type);
   const kind = valid ? type : 'attraction';
   const query = useQuery({
-    queryKey: ['explore', 'place', kind, id],
+    queryKey: queryKeys.places.detail(kind, id),
     queryFn: ({ signal }) => exploreApi.place(kind, id, signal),
     enabled: valid && !!id,
   });

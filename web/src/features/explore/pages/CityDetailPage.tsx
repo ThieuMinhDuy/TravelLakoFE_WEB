@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { exploreApi } from '../services/exploreApi';
+import { queryKeys } from '../../../lib/queryKeys';
 import {
   CardSkeletons,
   ExploreFrame,
@@ -15,7 +16,7 @@ import { usePlaces } from '../hooks/useExploreQueries';
 export function CityDetailPage() {
   const { id = '' } = useParams();
   const query = useQuery({
-    queryKey: ['explore', 'city', id],
+    queryKey: queryKeys.cities.detail(id),
     queryFn: ({ signal }) => exploreApi.city(id, signal),
     enabled: !!id,
   });

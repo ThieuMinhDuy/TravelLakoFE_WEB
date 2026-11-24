@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '../../../contexts/toast/ToastContext';
 import { queryKeys } from '../../../lib/queryKeys';
+import { invalidateRelated } from '../../../lib/invalidateRelated';
 import { cityService } from '../../../services/cityService';
 import { favoriteService } from '../../../services/favoriteService';
 import { placeService } from '../../../services/placeService';
@@ -47,8 +48,7 @@ export function useAddFavorite() {
     onSuccess: () => toast.success('Đã lưu vào danh sách yêu thích'),
     onError: (error) => toast.error('Không thể lưu địa điểm', { description: error.message }),
     onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.favorites.all });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.profile });
+      void invalidateRelated.afterFavorite(queryClient);
     },
   });
 }
@@ -80,9 +80,7 @@ export function useRemoveFavorite() {
     },
     onSuccess: () => toast.success('Đã bỏ khỏi danh sách yêu thích'),
     onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.favorites.all });
-      // Số lượng yêu thích trên phần đầu trang lấy từ profile
-      void queryClient.invalidateQueries({ queryKey: queryKeys.profile });
+      void invalidateRelated.afterFavorite(queryClient);
     },
   });
 }
@@ -113,8 +111,7 @@ export function useDeleteReview() {
     },
     onSuccess: () => toast.success('Đã xóa đánh giá'),
     onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.reviews.all });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.profile });
+      void invalidateRelated.afterReview(queryClient);
     },
   });
 }

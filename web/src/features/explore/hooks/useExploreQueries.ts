@@ -1,18 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../../../store/useAuthStore';
-import { exploreApi } from '../services/exploreApi';
+import { exploreApi, readList } from '../services/exploreApi';
+import { cityService } from '../../../services/cityService';
+import { favoriteService } from '../../../services/favoriteService';
+import { queryKeys } from '../../../lib/queryKeys';
+import type { City } from '../../../types/city';
+import type { Favorite } from '../types';
 import type { ExploreFilters } from '../types';
 
-export const exploreKeys = {
-  cities: ['explore', 'cities'] as const,
-  favorites: (userId?: string) => ['explore', 'favorites', userId] as const,
-  reviews: (kind: string, id: string) =>
-    ['explore', 'reviews', kind, id] as const,
-};
 export function useCities() {
   return useQuery({
-    queryKey: exploreKeys.cities,
-    queryFn: ({ signal }) => exploreApi.cities(signal),
+    queryKey: queryKeys.cities.list(),
+    queryFn: cityService.getCities,
+    select: (data) => readList<City>(data, 'cities'),
   });
 }
 export function usePlaces(filters: ExploreFilters, enabled = true) {
@@ -28,17 +28,18 @@ export function usePlaces(filters: ExploreFilters, enabled = true) {
     cuisineType,
   };
   return useQuery({
-    queryKey: ['explore', 'places', criteria],
+    queryKey: queryKeys.places.filtered(criteria),
     queryFn: ({ signal }) => exploreApi.places(filters, signal),
     staleTime: 60_000,
     enabled,
   });
 }
 export function useFavorites() {
-  const { isAuthenticated, user } = useAuthStore();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   return useQuery({
-    queryKey: exploreKeys.favorites(user?._id),
-    queryFn: ({ signal }) => exploreApi.favorites(signal),
+    queryKey: queryKeys.favorites.mine(),
+    queryFn: favoriteService.getMyFavorites,
+    select: (data) => readList<Favorite>(data, 'favorites'),
     enabled: isAuthenticated,
     staleTime: 30_000,
   });

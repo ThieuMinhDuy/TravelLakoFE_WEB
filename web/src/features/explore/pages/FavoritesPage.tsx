@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Heart } from 'lucide-react';
-import { useAuthStore } from '../../../store/useAuthStore';
-import { exploreKeys, useFavorites } from '../hooks/useExploreQueries';
+import { useFavorites } from '../hooks/useExploreQueries';
+import { invalidateRelated } from '../../../lib/invalidateRelated';
 import { usePagination } from '../hooks/usePagination';
 import { exploreApi } from '../services/exploreApi';
 import {
@@ -20,7 +20,6 @@ import type { ExplorePlace, Favorite } from '../types';
 
 export function FavoritesPage() {
   const query = useFavorites();
-  const { user } = useAuthStore();
   const client = useQueryClient();
   const [kind, setKind] = useState('all');
   const [page, setPage] = useState(1);
@@ -41,9 +40,7 @@ export function FavoritesPage() {
   const remove = useMutation({
     mutationFn: exploreApi.deleteFavorite,
     onSuccess: async () => {
-      await client.invalidateQueries({
-        queryKey: exploreKeys.favorites(user?._id),
-      });
+      await invalidateRelated.afterFavorite(client);
       toast.success('Đã bỏ lưu địa điểm.');
     },
     onError: (error) => toast.error(messageOf(error)),

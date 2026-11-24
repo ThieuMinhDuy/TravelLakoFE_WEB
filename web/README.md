@@ -27,14 +27,13 @@ web/
 │   ├── features/           # Module hóa theo tính năng nghiệp vụ
 │   │   ├── admin/          # Quản trị (Địa điểm, người dùng, review)
 │   │   ├── auth/           # Đăng nhập, đăng ký, OTP
-│   │   ├── diary/          # Nhật ký chuyến đi, feedback
-│   │   ├── places/         # Khám phá, lọc địa điểm, chi tiết
-│   │   └── trips/          # Lập lịch trình, quản lý chuyến đi
+│   │   ├── explore/        # Trang chủ, thành phố, địa điểm, review, yêu thích
+│   │   └── profile/        # Hồ sơ, các tab cá nhân và cài đặt
 │   ├── contexts/           # React Context (LocaleContext, ToastContext)
 │   ├── hooks/              # Generic hooks: usePagination, useDebounce, useDocumentTitle...
 │   ├── layouts/            # Layouts (MainLayout, AdminLayout) — màn auth là popup
 │   ├── routes/             # Định tuyến SPA & Protected Route (RBAC)
-│   ├── lib/                # QueryClient dùng chung
+│   ├── lib/                # QueryClient, query keys và quy tắc làm mới cache
 │   ├── services/           # Axios client + interceptors, ApiError
 │   ├── store/              # Global state (Zustand)
 │   ├── types/              # TypeScript types / interfaces / DTOs
@@ -66,3 +65,17 @@ npm run build
 npm run test
 npm run test:coverage
 ```
+
+## Kiểm tra sau khi ghép nhánh
+
+Chạy tại thư mục `web`:
+
+```powershell
+npm ci
+npm run test:all
+npm run build
+```
+
+`test:all` chạy bộ test chung trong `tests/` và bộ Explore trong `src/features/explore/__tests__/`, mỗi bộ có config/setup riêng. `npm test` tiếp tục chỉ chạy bộ chung để giữ tương thích.
+
+Nghiệp vụ riêng đặt trong `features/<tên>/`; API tài nguyên, hook generic và quy ước cache dùng chung đặt trong `services/`, `hooks/`, `lib/`. Giữ import công khai ổn định khi tích hợp, không sao chép service/store để tránh conflict. Trips/diary hiện còn route placeholder; chưa có feature tương ứng trong bản này.

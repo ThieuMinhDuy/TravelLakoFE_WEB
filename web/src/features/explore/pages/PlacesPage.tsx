@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { useCities, usePlaces } from '../hooks/useExploreQueries';
-import { useDebounce } from '../hooks/useDebounce';
+import { useDebounce } from '../../../hooks/useDebounce';
 import { usePagination } from '../hooks/usePagination';
 import {
   ExploreFrame,
@@ -22,7 +22,7 @@ import type { ExploreFilters } from '../types';
 export function PlacesPage() {
   const [params, setParams] = useSearchParams();
   const filters = parseFilters(params);
-  const keyword = useDebounce(filters.search);
+  const keyword = useDebounce(filters.search, 350);
   const criteria = { ...filters, search: keyword };
   const invalidRange =
     filters.minPrice !== '' &&

@@ -149,15 +149,6 @@ export const AppRoutes: React.FC = () => {
           }
         />
         <Route
-          path="/places/:type/:id"
-          element={
-            <PlaceholderPage
-              title="Chi tiết địa điểm"
-              desc="Màn 3: Thư viện ảnh, thông tin, bản đồ vị trí và đánh giá của địa điểm."
-            />
-          }
-        />
-        <Route
           path="/trips/:id/diary"
           element={
             <ProtectedRoute>

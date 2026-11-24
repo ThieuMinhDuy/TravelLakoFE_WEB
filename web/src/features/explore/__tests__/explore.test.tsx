@@ -12,7 +12,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
 import { apiClient } from '../../../services/apiClient';
 import { useAuthStore } from '../../../store/useAuthStore';
-import { useDebounce } from '../hooks/useDebounce';
+import { useDebounce } from '../../../hooks/useDebounce';
 import { paginate } from '../hooks/usePagination';
 import { exploreApi, placeQuery, readList } from '../services/exploreApi';
 import {

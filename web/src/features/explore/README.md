@@ -1,12 +1,12 @@
 # Module khám phá của WinLT
 
-Module dùng API thực tế của TravelLako và tham khảo hình thức Figma. Các file triển khai nằm trong `features/explore/`; ảnh minh họa nằm trong `assets/travel/`. Không thêm thư viện hay sửa các file barrel `hooks/index.ts`, `services/index.ts`, `types/index.ts` dùng chung.
+Module dùng API thực tế của TravelLako và tham khảo hình thức Figma. Các file triển khai nằm trong `features/explore/`; ảnh minh họa nằm trong `assets/travel/`. Không thêm thư viện. Không chuyển hàng loạt file hoặc sửa các file barrel dùng chung.
 
 ## Tích hợp
 
 Điểm nối duy nhất vào ứng dụng hiện tại là `src/routes/AppRoutes.tsx`: import `ExplorePage`, thay nội dung các route `/`, `/cities`, `/places`, `/favorites`, và thêm `/cities/:id`, `/places/:type/:id`. Route yêu thích tiếp tục dùng `ProtectedRoute` của dự án. Khi ghép nhánh khác, giữ phần auth/profile/trips của các thành viên và áp dụng lại các route trên.
 
-Không đổi `HomePage.tsx`, header/footer, store xác thực hoặc cấu hình Axios. Header hiện có tìm kiếm thành phố bằng `/cities?search=...`; khung tìm kiếm mới trên trang chủ tìm địa điểm bằng `/places?search=...`.
+Trang chủ hiện dùng `ExploreHomePage.tsx`; HomePage cũ đã bỏ vì không còn nơi sử dụng. Header/footer, store xác thực và cấu hình Axios giữ nguyên. Header hiện có tìm kiếm thành phố bằng `/cities?search=...`; khung tìm kiếm mới trên trang chủ tìm địa điểm bằng `/places?search=...`.
 
 ## Đối chiếu API và giao diện
 
@@ -19,8 +19,8 @@ Kiểm tra API thực tế ngày 25 tháng 11 năm 2026 (giờ Việt Nam): các
 | Tất cả loại địa điểm | Tổng hợp 4 API theo loại                                                 | Gửi bộ lọc tương ứng cho từng loại; một request lỗi thì báo lỗi, không tuyên bố danh sách rỗng                                                                |
 | Chi tiết             | `GET /places/:type/:id`                                                  | Ảnh, mô tả, địa chỉ, giá, tọa độ và rating từ API                                                                                                             |
 | Đánh giá             | `GET /reviews/:itemType/:itemId`, `POST /reviews`, `DELETE /reviews/:id` | Đọc công khai; gửi/xóa cần đăng nhập; số sao nguyên 1–5 và nội dung không rỗng                                                                                |
-| Yêu thích            | `GET /favorites`, `POST /favorites`, `DELETE /favorites/:id`             | Xóa bằng ID bản ghi favorite; cache tách theo user                                                                                                            |
-| Quản trị nội dung    | `/admin/cities`, `/admin/places/:type`, `/admin/reviews`                 | Đã khai báo adapter riêng; chưa thay các màn Admin hiện có để tránh viết chồng nhánh Hoàng                                                                    |
+| Yêu thích            | `GET /favorites`, `POST /favorites`, `DELETE /favorites/:id`             | Xóa bằng ID bản ghi favorite; dùng chung cache envelope với Profile; cache được xóa khi đăng xuất/hết phiên                                                                                                            |
+| Quản trị nội dung    | `/admin/cities`, `/admin/places/:type`, `/admin/reviews`                 | Dùng các màn và service Admin hiện có; bỏ adapter Admin dư trong Explore                                                                    |
 
 `type` trên URL địa điểm là chữ thường; `itemType` của review/favorite được ánh xạ sang `Attraction`, `Hotel`, `Restaurant`, `Cafe`.
 
@@ -35,8 +35,8 @@ Không có trường giờ mở cửa, tiện ích hay cờ nổi bật trong sc
 - `ExplorePage.tsx`: điểm vào, tải lười các trang và tiêu đề tab.
 - `pages/`: trang chủ, thành phố, danh sách, chi tiết và yêu thích.
 - `components/`: card, skeleton HOC, gallery dùng native dialog, bản đồ Leaflet tải lười, form review và nút yêu thích.
-- `services/`: ánh xạ contract và request qua Axios client hiện có.
-- `hooks/`: React Query, debounce và phân trang generic thuộc riêng module.
+- `services/`: kiểm tra response, ánh xạ bộ lọc và tổng hợp 4 loại địa điểm; request nằm ở `src/services/` dùng chung.
+- `hooks/`: React Query và phân trang do URL điều khiển. Debounce dùng `src/hooks/useDebounce.ts`; hook phân trang chung hiện giữ state nội bộ nên không thay thế trực tiếp được.
 - `explore.css`: selector giới hạn dưới `.explore` và tiền tố `explore-`.
 
 ## Kiểm thử
@@ -44,12 +44,21 @@ Không có trường giờ mở cửa, tiện ích hay cờ nổi bật trong sc
 Từ thư mục `web`:
 
 ```powershell
-npx vitest run --config vitest.explore.config.ts
+npm run test:all
 npm run build
 ```
 
 Chạy giao diện bằng `npm run dev` và mở `http://localhost:5173`. Backend hiện cho phép CORS của origin này, nhưng không trả `Access-Control-Allow-Origin` cho `http://127.0.0.1:5173`. Không sửa Axios hoặc nới bảo mật backend để che khác biệt này.
 
-Config kiểm thử riêng để tránh đụng config của hai nhánh khác. Fixture chỉ được dùng trong test. Test kiểm tra debounce, URL/Back, tham số giá, phân trang, phân biệt dữ liệu rỗng/lỗi, redirect đăng nhập, ID favorite và validation/gửi review.
+`npm run test:all` chạy cả test chung và test Explore. Config/setup/test của Explore vẫn riêng, không sửa file test/setup chung. Fixture chỉ được dùng trong test. Test kiểm tra debounce, URL/Back, tham số giá, phân trang, phân biệt dữ liệu rỗng/lỗi, redirect đăng nhập, ID favorite và validation/gửi review.
 
 Các thao tác ghi dữ liệu thật và tài khoản Admin cần kiểm tra tích hợp với phiên đăng nhập hợp lệ; không tự tạo tài khoản hoặc ghi dữ liệu lên server production khi kiểm tra giao diện.
+
+## Tích hợp dữ liệu dùng chung
+
+- Query key nằm trong `src/lib/queryKeys.ts`. Thành phố/yêu thích dùng cùng key và response envelope với Profile; Explore dùng `select` để lấy mảng mà không đổi dữ liệu trong cache.
+- Chi tiết thành phố/địa điểm, danh sách lọc và review nằm dưới prefix tài nguyên tương ứng. Không dùng prefix `explore` tách rời quy tắc cập nhật chung.
+- `src/lib/invalidateRelated.ts` quy định làm mới cache sau mutation từ Explore, Profile hoặc Admin; Admin giữ export `invalidateAdmin` để các trang không phải đổi import.
+- Nút đăng nhập phải truyền `backgroundLocation` hoặc dùng `OpenAuthLink` để popup giữ trang hiện tại.
+- Card của Explore giữ riêng vì khác bố cục; không tạo thêm bộ gọi API hoặc auth store.
+- Các file dùng chung cần phối hợp khi sửa: routes, query keys, invalidation, services và package scripts. Thành viên khác cập nhật main trước khi sửa tiếp các file này.

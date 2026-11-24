@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { useCities } from '../hooks/useExploreQueries';
-import { useDebounce } from '../hooks/useDebounce';
+import { useDebounce } from '../../../hooks/useDebounce';
 import { usePagination } from '../hooks/usePagination';
 import {
   CardSkeletons,
@@ -17,7 +17,7 @@ export function CitiesPage() {
   const query = useCities();
   const [params, setParams] = useSearchParams();
   const input = params.get('search') ?? '';
-  const keyword = useDebounce(input);
+  const keyword = useDebounce(input, 350);
   const cities =
     query.data?.filter((c) =>
       normalizeText(c.name).includes(normalizeText(keyword)),

@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import { ExploreLoading } from './components/ExploreLoading';
 import './explore.css';
 
@@ -38,7 +37,6 @@ const titles: Record<keyof typeof pages, string> = {
   favorites: 'Địa điểm yêu thích',
 };
 export function ExplorePage({ page }: { page: keyof typeof pages }) {
-  const location = useLocation();
   useEffect(() => {
     const previous = document.title;
     document.title = `${titles[page]} | TripMate`;
@@ -46,9 +44,6 @@ export function ExplorePage({ page }: { page: keyof typeof pages }) {
       document.title = previous;
     };
   }, [page]);
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [location.pathname]);
   const Page = pages[page];
   return (
     <Suspense fallback={<ExploreLoading />}>
