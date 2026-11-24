@@ -7,7 +7,7 @@ import { AdminLayout } from '../layouts/AdminLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 import { GuestRoute } from './GuestRoute';
 
-import { HomePage } from '../pages/HomePage';
+import { ExplorePage } from '../features/explore/ExplorePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 
 import { LoginPage } from '../features/auth/pages/LoginPage';
@@ -38,23 +38,17 @@ export const AppRoutes: React.FC = () => {
     <Routes>
       {/* 1. Public Routes with MainLayout */}
       <Route element={<MainLayout />}>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<ExplorePage page="home" />} />
         <Route
           path="/cities"
           element={
-            <PlaceholderPage
-              title="Điểm đến (Cities & Places)"
-              desc="Khám phá 63 tỉnh thành Việt Nam và các điểm tham quan nổi bật."
-            />
+            <ExplorePage page="cities" />
           }
         />
         <Route
           path="/places"
           element={
-            <PlaceholderPage
-              title="Khám phá Địa điểm (Place Directory)"
-              desc="Màn 2: Tìm kiếm và lọc khách sạn, điểm vui chơi, nhà hàng, quán cafe theo 63 tỉnh thành Việt Nam."
-            />
+            <ExplorePage page="places" />
           }
         />
         <Route
@@ -92,10 +86,7 @@ export const AppRoutes: React.FC = () => {
           path="/favorites"
           element={
             <ProtectedRoute>
-              <PlaceholderPage
-                title="Địa điểm đã lưu (Yêu thích)"
-                desc="Danh sách các địa điểm, khách sạn và nhà hàng bạn đã lưu vào mục Yêu thích."
-              />
+              <ExplorePage page="favorites" />
             </ProtectedRoute>
           }
         />
@@ -108,6 +99,9 @@ export const AppRoutes: React.FC = () => {
             />
           }
         />
+
+        <Route path="/cities/:id" element={<ExplorePage page="city" />} />
+        <Route path="/places/:type/:id" element={<ExplorePage page="place" />} />
 
         {/* Protected Profile Route */}
         <Route
