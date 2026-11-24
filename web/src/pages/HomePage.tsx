@@ -1,11 +1,14 @@
 import React from 'react';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/common/Button';
+import { buttonVariants } from '../components/common/buttonVariants';
 import { Card } from '../components/common/Card';
 import { Compass, Sparkles, Map, Shield } from 'lucide-react';
 import './css/HomePage.css';
+import { OpenAuthLink } from '../features/auth/components/OpenAuthLink';
 
 export const HomePage: React.FC = () => {
+  useDocumentTitle();
   return (
     <div className="home-page">
       {/* Hero Welcome Section with Scenic Landscape Banner */}
@@ -30,29 +33,24 @@ export const HomePage: React.FC = () => {
         </p>
 
         <div className="home-hero__actions">
-          <Link to="/login">
-            <Button variant="accent" size="lg">
-              Đăng nhập / Đăng ký
-            </Button>
+          <OpenAuthLink to="/login" className={buttonVariants({ variant: 'accent', size: 'lg' })}>
+            Đăng nhập / Đăng ký
+          </OpenAuthLink>
+          <Link
+            to="/profile"
+            className={buttonVariants({ variant: 'outline', size: 'lg' })}
+            style={{
+              color: '#FFFFFF',
+              borderColor: 'rgba(255, 255, 255, 0.4)',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            Hồ sơ cá nhân
           </Link>
-          <Link to="/profile">
-            <Button
-              variant="outline"
-              size="lg"
-              style={{
-                color: '#FFFFFF',
-                borderColor: 'rgba(255, 255, 255, 0.4)',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(8px)',
-              }}
-            >
-              Hồ sơ cá nhân
-            </Button>
-          </Link>
-          <Link to="/admin">
-            <Button variant="primary" size="lg" leftIcon={<Shield className="w-4 h-4" />}>
-              Cổng Quản trị Admin
-            </Button>
+          <Link to="/admin" className={buttonVariants({ variant: 'primary', size: 'lg' })}>
+            <Shield className="w-4 h-4" />
+            Cổng Quản trị Admin
           </Link>
         </div>
       </section>

@@ -1,0 +1,89 @@
+/* ==========================================================================
+   Trang Địa điểm
+   ========================================================================== */
+
+.admin-place-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0.75rem;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+.admin-place-cell:hover .admin-place-cell__name {
+  color: var(--glass-accent);
+}
+
+.admin-place-cell:focus-visible {
+  outline: none;
+  box-shadow: var(--glass-focus);
+}
+
+.admin-place-cell__thumb {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.25rem;
+  height: 2.5rem;
+  border-radius: 0.65rem;
+  object-fit: cover;
+  background: rgb(15 23 42 / 0.06);
+  color: var(--glass-text-muted);
+}
+
+.admin-place-cell__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-place-cell__name {
+  max-width: 18rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 700;
+  color: var(--glass-text);
+  transition: color 0.2s ease;
+}
+
+.admin-place-cell__address {
+  max-width: 18rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.75rem;
+  color: var(--glass-text-muted);
+}
+
+.admin-price {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.admin-price .admin-muted {
+  margin-left: 0.15rem;
+  font-weight: 400;
+}
+
+/* Form */
+.admin-form__type-note {
+  margin: 0;
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.8rem;
+  background: rgb(15 23 42 / 0.04);
+  font-size: 0.8125rem;
+  color: var(--glass-text-sub);
+}
+
+.admin-form__hint {
+  margin-right: auto;
+  align-self: center;
+  font-size: 0.8125rem;
+  color: var(--glass-text-muted);
+}

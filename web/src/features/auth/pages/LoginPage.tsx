@@ -1,62 +1,132 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card } from '../../../components/common/Card';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
+import { useSearchParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useToast } from '../../../contexts/toast/ToastContext';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
-import { Mail, Lock } from 'lucide-react';
-import './css/AuthPages.css';
+import { storage } from '../../../utils/storage';
+import {
+  AuthDivider,
+  AuthHeader,
+  AuthItem,
+  AuthLink,
+  FormAlert,
+  SlowServerHint,
+} from '../components/AuthUI';
+import { useAuthModal } from '../components/AuthModalContext';
+import { GoogleAuthButton } from '../components/GoogleAuthButton';
+import { PasswordInput } from '../../../components/common/PasswordInput';
+import { useAuthNavigation } from '../hooks/useAuthNavigation';
+import { useCompleteLogin } from '../hooks/useCompleteLogin';
+import { useSlowHint } from '../hooks/useSlowHint';
+import { loginSchema, type LoginValues } from '../schemas';
+import { authService, isUnverifiedLoginError } from '../services/authService';
 
 export const LoginPage: React.FC = () => {
+  useDocumentTitle('Đăng nhập');
+  const [searchParams] = useSearchParams();
+  const { goTo } = useAuthNavigation();
+  const { shake } = useAuthModal();
+  const toast = useToast();
+  const completeLogin = useCompleteLogin();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    getValues,
+    formState: { errors },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
+      password: '',
+      remember: storage.isRemembered(),
+    },
+  });
+
+  const login = useMutation({
+    mutationFn: authService.login,
+    onSuccess: (res) => completeLogin(res, getValues('remember')),
+    onError: (err, { email }) => {
+      // Tài khoản chưa xác thực email → chuyển sang màn xác thực; màn đó tự gửi mã (send=1)
+      // và tự đếm ngược theo retryAfter nếu mã vừa được gửi gần đây (OTP_COOLDOWN).
+      if (isUnverifiedLoginError(err)) {
+        toast.info('Tài khoản chưa được xác thực', { description: 'Hãy nhập mã OTP gửi tới email của bạn.' });
+        // Giữ lựa chọn "Ghi nhớ đăng nhập" cho lần đăng nhập sau khi xác thực OTP
+        goTo('/verify-otp', { email, send: '1', remember: getValues('remember') ? undefined : '0' });
+        return;
+      }
+      shake();
+    },
+  });
+
+  const slow = useSlowHint(login.isPending);
+  const apiError = login.error && !isUnverifiedLoginError(login.error) ? login.error.message : null;
+
+  const onSubmit = ({ email, password }: LoginValues) => login.mutate({ email, password });
+
   return (
-    <Card className="auth-card">
-      <div className="auth-card__header">
-        <h2 className="auth-card__title">Đăng nhập</h2>
-        <p className="auth-card__subtitle">
-          Chào mừng bạn quay trở lại với TripMate
-        </p>
-      </div>
+    <>
+      <AuthHeader title="Đăng nhập" subtitle="Chào mừng bạn quay lại với TripMate" />
 
-      <form onSubmit={(e) => e.preventDefault()} className="auth-card__form">
-        <Input
-          label="Địa chỉ Email"
-          type="email"
-          placeholder="yourname@gmail.com"
-          leftIcon={<Mail className="w-4 h-4" />}
-          required
-        />
+      <form className="auth-form" onSubmit={handleSubmit(onSubmit, shake)} noValidate>
+        <AuthItem>
+          <Input
+            label="Địa chỉ email"
+            type="email"
+            placeholder="Nhập địa chỉ email của bạn"
+            autoComplete="email"
+            autoFocus
+            error={errors.email?.message}
+            {...register('email')}
+          />
+        </AuthItem>
 
-        <Input
-          label="Mật khẩu"
-          type="password"
-          placeholder="••••••••"
-          leftIcon={<Lock className="w-4 h-4" />}
-          required
-        />
+        <AuthItem>
+          <PasswordInput
+            label="Mật khẩu"
+            placeholder="Nhập mật khẩu của bạn"
+            autoComplete="current-password"
+            error={errors.password?.message}
+            {...register('password')}
+          />
+        </AuthItem>
 
-        <div className="auth-card__options">
-          <label className="auth-card__remember">
-            <input type="checkbox" className="rounded text-oceanBlue" />
+        <AuthItem className="auth-form__row">
+          <label className="auth-checkbox">
+            <input type="checkbox" {...register('remember')} />
             <span>Ghi nhớ đăng nhập</span>
           </label>
-          <Link
-            to="/forgot-password"
-            className="auth-card__link"
-          >
+          <AuthLink to="/forgot-password" params={{ email: watch('email') }} className="auth-link--muted">
             Quên mật khẩu?
-          </Link>
-        </div>
+          </AuthLink>
+        </AuthItem>
 
-        <Button variant="primary" className="w-full" size="md">
-          Đăng nhập
-        </Button>
+        <FormAlert message={apiError} />
+
+        <AuthItem>
+          <Button type="submit" className="auth-btn" isLoading={login.isPending}>
+            {login.isPending ? 'Đang đăng nhập…' : 'Đăng nhập'}
+          </Button>
+          <SlowServerHint show={slow} />
+        </AuthItem>
       </form>
 
-      <div className="auth-card__footer">
-        Chưa có tài khoản?{' '}
-        <Link to="/register" className="auth-card__link">
-          Đăng ký ngay
-        </Link>
-      </div>
-    </Card>
+      <AuthDivider />
+
+      <AuthItem>
+        <GoogleAuthButton mode="signin" remember={watch('remember')} />
+      </AuthItem>
+
+      <AuthItem>
+        <p className="auth-switch">
+          Chưa có tài khoản? <AuthLink to="/register">Đăng ký ngay</AuthLink>
+        </p>
+      </AuthItem>
+    </>
   );
 };

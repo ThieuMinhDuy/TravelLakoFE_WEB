@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useId, useRef, useState } from 'react';
 import { cn } from '../../utils/cn';
 import { uploadService } from '../../services/uploadService';
+import { IMAGE_ACCEPT, validateImageFile } from '../../config/upload';
 import { UploadCloud, X, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '../../contexts/toast/ToastContext';
 import './css/ImageUploader.css';
 
 export interface ImageUploaderProps {
@@ -11,6 +12,8 @@ export interface ImageUploaderProps {
   label?: string;
   aspectRatio?: 'square' | 'video' | 'wide';
   className?: string;
+  /** false: ẩn nút xóa, chỉ cho thay ảnh khác (vd: backend không cho xóa ảnh thành phố) */
+  removable?: boolean;
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -19,21 +22,18 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   label = 'Tải ảnh lên',
   aspectRatio = 'video',
   className,
+  removable = true,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
+  const toast = useToast();
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const labelId = useId();
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Vui lòng chọn tệp định dạng hình ảnh (PNG, JPG, WEBP)!');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Kích thước ảnh không được vượt quá 5MB!');
+  const uploadFile = async (file: File) => {
+    const error = validateImageFile(file);
+    if (error) {
+      toast.error(error);
       return;
     }
 
@@ -43,78 +43,126 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       onChange(res.url);
       toast.success('Tải ảnh lên thành công!');
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Tải ảnh thất bại!';
-      toast.error(errorMsg);
+      toast.error(err instanceof Error ? err.message : 'Tải ảnh thất bại!');
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // cho phép chọn lại cùng một file
+    if (file) void uploadFile(file);
+  };
+
+  const openPicker = () => {
+    if (!isUploading) fileInputRef.current?.click();
+  };
+
+  // Kéo & thả ảnh vào vùng chọn
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault(); // bắt buộc để sự kiện drop được kích hoạt
+    if (!isUploading) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    // Bỏ qua khi con trỏ chỉ di chuyển giữa các phần tử con bên trong
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (isUploading) return;
+    const file = e.dataTransfer.files?.[0];
+    if (file) void uploadFile(file);
   };
 
   const aspectClass = `ui-image-uploader__aspect--${aspectRatio}`;
 
   return (
     <div className={cn('ui-image-uploader', className)}>
-      {label && <label className="ui-image-uploader__label">{label}</label>}
+      {label && (
+        <span id={labelId} className="ui-image-uploader__label">
+          {label}
+        </span>
+      )}
 
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept={IMAGE_ACCEPT}
         onChange={handleFileChange}
         className="hidden"
+        tabIndex={-1}
+        aria-hidden="true"
       />
 
       {value ? (
-        <div
-          className={cn(
-            'ui-image-uploader__preview',
-            aspectClass
+        <div className={cn('ui-image-uploader__preview', aspectClass)}>
+          <img src={value} alt={label || 'Ảnh đã tải lên'} className="ui-image-uploader__preview-img" />
+          {isUploading && (
+            <div className="ui-image-uploader__uploading" role="status">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span>Đang tải ảnh mới…</span>
+            </div>
           )}
-        >
-          <img src={value} alt="Uploaded" className="ui-image-uploader__preview-img" />
           <div className="ui-image-uploader__preview-overlay">
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={openPicker}
               className="px-3 py-1.5 rounded-lg bg-surfaceWhite text-slate-800 text-xs font-semibold hover:bg-slate-100"
             >
               Thay đổi
             </button>
-            <button
-              type="button"
-              onClick={() => onChange('')}
-              className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            {removable && (
+              <button
+                type="button"
+                onClick={() => onChange('')}
+                className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700"
+                aria-label="Xóa ảnh"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
       ) : (
-        <div
-          onClick={() => !isUploading && fileInputRef.current?.click()}
+        <button
+          type="button"
+          onClick={openPicker}
+          onDragOver={handleDragOver}
+          onDragEnter={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          disabled={isUploading}
+          aria-labelledby={label ? labelId : undefined}
+          aria-describedby={`${labelId}-hint`}
           className={cn(
             'ui-image-uploader__dropzone',
-            aspectClass
+            aspectClass,
+            isDragging && 'ui-image-uploader__dropzone--dragging'
           )}
         >
           {isUploading ? (
-            <div className="flex flex-col items-center gap-2 text-oceanBlue">
+            <span className="flex flex-col items-center gap-2 text-oceanBlue">
               <Loader2 className="w-8 h-8 animate-spin" />
               <span className="text-xs font-medium">Đang tải ảnh lên...</span>
-            </div>
+            </span>
           ) : (
             <>
-              <div className="ui-image-uploader__icon-box">
+              <span className="ui-image-uploader__icon-box">
                 <UploadCloud className="w-5 h-5" />
-              </div>
-              <p className="text-xs font-semibold text-slate-700">Nhấn để chọn ảnh hoặc kéo thả</p>
-              <p className="text-[11px] text-slate-400 mt-1">PNG, JPG, WEBP (Tối đa 5MB)</p>
+              </span>
+              <span className="text-xs font-semibold text-slate-700">
+                {isDragging ? 'Thả ảnh vào đây' : 'Nhấn để chọn ảnh hoặc kéo thả'}
+              </span>
+              <span id={`${labelId}-hint`} className="text-[11px] text-slate-400 mt-1">
+                PNG, JPG, WEBP (Tối đa 5MB)
+              </span>
             </>
           )}
-        </div>
+        </button>
       )}
     </div>
   );

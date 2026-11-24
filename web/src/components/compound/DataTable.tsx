@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { usePagination } from '../../hooks/usePagination';
 import { cn } from '../../utils/cn';
 import { Skeleton } from '../common/Skeleton';
 import { EmptyState } from '../common/EmptyState';
@@ -40,7 +41,6 @@ export function DataTable<T extends object>({
   actions,
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
 
   // Lọc dữ liệu theo searchKeys
   const filteredData = React.useMemo(() => {
@@ -60,12 +60,9 @@ export function DataTable<T extends object>({
     });
   }, [data, searchTerm, searchKeys]);
 
-  // Phân trang
-  const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
-  const paginatedData = React.useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    return filteredData.slice(start, start + pageSize);
-  }, [filteredData, currentPage, pageSize]);
+  // Phân trang phía client — trang tự giới hạn khi dữ liệu ít đi (xem usePagination)
+  const pagination = usePagination(filteredData, { pageSize });
+  const { page, totalPages, pageItems: paginatedData } = pagination;
 
   return (
     <div className={cn('ui-data-table', className)}>
@@ -81,7 +78,7 @@ export function DataTable<T extends object>({
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
-                  setCurrentPage(1);
+                  pagination.reset();
                 }}
                 className="ui-data-table__search-input"
               />
@@ -148,27 +145,27 @@ export function DataTable<T extends object>({
         {!isLoading && filteredData.length > pageSize && (
           <div className="ui-data-table__pagination">
             <span>
-              Hiển thị {(currentPage - 1) * pageSize + 1} -{' '}
-              {Math.min(currentPage * pageSize, filteredData.length)} trên tổng số{' '}
-              {filteredData.length} kết quả
+              Hiển thị {pagination.from} - {pagination.to} trên tổng số {pagination.total} kết quả
             </span>
             <div className="ui-data-table__pagination-controls">
               <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={!pagination.hasPrev}
+                onClick={pagination.prevPage}
                 className="ui-data-table__pagination-btn"
                 type="button"
+                aria-label="Trang trước"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <span className="ui-data-table__pagination-current">
-                {currentPage} / {totalPages}
+                {page} / {totalPages}
               </span>
               <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={!pagination.hasNext}
+                onClick={pagination.nextPage}
                 className="ui-data-table__pagination-btn"
                 type="button"
+                aria-label="Trang sau"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

@@ -178,3 +178,60 @@ Dựa trên phân tích toàn bộ **1,577 text nodes** từ file Figma gốc (*
 *   Bo góc: `rounded-2xl` (16px).
 *   Đổ bóng: Soft Shadow (`shadow-sm`, nâng lên `shadow-md` khi hover).
 *   Gợi ý ảnh: Hover hiệu ứng phóng nhẹ (`transform scale-105`).
+
+### C. Thành phần dùng chung bổ sung (web)
+| Thành phần | Đường dẫn | Ghi chú |
+|---|---|---|
+| `ConfirmDialog` | `components/compound/ConfirmDialog.tsx` | Prop `requireText`: bắt gõ đúng chuỗi (vd: email) mới cho xác nhận thao tác không hoàn tác được. `children` cho danh sách hậu quả. |
+| `ImageUploader` | `components/compound/ImageUploader.tsx` | Prop `removable={false}` ẩn nút xóa (chỉ cho thay ảnh khác). Có lớp phủ "Đang tải ảnh mới…" khi thay ảnh. |
+| `MultiImageUploader` | `components/compound/MultiImageUploader.tsx` | Tải nhiều ảnh song song (thanh tiến độ từng ảnh), kéo thả sắp xếp bằng `@hello-pangea/dnd`, ảnh đầu tiên là ảnh bìa, nút "Đặt làm ảnh bìa" cho bàn phím. Báo `onUploadingChange` để form khóa nút lưu. |
+| `MoneyInput` | `components/common/MoneyInput.tsx` | Hiển thị `1.600.000 đ`, trả về `number` (rỗng → `undefined`). |
+| `MapPicker` | `components/map/` | Bản đồ OpenStreetMap (react-leaflet): bấm để đặt ghim, kéo ghim để chỉnh. Tải lazy (Leaflet ~155 KB chỉ tải khi mở form). Ghim vẽ bằng CSS (`divIcon`) vì icon ảnh mặc định của Leaflet vỡ đường dẫn khi build bằng Vite. |
+
+---
+
+## 6. Liquid Glass — Giao diện khu quản trị (Admin Portal)
+
+Khu `/admin` dùng phong cách **Liquid Glass** (bề mặt kính mờ kiểu iOS / iPadOS), tách biệt hoàn toàn với trang người dùng.
+
+### A. Phạm vi áp dụng
+* `AdminLayout` gắn `data-surface="admin"` lên `<html>` khi vào khu quản trị và gỡ khi rời đi. Mọi CSS kính chỉ có hiệu lực dưới thuộc tính này → áp được cả cho Modal / Drawer / Toast render qua portal ra `<body>`, nhưng **không ảnh hưởng trang người dùng**.
+* File chính:
+  * `components/glass/css/glass.css` — token và class `.glass`.
+  * `layouts/css/AdminSkin.css` — phiên bản kính của component dùng chung (Card, Button, Input, Select, Badge, Avatar, DataTable, Modal, Drawer).
+  * `components/glass/` — `LiquidBackdrop`, `LiquidLensFilter`, `SegmentedControl`, `useGlassPointer`.
+
+### B. Màu sắc: trung tính + một màu nhấn
+* **Nền:** xám xanh nhạt (`#EEF2F6 → #E8EDF3`) với 2 vầng sáng rất mờ trôi chậm (`LiquidBackdrop`). Không dùng nhiều đốm màu — giao diện nhiều màu khiến người quản trị khó tập trung.
+* **Một màu nhấn duy nhất:** Ocean Azure `#0369A1` (`--glass-accent`) cho mục đang chọn, nút chính, liên kết, biểu đồ.
+* **Màu ngữ nghĩa chỉ dùng khi mang thông tin:** xanh lá = hoạt động, đỏ = đã khóa / xóa, vàng = cần chú ý (chưa xác thực, đánh giá thấp). Luôn đi kèm chữ, không chỉ dựa vào màu.
+* Avatar chữ cái trong khu admin dùng nền xám trung tính (không dùng gradient cam của trang người dùng).
+
+### C. Các lớp kính
+| Class | Độ đục nền | Dùng cho |
+|---|---|---|
+| `.glass--thin` | 40% | Thanh chọn (segmented), chip |
+| `.glass` | 50% | Sidebar, header, thẻ số liệu, thẻ nội dung |
+| `.glass--thick` | 80% | Bề mặt nhiều chữ: form, khung trạng thái lỗi |
+
+Mỗi tấm kính gồm: thân kính (`backdrop-filter: blur(24px) saturate(185%)`) + **viền phản quang** (`::before`, gradient sáng ở mép trên) + **vệt sáng** (`::after`). Thêm `.glass--interactive` cho bề mặt bấm được: nảy nhẹ khi hover, vệt sáng đi theo con trỏ (`useGlassPointer` cập nhật `--mx/--my`, một listener chung cho cả trang).
+
+Mọi selector kính bọc trong `:where()` (độ ưu tiên 0) → class của component luôn ghi đè được (vd: sidebar cần `position: sticky`).
+
+### D. Chuyển động "chất lỏng"
+* Mục đang chọn ở sidebar và `SegmentedControl` dùng `layoutId` của framer-motion: "giọt kính" trượt và co giãn sang mục mới theo lò xo.
+* Modal / Drawer mở bằng hiệu ứng lò xo; Drawer nổi cách mép 0.75rem, bo 1.75rem.
+* `.glass--lens`: khúc xạ thật bằng bộ lọc SVG (`feTurbulence` + `feDisplacementMap`) trong `backdrop-filter`. **Chỉ bật trên Chromium** (`LiquidLensFilter` gắn `data-liquid-lens` khi phát hiện); trình duyệt khác tự dùng hiệu ứng mờ thường.
+
+### E. Khả năng tiếp cận & hiệu năng
+* `prefers-reduced-transparency: reduce` hoặc trình duyệt không hỗ trợ `backdrop-filter` → nền đặc.
+* `prefers-reduced-motion: reduce` → tắt nền trôi, hiệu ứng nảy, lò xo (`MotionConfig reducedMotion="user"`).
+* Chữ trên kính đạt tương phản ≥ 4.5:1; vòng focus luôn hiện (`--glass-focus`).
+* Không đặt `backdrop-filter` cho từng dòng bảng — chỉ lớp bao ngoài (mỗi màn hình khoảng 8 lớp kính).
+
+### F. Biểu đồ (Bảng điều khiển)
+* Một chuỗi dữ liệu = **một màu** (`#0369A1`, đã kiểm tra tương phản với nền). Không dùng biểu đồ tròn: phân bố dùng **thanh ngang xếp hạng** chung một gốc.
+* Biểu đồ cột vẽ bằng HTML/CSS (`features/admin/components/dashboard/ColumnChart.tsx`): cột ≤ 24px, bo 4px đầu dữ liệu, lưới mảnh liền nét, trục Y luôn 4 bước số tròn, chỉ ghi số trên cột mới nhất.
+* Tooltip hiện khi rê chuột **và** khi focus bàn phím / chạm; mỗi cột có `aria-label` đầy đủ ("Tháng 11/2026: 14 đánh giá mới").
+* Hai đại lượng khác cỡ (người dùng mới, đánh giá mới) → **hai biểu đồ riêng**, không gộp hai trục Y.
+* Không dùng Recharts: bản 2.15 kéo theo `react-is` 18, hay hiện biểu đồ trống với React 19.

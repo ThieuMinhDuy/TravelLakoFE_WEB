@@ -1,0 +1,61 @@
+.map-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.map-picker__map {
+  height: 15rem;
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgb(15 23 42 / 0.1);
+  overflow: hidden;
+  /* Leaflet đặt z-index cao cho pane; tạo stacking context riêng để không đè lên drawer / modal */
+  isolation: isolate;
+  z-index: 0;
+  cursor: crosshair;
+}
+
+.map-picker__map .leaflet-control-attribution {
+  font-size: 0.625rem;
+}
+
+.map-picker__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--glass-text-muted, #64748b);
+}
+
+/* Ghim: giọt nước màu nhấn + bóng dưới chân */
+.map-picker__pin {
+  background: none;
+  border: 0;
+}
+
+.map-picker__pin-head {
+  position: absolute;
+  left: 2px;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #ffffff;
+  border-radius: 50% 50% 50% 0;
+  background: var(--glass-accent, #0369a1);
+  box-shadow: 0 4px 10px rgb(15 23 42 / 0.35);
+  transform: rotate(-45deg);
+}
+
+.map-picker__pin-shadow {
+  position: absolute;
+  left: 8px;
+  bottom: 0;
+  width: 12px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgb(15 23 42 / 0.3);
+  filter: blur(1px);
+}
+
+.leaflet-dragging .map-picker__pin-head {
+  box-shadow: 0 8px 16px rgb(15 23 42 / 0.35);
+}

@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Drawer — ngăn kéo trượt từ cạnh màn hình
+   ========================================================================== */
+
+.ui-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 80; /* trên header (50), dưới Modal (90) và popup đăng nhập (100) */
+  visibility: hidden;
+  pointer-events: none;
+  /* Giữ visible tới khi hiệu ứng đóng chạy xong */
+  transition: visibility 0s linear 0.3s;
+}
+
+.ui-drawer--open {
+  visibility: visible;
+  pointer-events: auto;
+  transition: visibility 0s;
+}
+
+.ui-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ui-drawer--open .ui-drawer__backdrop {
+  opacity: 1;
+}
+
+.ui-drawer__panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(20rem, 85vw);
+  background-color: var(--color-surfaceWhite, #FFFFFF);
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.35);
+  outline: none;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.ui-drawer--right .ui-drawer__panel {
+  right: 0;
+  transform: translateX(100%);
+}
+
+.ui-drawer--left .ui-drawer__panel {
+  left: 0;
+  transform: translateX(-100%);
+}
+
+.ui-drawer--open .ui-drawer__panel {
+  transform: translateX(0);
+}
+
+.ui-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-borderGray, #E2E8F0);
+}
+
+.ui-drawer__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.ui-drawer__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.ui-drawer__close:hover {
+  background-color: #F1F5F9;
+  color: #0F172A;
+}
+
+.ui-drawer__close:focus-visible {
+  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline-offset: 2px;
+}
+
+.ui-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-drawer,
+  .ui-drawer__backdrop,
+  .ui-drawer__panel {
+    transition: none;
+  }
+}
