@@ -19,6 +19,7 @@
 | **Màn 6: Trip Planner** | Kế thừa Design System | **Mới (20%)** | Button styles, Modal layout, Typography | Giao diện kéo thả Timeline hàng ngày (DnD), Bản đồ Polyline di chuyển |
 | **Màn 7: Trip Diary** | Kế thừa Design System | **Mới (30%)** | Form input, Typography | Editor viết nhật ký, Drag & Drop upload tối đa 10 ảnh |
 | **Màn 8: User Profile** | `201:22468` (Account) | **70%** | Avatar upload, Form thông tin cá nhân | Lưới tag chọn Sở thích du lịch Việt Nam, Phân khúc ngân sách |
+| **Màn 9: Admin Portal** | Kế thừa Design System | **Mới (10%)** | Typography Open Sans, màu Ocean Azure, Input / Button / Badge | Giao diện Liquid Glass (sidebar & header nổi), bảng dữ liệu, form trong Drawer, bản đồ chọn tọa độ, upload nhiều ảnh kéo thả, biểu đồ theo tháng |
 
 ---
 
@@ -137,3 +138,22 @@
   3. **Bong bóng Trợ lý ảo AI nổi (Floating AI Bubble).**
 * **Bố trí layout:**
   * Form thông tin xếp dọc ở cột trái; Thiết lập sở thích và ngân sách xếp ở cột phải.
+
+---
+
+### Màn 9: Phân hệ quản trị (Admin Portal)
+* **Mục đích:** Quản trị viên quản lý người dùng, thành phố, địa điểm, kiểm duyệt đánh giá và import dữ liệu từ OpenStreetMap.
+* **Phong cách:** Liquid Glass — bề mặt kính mờ kiểu iOS trên nền xám xanh trung tính, một màu nhấn Ocean Azure (chi tiết: tài liệu 06 mục 6). Chỉ áp dụng trong `/admin`.
+* **Khung chung (`AdminLayout`):**
+  1. **Sidebar kính nổi** (cách mép 12px, bo 28px): menu chia nhóm Tổng quan / Quản lý / Công cụ; "giọt kính" trượt theo mục đang chọn; thu gọn còn icon; dưới 1024px chuyển thành Drawer.
+  2. **Header kính nổi:** nút menu, breadcrumb tự động theo route, nút về trang chủ, thông tin admin, đăng xuất.
+* **Các trang:**
+  1. **Bảng điều khiển:** 4 thẻ số liệu (kèm số mới trong tháng), 2 biểu đồ cột người dùng mới / đánh giá mới theo tháng (6 hoặc 12 tháng), thanh ngang xếp hạng (địa điểm theo loại, top thành phố, phân bố số sao), 5 đánh giá mới nhất, lối tắt.
+  2. **Người dùng:** thanh chọn nhóm (Tất cả / Quản trị viên / Khách hàng / Đã khóa / Chưa xác thực) kèm số đếm, tìm kiếm không dấu, bảng có nút khóa / cấp quyền / xóa; Drawer chi tiết + sửa tên, email; xóa phải gõ email xác nhận.
+  3. **Thành phố:** lưới thẻ ảnh banner + tấm kính thông tin; Drawer thêm / sửa có bản đồ chọn tọa độ; xóa 2 bước khi thành phố còn địa điểm.
+  4. **Địa điểm:** thanh chọn 4 loại, lọc thành phố, bảng có cột riêng theo loại; Drawer form theo loại, upload nhiều ảnh kéo thả sắp xếp, ô tiền định dạng VNĐ, bản đồ + nút "Lấy tọa độ thành phố".
+  5. **Kiểm duyệt đánh giá:** thẻ đánh giá (người viết, số sao, nội dung, địa điểm), lọc theo loại / thành phố / số sao / địa điểm, chọn nhiều để xóa.
+  6. **Import OSM:** chọn thành phố (2 nhóm: đã có / thêm mới), thanh trượt số lượng mỗi loại, tiến trình 3 bước, thẻ kết quả theo loại, cảnh báo dữ liệu ngẫu nhiên.
+* **Bố trí layout:**
+  * Desktop: sidebar trái cố định, nội dung tối đa 88rem; form thêm / sửa luôn mở trong Drawer bên phải.
+  * Mobile: sidebar thành Drawer, bộ lọc xếp dọc (hai ô chọn ngắn nằm cùng hàng), bảng cuộn ngang trong khung.

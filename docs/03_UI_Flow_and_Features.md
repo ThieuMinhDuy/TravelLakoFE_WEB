@@ -78,10 +78,11 @@ graph TD
 
 ### A. Dashboard Thống kê (Analytics Dashboard)
 Trang chính khi Admin đăng nhập:
-*   FE sử dụng thư viện `recharts` hiển thị các thông số tổng quan dưới dạng thẻ (Card): Tổng số người dùng, tổng số review, tổng số địa điểm.
-*   Biểu đồ đường (Line Chart): Lượng người dùng đăng ký mới theo thời gian.
-*   Biểu đồ hình tròn (Pie Chart): Tỷ lệ các loại địa điểm (`Attraction`, `Hotel`, `Restaurant`, `Cafe`).
-*   Biểu đồ cột (Bar Chart): Top 5 địa điểm có điểm đánh giá rating cao nhất.
+*   Thẻ số liệu tổng quan: tổng người dùng, chuyến đi, địa điểm, đánh giá (kèm số mới trong tháng); bấm thẻ để mở trang quản lý tương ứng.
+*   Biểu đồ cột theo tháng (chọn 6 hoặc 12 tháng): người dùng đăng ký mới và đánh giá mới. API thống kê chỉ trả số đếm nên chuỗi theo tháng được tính phía FE từ `createdAt`.
+*   Thanh xếp hạng: số địa điểm theo loại (`Attraction`, `Hotel`, `Restaurant`, `Cafe`), 5 thành phố nhiều đánh giá nhất, phân bố số sao (bấm để lọc ở trang Đánh giá).
+*   Danh sách 5 đánh giá mới nhất và số đánh giá thấp (≤ 2 sao) cần kiểm tra.
+*   Biểu đồ tự vẽ bằng SVG/CSS theo phong cách Liquid Glass (không dùng `recharts`) để nhẹ và đồng bộ giao diện.
 
 ### B. Quản lý Thành phố và Địa điểm (CRUD Management)
 *   Danh sách dạng Table có phân trang, tìm kiếm và bộ lọc.
@@ -93,5 +94,6 @@ Trang chính khi Admin đăng nhập:
 *   Nút bấm Khóa/Mở khóa tài khoản (`isBlocked: true/false`) của người dùng vi phạm tiêu chuẩn cộng đồng.
 
 ### D. Công cụ Import dữ liệu hàng loạt
-*   Màn hình cho phép Admin kéo thả tệp Excel (.xlsx) hoặc JSON chứa hàng trăm địa điểm du lịch, khách sạn đã soạn sẵn từ trước.
-*   FE gửi tệp này lên API `/api/admin/import` để backend tự động bóc tách và chèn hàng loạt vào cơ sở dữ liệu.
+*   Thay cho import tệp Excel/JSON: Admin chọn một thành phố (đã có, hoặc trong danh sách tỉnh thành gợi ý để tạo mới) và số địa điểm mới tối đa mỗi loại.
+*   FE gọi `POST /api/admin/import/osm`: backend lấy dữ liệu thật từ OpenStreetMap (Overpass, dự phòng Nominatim), bỏ địa điểm đã có, Gemini viết mô tả và giá tham khảo rồi lưu vào cơ sở dữ liệu.
+*   Màn hình hiện tiến trình từng bước, kết quả theo loại địa điểm, số địa điểm do AI viết mô tả, và xử lý riêng lỗi máy chủ OSM bận (đếm ngược trước khi thử lại) hoặc không tìm được thành phố.

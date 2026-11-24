@@ -760,6 +760,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -824,6 +827,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -884,6 +890,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -929,6 +938,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -960,6 +972,9 @@
           "Trips"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -994,6 +1009,9 @@
           "Trips - Itinerary"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -1066,6 +1084,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -1124,6 +1145,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -1162,6 +1186,9 @@
           "Trips - Itinerary"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -1226,6 +1253,9 @@
           "Trips - Itinerary"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -1339,6 +1369,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -1400,6 +1433,9 @@
           "Reviews"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -1670,6 +1706,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -1706,6 +1745,9 @@
           "Favorites"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -1758,6 +1800,9 @@
           "Favorites"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -1948,13 +1993,61 @@
     },
     "/auth/logout": {
       "post": {
-        "summary": "Đăng xuất người dùng (xóa cookie token)",
+        "summary": "Đăng xuất (xóa cookie `jwt` nếu có). Client dùng Bearer token tự xóa token phía mình.",
         "tags": [
           "Auth"
         ],
         "responses": {
           "200": {
             "description": "Đăng xuất thành công"
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "post": {
+        "summary": "Đăng nhập hoặc đăng ký bằng Google ID Token",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "idToken"
+                ],
+                "properties": {
+                  "idToken": {
+                    "type": "string",
+                    "description": "Chuỗi Google ID Token (credential) nhận từ Google SDK phía Frontend"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đăng nhập thành công, trả về thông tin user và cấp JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Thiếu token hoặc token không lấy được email"
+          },
+          "401": {
+            "description": "Google ID Token không hợp lệ hoặc đã hết hạn"
+          },
+          "403": {
+            "description": "Tài khoản đã bị khóa"
           }
         }
       }
@@ -1966,6 +2059,9 @@
           "Auth"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -1992,6 +2088,9 @@
           "Auth"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -2618,6 +2717,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -2651,6 +2753,9 @@
           "Admin - User"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -2693,6 +2798,9 @@
           "Admin - User"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -2766,6 +2874,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -2805,6 +2916,9 @@
           "Admin - Review"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -2911,6 +3025,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -2962,6 +3079,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -3011,6 +3131,9 @@
           "Admin - Places"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -3079,6 +3202,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -3127,6 +3253,9 @@
           "Admin - Places"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -3200,6 +3329,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -3264,6 +3396,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -3302,6 +3437,9 @@
           "Admin - Import"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -3386,6 +3524,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -3456,6 +3597,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -3487,6 +3631,9 @@
           "Admin - City"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -3532,6 +3679,9 @@
         ],
         "security": [
           {
+            "bearerAuth": []
+          },
+          {
             "cookieAuth": []
           }
         ],
@@ -3574,6 +3724,9 @@
           "Admin - City"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }
@@ -3627,6 +3780,9 @@
           "Admin - City"
         ],
         "security": [
+          {
+            "bearerAuth": []
+          },
           {
             "cookieAuth": []
           }

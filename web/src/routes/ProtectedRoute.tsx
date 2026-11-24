@@ -1,16 +1,24 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
-import { toast } from 'sonner';
+import { isAdminUser } from '../utils/auth';
+import { ForbiddenPage } from '../pages/ForbiddenPage';
 
 export interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
+  /** Hiển thị khi đã đăng nhập nhưng không đủ quyền (mặc định: trang 403) */
+  forbiddenFallback?: React.ReactNode;
 }
 
+/**
+ * - Chưa đăng nhập → mở popup đăng nhập, kèm `redirect` để quay lại sau khi đăng nhập
+ * - Đã đăng nhập nhưng thiếu quyền Admin → hiển thị 403 (giữ nguyên URL)
+ */
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requireAdmin = false,
+  forbiddenFallback = <ForbiddenPage />,
 }) => {
   const { isAuthenticated, user } = useAuthStore();
   const location = useLocation();
@@ -24,9 +32,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  if (requireAdmin && !user?.isAdmin) {
-    toast.error('Bạn không có quyền truy cập vào phân hệ Quản trị viên!');
-    return <Navigate to="/" replace />;
+  if (requireAdmin && !isAdminUser(user)) {
+    return <>{forbiddenFallback}</>;
   }
 
   return <>{children}</>;

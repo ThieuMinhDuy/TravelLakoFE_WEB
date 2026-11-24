@@ -1,0 +1,188 @@
+.ui-multi-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.ui-multi-upload__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ui-multi-upload__count {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: #64748b;
+}
+
+.ui-multi-upload__list {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0.25rem 0.1rem 0.5rem;
+  overflow-x: auto;
+  list-style: none;
+}
+
+.ui-multi-upload__tile {
+  position: relative;
+  flex-shrink: 0;
+  width: 7.5rem;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid rgb(15 23 42 / 0.1);
+  border-radius: 0.9rem;
+  background: #f1f5f9;
+}
+
+.ui-multi-upload__tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ui-multi-upload__tile--dragging {
+  box-shadow: 0 16px 30px -10px rgb(15 23 42 / 0.45);
+  transform-origin: center;
+}
+
+.ui-multi-upload__tile--pending img {
+  filter: saturate(0.4) brightness(0.9);
+}
+
+/* Tay nắm kéo + các nút nhỏ phủ trên ảnh */
+.ui-multi-upload__handle,
+.ui-multi-upload__btn {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border: 0;
+  border-radius: 9999px;
+  background: rgb(15 23 42 / 0.55);
+  color: #ffffff;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.ui-multi-upload__handle svg,
+.ui-multi-upload__btn svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.ui-multi-upload__handle {
+  left: 0.3rem;
+  top: 0.3rem;
+  cursor: grab;
+}
+
+.ui-multi-upload__handle:focus-visible,
+.ui-multi-upload__btn:focus-visible,
+.ui-multi-upload__add:focus-visible {
+  outline: 2px solid #ffffff;
+  box-shadow: 0 0 0 4px rgb(3 105 161 / 0.6);
+}
+
+.ui-multi-upload__btn {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.ui-multi-upload__btn--remove {
+  right: 0.3rem;
+  top: 0.3rem;
+}
+
+.ui-multi-upload__btn--remove:hover {
+  background: #dc2626;
+}
+
+.ui-multi-upload__btn--cover {
+  left: 0.3rem;
+  bottom: 0.3rem;
+  opacity: 0;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.ui-multi-upload__tile:hover .ui-multi-upload__btn--cover,
+.ui-multi-upload__btn--cover:focus-visible {
+  opacity: 1;
+}
+
+.ui-multi-upload__btn--cover:hover {
+  background: rgb(3 105 161 / 0.9);
+}
+
+.ui-multi-upload__cover {
+  position: absolute;
+  left: 0.3rem;
+  bottom: 0.3rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.9);
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ui-multi-upload__progress {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  height: 0.3rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.55);
+}
+
+.ui-multi-upload__progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #0369a1;
+  transition: width 0.2s ease;
+}
+
+.ui-multi-upload__add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  width: 7.5rem;
+  aspect-ratio: 4 / 3;
+  border: 1.5px dashed rgb(15 23 42 / 0.2);
+  border-radius: 0.9rem;
+  background: rgb(255 255 255 / 0.5);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.ui-multi-upload__add svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.ui-multi-upload__add:hover,
+.ui-multi-upload__add--over {
+  border-color: #0369a1;
+  background: rgb(255 255 255 / 0.85);
+  color: #0369a1;
+}
+
+@media (hover: none) {
+  .ui-multi-upload__btn--cover {
+    opacity: 1;
+  }
+}

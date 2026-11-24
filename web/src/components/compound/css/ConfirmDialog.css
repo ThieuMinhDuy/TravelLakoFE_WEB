@@ -42,6 +42,22 @@
   line-height: 1.625;
 }
 
+.ui-confirm-dialog__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.ui-confirm-dialog__extra {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.ui-confirm-dialog__require {
+  margin-top: 1rem;
+}
+
 .ui-confirm-dialog__actions {
   display: flex;
   align-items: center;

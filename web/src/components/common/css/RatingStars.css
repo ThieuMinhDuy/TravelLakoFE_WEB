@@ -1,0 +1,31 @@
+/* ==========================================================================
+   RatingStars
+   ========================================================================== */
+
+.ui-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.ui-rating__star {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: #CBD5E1;
+}
+
+.ui-rating__star--filled {
+  color: var(--color-sunsetSand, #D97706);
+  fill: currentColor;
+}
+
+.ui-rating__value {
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.ui-rating__count {
+  color: #94A3B8;
+}

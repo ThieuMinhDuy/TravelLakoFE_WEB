@@ -1,111 +1,100 @@
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useUIStore } from '../../store/useUIStore';
 import { cn } from '../../utils/cn';
-import {
-  LayoutDashboard,
-  Users,
-  Building2,
-  MapPin,
-  MessageSquare,
-  DownloadCloud,
-} from 'lucide-react';
+import { ADMIN_NAV } from '../../features/admin/config/adminNav';
 import logoImg from '../../assets/logo.png';
 import './css/AdminSidebar.css';
 
-export const AdminSidebar: React.FC = () => {
-  const { adminSidebarCollapsed } = useUIStore();
+interface AdminSidebarProps {
+  /** `drawer`: hiển thị bên trong Drawer trên màn nhỏ (luôn mở rộng, chiếm hết khung) */
+  variant?: 'sidebar' | 'drawer';
+  /** Gọi khi chọn một mục menu (dùng để đóng drawer) */
+  onNavigate?: () => void;
+}
 
-  const navItems = [
-    {
-      to: '/admin',
-      label: 'Tổng quan (Dashboard)',
-      icon: LayoutDashboard,
-      end: true,
-    },
-    {
-      to: '/admin/users',
-      label: 'Quản lý Người dùng',
-      icon: Users,
-    },
-    {
-      to: '/admin/cities',
-      label: 'Quản lý Thành phố',
-      icon: Building2,
-    },
-    {
-      to: '/admin/places',
-      label: 'Quản lý Địa điểm',
-      icon: MapPin,
-    },
-    {
-      to: '/admin/reviews',
-      label: 'Quản lý Đánh giá',
-      icon: MessageSquare,
-    },
-    {
-      to: '/admin/import',
-      label: 'Cào dữ liệu (OSM)',
-      icon: DownloadCloud,
-    },
-  ];
+/** Lò xo cho "giọt kính" trượt giữa các mục — hơi nảy như thanh tab iOS */
+const PILL_SPRING = { type: 'spring', stiffness: 380, damping: 30, mass: 0.9 } as const;
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ variant = 'sidebar', onNavigate }) => {
+  const collapsedSetting = useUIStore((s) => s.adminSidebarCollapsed);
+  // Trong drawer luôn hiện đầy đủ nhãn, bỏ qua trạng thái thu gọn của desktop
+  const collapsed = variant === 'sidebar' && collapsedSetting;
+  const pillId = `admin-nav-pill-${variant}`;
 
   return (
     <aside
       className={cn(
         'admin-sidebar',
-        adminSidebarCollapsed && 'admin-sidebar--collapsed'
+        variant === 'sidebar' && 'glass',
+        variant === 'drawer' && 'admin-sidebar--drawer',
+        collapsed && 'admin-sidebar--collapsed'
       )}
     >
-      {/* Brand Header */}
       <div className="admin-sidebar__header">
-        <Link to="/admin" className="admin-sidebar__brand-link">
-          <img src={logoImg} alt="Logo" className="admin-sidebar__brand-logo" />
-          {!adminSidebarCollapsed && (
-            <div className="admin-sidebar__brand-text">
-              <span className="admin-sidebar__brand-name">
-                Trip<span className="admin-sidebar__brand-highlight">Mate</span>
-              </span>
-              <span className="admin-sidebar__brand-tag">
-                Admin Portal
-              </span>
-            </div>
+        <Link to="/admin" className="admin-sidebar__brand" onClick={onNavigate} aria-label="TripMate Admin — Bảng điều khiển">
+          <span className="admin-sidebar__logo">
+            <img src={logoImg} alt="" />
+          </span>
+          {!collapsed && (
+            <span className="admin-sidebar__brand-text">
+              <span className="admin-sidebar__brand-name">TripMate</span>
+              <span className="admin-sidebar__brand-tag">Admin</span>
+            </span>
           )}
         </Link>
       </div>
 
-      {/* Nav List */}
-      <nav className="admin-sidebar__nav">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              title={adminSidebarCollapsed ? item.label : undefined}
-              className={({ isActive }) =>
-                cn(
-                  'admin-sidebar__nav-item',
-                  isActive && 'admin-sidebar__nav-item--active',
-                  adminSidebarCollapsed && 'admin-sidebar__nav-item--collapsed'
-                )
-              }
-            >
-              <Icon className="admin-sidebar__nav-icon" />
-              {!adminSidebarCollapsed && (
-                <span className="admin-sidebar__nav-label">{item.label}</span>
-              )}
-            </NavLink>
-          );
-        })}
+      <nav className="admin-sidebar__nav" aria-label="Menu quản trị">
+        {ADMIN_NAV.map((group) => (
+          <div key={group.label} className="admin-sidebar__group">
+            {collapsed ? (
+              <span className="admin-sidebar__group-divider" aria-hidden="true" />
+            ) : (
+              <p className="admin-sidebar__group-label">{group.label}</p>
+            )}
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={onNavigate}
+                  title={collapsed ? item.label : undefined}
+                  aria-label={collapsed ? item.label : undefined}
+                  className={({ isActive }) =>
+                    cn('admin-sidebar__item', isActive && 'admin-sidebar__item--active')
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <motion.span
+                          layoutId={pillId}
+                          className="admin-sidebar__pill glass glass--thick glass--lens"
+                          transition={PILL_SPRING}
+                          aria-hidden="true"
+                        />
+                      )}
+                      <span className="admin-sidebar__icon">
+                        <Icon aria-hidden="true" />
+                      </span>
+                      {!collapsed && <span className="admin-sidebar__label">{item.label}</span>}
+                    </>
+                  )}
+                </NavLink>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
-      {/* Footer / Meta */}
-      {!adminSidebarCollapsed && (
+      {!collapsed && (
         <div className="admin-sidebar__footer">
-          <p className="admin-sidebar__footer-text">TripMate Engine v1.0</p>
-          <p className="admin-sidebar__footer-text">OpenAPI Mongoose Compatible</p>
+          <span className="admin-sidebar__status-dot" aria-hidden="true" />
+          TripMate Admin · v1.0
         </div>
       )}
     </aside>

@@ -1,0 +1,109 @@
+/* ==========================================================================
+   Tabs — Compound Component
+   ========================================================================== */
+
+.ui-tabs__list {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ui-tabs__list::-webkit-scrollbar {
+  display: none;
+}
+
+.ui-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  padding: 0.625rem 1rem;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-textSub, #475569);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+}
+
+.ui-tabs__tab:hover:not(:disabled) {
+  color: var(--color-textMain, #0F172A);
+}
+
+.ui-tabs__tab:focus-visible {
+  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline-offset: 2px;
+}
+
+.ui-tabs__tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ui-tabs__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.375rem;
+  border-radius: 9999px;
+  background-color: var(--color-bgSubtle, #F1F5F9);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-textSub, #475569);
+}
+
+.ui-tabs__tab--active .ui-tabs__badge {
+  background-color: var(--color-oceanBlue, #0369A1);
+  color: #FFFFFF;
+}
+
+.ui-tabs__panel {
+  padding-top: 1.25rem;
+}
+
+.ui-tabs__panel:focus-visible {
+  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline-offset: 4px;
+  border-radius: 0.5rem;
+}
+
+/* --- Biến thể underline (mặc định) ------------------------------------ */
+.ui-tabs--underline .ui-tabs__list {
+  border-bottom: 1px solid var(--color-borderGray, #E2E8F0);
+}
+
+.ui-tabs--underline .ui-tabs__tab {
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+}
+
+.ui-tabs--underline .ui-tabs__tab--active {
+  color: var(--color-oceanBlue, #0369A1);
+  border-bottom-color: var(--color-oceanBlue, #0369A1);
+}
+
+/* --- Biến thể pills -------------------------------------------------- */
+.ui-tabs--pills .ui-tabs__list {
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-bgSubtle, #F1F5F9);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.ui-tabs--pills .ui-tabs__tab {
+  border-radius: 0.625rem;
+}
+
+.ui-tabs--pills .ui-tabs__tab--active {
+  background-color: var(--color-surfaceWhite, #FFFFFF);
+  color: var(--color-oceanBlue, #0369A1);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+}

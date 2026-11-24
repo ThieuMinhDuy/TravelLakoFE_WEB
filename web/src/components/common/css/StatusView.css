@@ -1,0 +1,59 @@
+/* ==========================================================================
+   StatusView — màn hình trạng thái dùng chung (404, 403, lỗi ứng dụng)
+   ========================================================================== */
+
+.ui-status-view {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.ui-status-view--full {
+  min-height: 100vh;
+  background-color: var(--color-bgApp, #FAFAFA);
+}
+
+.ui-status-view__code {
+  font-weight: 800;
+  font-size: 4.5rem;
+  color: rgba(3, 105, 161, 0.25);
+  user-select: none;
+  line-height: 1;
+}
+
+.ui-status-view__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  background-color: var(--color-oceanBlueLight, #F0F9FF);
+  color: var(--color-oceanBlue, #0369A1);
+}
+
+.ui-status-view__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0.75rem 0 0;
+}
+
+.ui-status-view__desc {
+  font-size: 0.875rem;
+  color: #64748B;
+  max-width: 28rem;
+  margin: 0.5rem 0 1.5rem;
+  line-height: 1.6;
+}
+
+.ui-status-view__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}

@@ -1,41 +1,107 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { Routes, Route, useLocation, type Location } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
-import { AuthLayout } from '../layouts/AuthLayout';
-import { AdminLayout } from '../layouts/AdminLayout';
 
 import { ProtectedRoute } from './ProtectedRoute';
-import { GuestRoute } from './GuestRoute';
+import { GuestRedirect } from './GuestRedirect';
+import { useAuthStore } from '../store/useAuthStore';
+import { Spinner } from '../components/common/Spinner';
+import { ErrorBoundary } from '../components/common/ErrorBoundary';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { ScrollToTop } from './ScrollToTop';
 
 import { ExplorePage } from '../features/explore/ExplorePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { ForbiddenPage } from '../pages/ForbiddenPage';
 
-import { LoginPage } from '../features/auth/pages/LoginPage';
-import { RegisterPage } from '../features/auth/pages/RegisterPage';
-import { VerifyOtpPage } from '../features/auth/pages/VerifyOtpPage';
-import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage';
-import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage';
+import { isAuthPath, type AuthModalState } from '../features/auth/authPaths';
 
-import { ProfilePage } from '../features/profile/pages/ProfilePage';
+/**
+ * Lazy-load các phân hệ chỉ dành cho người đã đăng nhập / Admin → khách vào trang chủ
+ * không phải tải code của chúng (tách chunk riêng khi build).
+ */
+const lazyNamed = <K extends string, P extends object = object>(
+  loader: () => Promise<Record<K, React.ComponentType<P>>>,
+  name: K
+) => lazy(() => loader().then((m) => ({ default: m[name] })));
 
-import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage';
-import { AdminUsersPage } from '../features/admin/pages/AdminUsersPage';
-import { AdminCitiesPage } from '../features/admin/pages/AdminCitiesPage';
-import { AdminPlacesPage } from '../features/admin/pages/AdminPlacesPage';
-import { AdminReviewsPage } from '../features/admin/pages/AdminReviewsPage';
-import { AdminImportPage } from '../features/admin/pages/AdminImportPage';
+/** Popup xác thực (kèm framer-motion, zod, react-hook-form, Google SDK) — chunk riêng */
+const loadAuthModal = () => import('../features/auth/AuthModalHost');
+const AuthModalHost = lazyNamed(loadAuthModal, 'AuthModalHost');
 
-// Simple placeholder helper
-const PlaceholderPage: React.FC<{ title: string; desc: string }> = ({ title, desc }) => (
-  <div className="max-w-4xl mx-auto py-16 px-4 text-center">
-    <h2 className="text-3xl font-extrabold text-slate-900">{title}</h2>
-    <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">{desc}</p>
+const AdminLayout = lazyNamed(() => import('../layouts/AdminLayout'), 'AdminLayout');
+const ProfilePage = lazyNamed(() => import('../features/profile/pages/ProfilePage'), 'ProfilePage');
+const AdminDashboardPage = lazyNamed(() => import('../features/admin/pages/AdminDashboardPage'), 'AdminDashboardPage');
+const AdminUsersPage = lazyNamed(() => import('../features/admin/pages/AdminUsersPage'), 'AdminUsersPage');
+const AdminCitiesPage = lazyNamed(() => import('../features/admin/pages/AdminCitiesPage'), 'AdminCitiesPage');
+const AdminPlacesPage = lazyNamed(() => import('../features/admin/pages/AdminPlacesPage'), 'AdminPlacesPage');
+const AdminReviewsPage = lazyNamed(() => import('../features/admin/pages/AdminReviewsPage'), 'AdminReviewsPage');
+const AdminImportPage = lazyNamed(() => import('../features/admin/pages/AdminImportPage'), 'AdminImportPage');
+
+const PageFallback: React.FC = () => (
+  <div className="flex items-center justify-center py-24" role="status" aria-label="Đang tải trang">
+    <Spinner size="lg" className="text-oceanBlue" />
   </div>
 );
 
-export const AppRoutes: React.FC = () => {
+/** Bọc từng trang lazy trong Suspense riêng → layout xung quanh không bị thay bằng spinner */
+const withSuspense = (element: React.ReactNode) => (
+  <Suspense fallback={<PageFallback />}>{element}</Suspense>
+);
+
+// Simple placeholder helper
+const PlaceholderPage: React.FC<{ title: string; desc: string }> = ({ title, desc }) => {
+  useDocumentTitle(title);
   return (
-    <Routes>
+    <div className="max-w-4xl mx-auto py-16 px-4 text-center">
+      <h2 className="text-3xl font-extrabold text-slate-900">{title}</h2>
+      <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">{desc}</p>
+    </div>
+  );
+};
+
+/** Trang nền mặc định khi mở thẳng URL /login, /register... */
+const HOME_LOCATION: Location = {
+  pathname: '/',
+  search: '',
+  hash: '',
+  state: null,
+  key: 'auth-background',
+};
+
+export const AppRoutes: React.FC = () => {
+  const location = useLocation();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  // Các màn auth là popup: trang phía sau là trang người dùng đang xem (hoặc trang chủ)
+  const isAuthOpen = isAuthPath(location.pathname);
+  const backgroundLocation = isAuthOpen
+    ? ((location.state as AuthModalState | null)?.backgroundLocation ?? HOME_LOCATION)
+    : null;
+
+  // Chỉ mount popup sau lần mở đầu tiên; sau đó giữ mount để chạy được hiệu ứng đóng
+  const isAuthModalOpen = isAuthOpen && !isAuthenticated;
+  const [authModalMounted, setAuthModalMounted] = useState(isAuthModalOpen);
+  if (isAuthModalOpen && !authModalMounted) setAuthModalMounted(true);
+
+  // Tải sẵn chunk popup khi trình duyệt rảnh → lần bấm "Đăng nhập" đầu tiên mở ngay
+  useEffect(() => {
+    if (isAuthenticated) return;
+    const prefetch = () => void loadAuthModal();
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(prefetch, { timeout: 4000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const timer = window.setTimeout(prefetch, 2000);
+    return () => window.clearTimeout(timer);
+  }, [isAuthenticated]);
+
+  const pageLocation = backgroundLocation ?? location;
+
+  return (
+    <>
+    <ScrollToTop pathname={pageLocation.pathname} />
+    <Routes location={pageLocation}>
       {/* 1. Public Routes with MainLayout */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<ExplorePage page="home" />} />
@@ -69,6 +135,26 @@ export const AppRoutes: React.FC = () => {
                 desc="Màn 7: Ghi lại khoảnh khắc, cảm xúc và hình ảnh trong hành trình của bạn."
               />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trips/:id"
+          element={
+            <ProtectedRoute>
+              <PlaceholderPage
+                title="Chi tiết chuyến đi"
+                desc="Màn 6: Lịch trình theo từng ngày, kéo thả sắp xếp địa điểm và bản đồ lộ trình."
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/places/:type/:id"
+          element={
+            <PlaceholderPage
+              title="Chi tiết địa điểm"
+              desc="Màn 3: Thư viện ảnh, thông tin, bản đồ vị trí và đánh giá của địa điểm."
+            />
           }
         />
         <Route
@@ -108,48 +194,53 @@ export const AppRoutes: React.FC = () => {
           path="/profile"
           element={
             <ProtectedRoute>
-              <ProfilePage />
+              {withSuspense(<ProfilePage />)}
             </ProtectedRoute>
           }
         />
       </Route>
 
-      {/* 2. Guest Auth Routes with AuthLayout (Split-Screen) */}
-      <Route
-        element={
-          <GuestRoute>
-            <AuthLayout />
-          </GuestRoute>
-        }
-      >
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/verify-otp" element={<VerifyOtpPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-      </Route>
 
-      {/* 3. Protected Admin Routes with AdminLayout */}
+      {/* 2. Protected Admin Routes with AdminLayout */}
       <Route
         path="/admin"
         element={
-          <ProtectedRoute requireAdmin>
-            <AdminLayout />
+          <ProtectedRoute
+            requireAdmin
+            forbiddenFallback={
+              <MainLayout>
+                <ForbiddenPage />
+              </MainLayout>
+            }
+          >
+            {withSuspense(<AdminLayout />)}
           </ProtectedRoute>
         }
       >
-        <Route index element={<AdminDashboardPage />} />
-        <Route path="users" element={<AdminUsersPage />} />
-        <Route path="cities" element={<AdminCitiesPage />} />
-        <Route path="places" element={<AdminPlacesPage />} />
-        <Route path="reviews" element={<AdminReviewsPage />} />
-        <Route path="import" element={<AdminImportPage />} />
+        <Route index element={withSuspense(<AdminDashboardPage />)} />
+        <Route path="users" element={withSuspense(<AdminUsersPage />)} />
+        <Route path="cities" element={withSuspense(<AdminCitiesPage />)} />
+        <Route path="places" element={withSuspense(<AdminPlacesPage />)} />
+        <Route path="reviews" element={withSuspense(<AdminReviewsPage />)} />
+        <Route path="import" element={withSuspense(<AdminImportPage />)} />
       </Route>
 
-      {/* 4. Fallback 404 Route */}
+      {/* 3. Fallback 404 Route */}
       <Route element={<MainLayout />}>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
+
+    {/* 4. Popup xác thực (Login, Register, OTP, Quên / Đặt lại mật khẩu) */}
+    {isAuthOpen && isAuthenticated && <GuestRedirect location={location} />}
+    {authModalMounted && (
+      // Lỗi trong popup (kể cả lỗi tải chunk) không được làm trắng trang phía sau
+      <ErrorBoundary fallback={() => null}>
+        <Suspense fallback={null}>
+          <AuthModalHost open={isAuthModalOpen} location={location} />
+        </Suspense>
+      </ErrorBoundary>
+    )}
+    </>
   );
 };

@@ -1,0 +1,295 @@
+/* ==========================================================================
+   Admin skin — phiên bản Liquid Glass của các component dùng chung
+   --------------------------------------------------------------------------
+   Chỉ áp dụng dưới [data-surface="admin"]; trang người dùng giữ nguyên giao diện.
+   Selector có 2 lớp (0,2,0) để thắng style gốc (0,1,0) bất kể thứ tự nạp CSS.
+   ========================================================================== */
+
+/* ---------------------------------- Card --------------------------------- */
+/* Card dùng kính dày (nhiều chữ). Trang mới nên dùng class .glass trực tiếp. */
+
+[data-surface='admin'] .ui-card {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  background: rgb(255 255 255 / 0.55);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-inner), var(--glass-shadow);
+}
+
+/* --------------------------------- Button -------------------------------- */
+
+[data-surface='admin'] .ui-button {
+  border-radius: 9999px;
+  transition:
+    transform 0.35s var(--glass-spring),
+    background 0.2s ease,
+    box-shadow 0.25s ease,
+    color 0.2s ease;
+}
+
+[data-surface='admin'] .ui-button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+[data-surface='admin'] .ui-button--primary {
+  background: var(--glass-accent);
+  border-color: transparent;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 2px 6px -2px rgb(3 105 161 / 0.4);
+}
+
+[data-surface='admin'] .ui-button--primary:hover:not(:disabled) {
+  background: #075985;
+}
+
+[data-surface='admin'] .ui-button--danger {
+  background: #dc2626;
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 2px 6px -2px rgb(220 38 38 / 0.4);
+}
+
+[data-surface='admin'] .ui-button--outline,
+[data-surface='admin'] .ui-button--secondary {
+  border: 1px solid rgb(255 255 255 / 0.75);
+  background: rgb(255 255 255 / 0.55);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
+  color: var(--glass-text);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 2px 6px -2px rgb(15 23 42 / 0.12);
+}
+
+[data-surface='admin'] .ui-button--outline:hover:not(:disabled),
+[data-surface='admin'] .ui-button--secondary:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.85);
+  border-color: rgb(255 255 255 / 0.9);
+}
+
+[data-surface='admin'] .ui-button--ghost:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.55);
+}
+
+[data-surface='admin'] .ui-button:focus-visible {
+  box-shadow: var(--glass-focus);
+}
+
+/* ------------------------------ Input / Select --------------------------- */
+
+[data-surface='admin'] .ui-input,
+[data-surface='admin'] .ui-select,
+[data-surface='admin'] .ui-textarea,
+[data-surface='admin'] .ui-data-table__search-input {
+  border: 1px solid rgb(15 23 42 / 0.1);
+  border-radius: 0.9rem;
+  background: rgb(255 255 255 / 0.72);
+  box-shadow: inset 0 1px 2px rgb(15 23 42 / 0.05);
+  color: var(--glass-text);
+}
+
+[data-surface='admin'] .ui-input:focus,
+[data-surface='admin'] .ui-select:focus,
+[data-surface='admin'] .ui-textarea:focus,
+[data-surface='admin'] .ui-data-table__search-input:focus {
+  border-color: rgb(3 105 161 / 0.55);
+  background: rgb(255 255 255 / 0.95);
+  box-shadow: var(--glass-focus);
+}
+
+[data-surface='admin'] .ui-input--error {
+  border-color: #f87171;
+}
+
+[data-surface='admin'] .ui-input-label,
+[data-surface='admin'] .ui-select-label {
+  color: var(--glass-text-sub);
+}
+
+/* --------------------------------- Avatar -------------------------------- */
+/* Avatar chữ cái: tông trung tính thay cho gradient cam của trang người dùng */
+
+[data-surface='admin'] .ui-avatar {
+  background: rgb(15 23 42 / 0.08);
+  color: var(--glass-text-sub);
+}
+
+/* --------------------------------- Badge --------------------------------- */
+
+[data-surface='admin'] .ui-badge {
+  font-weight: 600;
+  border-color: rgb(255 255 255 / 0.6);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+
+[data-surface='admin'] .ui-badge--neutral {
+  background: rgb(241 245 249 / 0.8);
+  color: #334155;
+}
+
+[data-surface='admin'] .ui-badge--primary {
+  background: rgb(224 242 254 / 0.85);
+}
+
+[data-surface='admin'] .ui-badge--success {
+  background: rgb(209 250 229 / 0.85);
+}
+
+[data-surface='admin'] .ui-badge--danger {
+  background: rgb(254 226 226 / 0.85);
+}
+
+[data-surface='admin'] .ui-badge--accent,
+[data-surface='admin'] .ui-badge--warning {
+  background: rgb(254 243 199 / 0.85);
+}
+
+/* ------------------------------- DataTable ------------------------------- */
+/* Chỉ lớp bao có kính; từng dòng không dùng backdrop-filter (nặng khi cuộn) */
+
+[data-surface='admin'] .ui-data-table__container {
+  border: 1px solid var(--glass-border);
+  border-radius: 1.25rem;
+  background: rgb(255 255 255 / 0.62);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+}
+
+[data-surface='admin'] .ui-data-table__table {
+  font-size: 0.8125rem;
+  color: var(--glass-text);
+}
+
+[data-surface='admin'] .ui-data-table__thead {
+  background: rgb(255 255 255 / 0.55);
+  border-bottom: 1px solid rgb(15 23 42 / 0.07);
+  color: var(--glass-text-muted);
+}
+
+[data-surface='admin'] .ui-data-table__tbody tr {
+  border-bottom: 1px solid rgb(15 23 42 / 0.06);
+}
+
+/* Ô không xuống dòng: badge / trạng thái gọn một hàng, bảng cuộn ngang trên màn nhỏ */
+[data-surface='admin'] .ui-data-table__th,
+[data-surface='admin'] .ui-data-table__td {
+  white-space: nowrap;
+}
+
+[data-surface='admin'] .ui-data-table__tbody tr:hover {
+  background: rgb(255 255 255 / 0.7);
+}
+
+[data-surface='admin'] .ui-data-table__pagination {
+  border-top: 1px solid rgb(15 23 42 / 0.07);
+  color: var(--glass-text-muted);
+}
+
+[data-surface='admin'] .ui-data-table__pagination-btn {
+  border-radius: 9999px;
+  border-color: rgb(255 255 255 / 0.8);
+  background: rgb(255 255 255 / 0.6);
+  padding: 0.35rem;
+}
+
+/* --------------------------------- Modal --------------------------------- */
+
+[data-surface='admin'] .ui-modal__backdrop {
+  background: rgb(15 23 42 / 0.22);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+}
+
+[data-surface='admin'] .ui-modal__dialog {
+  border: 1px solid rgb(255 255 255 / 0.7);
+  border-radius: 1.75rem;
+  background: rgb(255 255 255 / 0.82);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  backdrop-filter: blur(30px) saturate(190%);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 30px 80px -20px rgb(15 23 42 / 0.4);
+  animation: admin-sheet-in 0.5s var(--glass-spring);
+}
+
+[data-surface='admin'] .ui-confirm-dialog__actions {
+  border-top-color: rgb(15 23 42 / 0.08);
+}
+
+/* --------------------------------- Drawer -------------------------------- */
+/* Panel nổi, cách mép 0.75rem — giống sheet trên iPadOS */
+
+[data-surface='admin'] .ui-drawer__backdrop {
+  background: rgb(15 23 42 / 0.2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+[data-surface='admin'] .ui-drawer__panel {
+  top: 0.75rem;
+  bottom: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  border-radius: 1.75rem;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.8);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  backdrop-filter: blur(30px) saturate(190%);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 30px 80px -20px rgb(15 23 42 / 0.4);
+  transition: transform 0.5s cubic-bezier(0.32, 1.2, 0.5, 1);
+}
+
+[data-surface='admin'] .ui-drawer--right .ui-drawer__panel {
+  right: 0.75rem;
+  transform: translateX(calc(100% + 1.5rem));
+}
+
+[data-surface='admin'] .ui-drawer--left .ui-drawer__panel {
+  left: 0.75rem;
+  transform: translateX(calc(-100% - 1.5rem));
+}
+
+[data-surface='admin'] .ui-drawer--open .ui-drawer__panel {
+  transform: translateX(0);
+}
+
+[data-surface='admin'] .ui-drawer__header {
+  border-bottom-color: rgb(15 23 42 / 0.07);
+}
+
+@keyframes admin-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ------------------------------ Fallback --------------------------------- */
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-surface='admin'] .ui-card,
+  [data-surface='admin'] .ui-modal__dialog,
+  [data-surface='admin'] .ui-drawer__panel,
+  [data-surface='admin'] .ui-button--outline,
+  [data-surface='admin'] .ui-button--secondary {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-surface='admin'] .ui-modal__dialog {
+    animation: none;
+  }
+
+  [data-surface='admin'] .ui-drawer__panel {
+    transition: none;
+  }
+}

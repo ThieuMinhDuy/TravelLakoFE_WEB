@@ -1,6 +1,10 @@
 import { City, Coordinates } from './city';
 
+/** Loại địa điểm dùng trên URL API: GET /api/places/:type */
 export type PlaceType = 'attraction' | 'hotel' | 'restaurant' | 'cafe';
+
+/** Loại địa điểm lưu trong Review / Favorite / lịch trình (tên Model của backend) */
+export type ItemType = 'Attraction' | 'Hotel' | 'Restaurant' | 'Cafe';
 
 export interface BasePlace {
   _id: string;
@@ -39,6 +43,14 @@ export type PlaceUnion = Attraction | Hotel | Restaurant | Cafe;
 export interface PlaceListResponse<T = PlaceUnion> {
   total: number;
   places: T[];
+}
+
+/** GET /api/places/search — mỗi loại tối đa 5 (không có từ khóa) hoặc 10 kết quả */
+export interface GlobalSearchResponse {
+  attractions: Attraction[];
+  hotels: Hotel[];
+  restaurants: Restaurant[];
+  cafes: Cafe[];
 }
 
 export interface CreateAttractionDTO {

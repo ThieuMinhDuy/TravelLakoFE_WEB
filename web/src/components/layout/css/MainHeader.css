@@ -522,3 +522,107 @@
     width: 16rem;
   }
 }
+
+/* ==========================================================================
+   Menu điều hướng trên màn nhỏ (< 860px): nút ☰ + drawer
+   ========================================================================== */
+.main-header__menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: 0.25rem;
+  margin-left: -0.5rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.main-header__menu-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.main-header__menu-btn:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+}
+
+@media (min-width: 860px) {
+  .main-header__menu-btn {
+    display: none;
+  }
+}
+
+.mobile-nav__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 1rem 1.25rem 0.5rem;
+}
+
+.mobile-nav__search-icon {
+  position: absolute;
+  left: 0.875rem;
+  width: 1rem;
+  height: 1rem;
+  color: #94A3B8;
+  pointer-events: none;
+}
+
+.mobile-nav__search-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+  border: 1px solid var(--color-borderGray, #E2E8F0);
+  border-radius: 0.75rem;
+  background-color: var(--color-bgSubtle, #F1F5F9);
+  font: inherit;
+  font-size: 16px; /* tránh iOS tự zoom khi focus */
+  color: #0F172A;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.mobile-nav__search-input:focus {
+  border-color: var(--color-oceanBlue, #0369A1);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.15);
+}
+
+.mobile-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem 1.5rem;
+}
+
+.mobile-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #334155;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.mobile-nav__link:hover {
+  background-color: var(--color-bgSubtle, #F1F5F9);
+  color: #0F172A;
+}
+
+.mobile-nav__link:focus-visible {
+  outline: 2px solid var(--color-oceanBlue, #0369A1);
+  outline-offset: -2px;
+}
+
+.mobile-nav__link--active {
+  background-color: var(--color-oceanBlueLight, #F0F9FF);
+  color: var(--color-oceanBlue, #0369A1);
+}

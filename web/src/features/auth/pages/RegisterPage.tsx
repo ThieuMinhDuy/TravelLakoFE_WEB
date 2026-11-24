@@ -1,57 +1,141 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card } from '../../../components/common/Card';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useToast } from '../../../contexts/toast/ToastContext';
+import { hasErrorCode } from '../../../services/apiError';
 import { Button } from '../../../components/common/Button';
 import { Input } from '../../../components/common/Input';
-import { Mail, Lock, User } from 'lucide-react';
-import './css/AuthPages.css';
+import {
+  AuthDivider,
+  AuthHeader,
+  AuthItem,
+  AuthLink,
+  FormAlert,
+  SlowServerHint,
+} from '../components/AuthUI';
+import { useAuthModal } from '../components/AuthModalContext';
+import { GoogleAuthButton } from '../components/GoogleAuthButton';
+import { PasswordChecklist } from '../../../components/common/PasswordChecklist';
+import { PasswordInput } from '../../../components/common/PasswordInput';
+import { useAuthNavigation } from '../hooks/useAuthNavigation';
+import { useSlowHint } from '../hooks/useSlowHint';
+import { registerSchema, type RegisterValues } from '../schemas';
+import { authService } from '../services/authService';
 
 export const RegisterPage: React.FC = () => {
+  useDocumentTitle('Đăng ký');
+  const { goTo } = useAuthNavigation();
+  const { shake } = useAuthModal();
+  const toast = useToast();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    formState: { errors },
+  } = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: '', email: '', password: '', agree: false },
+  });
+
+  const signUp = useMutation({
+    mutationFn: authService.register,
+    onSuccess: (res) => {
+      toast.success('Đã gửi mã xác thực!', { description: res.message });
+      goTo('/verify-otp', { email: res.email });
+    },
+    onError: (error) => {
+      shake();
+      // Lỗi thuộc về một ô → hiện ngay dưới ô đó
+      const field = hasErrorCode(error, 'EMAIL_EXISTS', 'INVALID_EMAIL')
+        ? 'email'
+        : hasErrorCode(error, 'WEAK_PASSWORD')
+          ? 'password'
+          : null;
+      if (field) setError(field, { message: error.message }, { shouldFocus: true });
+    },
+  });
+
+  const fieldError = hasErrorCode(signUp.error, 'EMAIL_EXISTS', 'INVALID_EMAIL', 'WEAK_PASSWORD');
+
+  const slow = useSlowHint(signUp.isPending);
+
+  const onSubmit = ({ name, email, password }: RegisterValues) =>
+    signUp.mutate({ name: name.trim(), email: email.trim(), password });
+
   return (
-    <Card className="auth-card">
-      <div className="auth-card__header">
-        <h2 className="auth-card__title">Đăng ký tài khoản</h2>
-        <p className="auth-card__subtitle">
-          Tạo tài khoản để bắt đầu lên lịch trình du lịch thông minh
-        </p>
-      </div>
+    <>
+      <AuthHeader title="Tạo tài khoản" subtitle="Bắt đầu lên kế hoạch cho chuyến đi tiếp theo" />
 
-      <form onSubmit={(e) => e.preventDefault()} className="auth-card__form">
-        <Input
-          label="Họ và tên"
-          type="text"
-          placeholder="Nguyễn Văn A"
-          leftIcon={<User className="w-4 h-4" />}
-          required
-        />
+      <form className="auth-form" onSubmit={handleSubmit(onSubmit, shake)} noValidate>
+        <AuthItem>
+          <Input
+            label="Họ và tên"
+            placeholder="Nhập họ và tên của bạn"
+            autoComplete="name"
+            autoFocus
+            error={errors.name?.message}
+            {...register('name')}
+          />
+        </AuthItem>
 
-        <Input
-          label="Địa chỉ Email (chỉ chấp nhận @gmail.com)"
-          type="email"
-          placeholder="yourname@gmail.com"
-          leftIcon={<Mail className="w-4 h-4" />}
-          required
-        />
+        <AuthItem>
+          <Input
+            label="Địa chỉ email"
+            type="email"
+            placeholder="ten.cua.ban@gmail.com"
+            autoComplete="email"
+            error={errors.email?.message}
+            {...register('email')}
+          />
+        </AuthItem>
 
-        <Input
-          label="Mật khẩu"
-          type="password"
-          placeholder="Tối thiểu 6 ký tự, 1 hoa, 1 thường, 1 số"
-          leftIcon={<Lock className="w-4 h-4" />}
-          required
-        />
+        <AuthItem>
+          <PasswordInput
+            label="Mật khẩu"
+            placeholder="Tạo mật khẩu của bạn"
+            autoComplete="new-password"
+            error={errors.password?.message}
+            {...register('password')}
+          />
+          <PasswordChecklist password={watch('password')} />
+        </AuthItem>
 
-        <Button variant="primary" className="w-full" size="md">
-          Đăng ký & Nhận mã OTP
-        </Button>
+        <AuthItem>
+          <label className="auth-checkbox">
+            <input type="checkbox" {...register('agree')} />
+            <span>
+              Tôi đồng ý với <span className="auth-link">Điều khoản</span> và{' '}
+              <span className="auth-link">Chính sách bảo mật</span>
+            </span>
+          </label>
+          {errors.agree && <p className="ui-input-message--error auth-checkbox__error">{errors.agree.message}</p>}
+        </AuthItem>
+
+        <FormAlert message={signUp.error && !fieldError ? signUp.error.message : null} />
+
+        <AuthItem>
+          <Button type="submit" className="auth-btn" isLoading={signUp.isPending}>
+            {signUp.isPending ? 'Đang tạo tài khoản…' : 'Đăng ký'}
+          </Button>
+          <SlowServerHint show={slow} />
+        </AuthItem>
       </form>
 
-      <div className="auth-card__footer">
-        Đã có tài khoản?{' '}
-        <Link to="/login" className="auth-card__link">
-          Đăng nhập
-        </Link>
-      </div>
-    </Card>
+      <AuthDivider />
+
+      <AuthItem>
+        <GoogleAuthButton mode="signup" />
+      </AuthItem>
+
+      <AuthItem>
+        <p className="auth-switch">
+          Đã có tài khoản? <AuthLink to="/login">Đăng nhập</AuthLink>
+        </p>
+      </AuthItem>
+    </>
   );
 };

@@ -76,6 +76,29 @@
   background-color: rgba(241, 245, 249, 0.8);
 }
 
+/* Dropzone là <button>: bỏ style mặc định, thêm viền focus cho bàn phím */
+.ui-image-uploader__dropzone {
+  width: 100%;
+  font: inherit;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.ui-image-uploader__dropzone:focus-visible {
+  outline: none;
+  border-color: var(--color-oceanBlue, #0369A1);
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.15);
+}
+
+.ui-image-uploader__dropzone:disabled {
+  cursor: progress;
+}
+
+/* Đang kéo ảnh vào vùng thả */
+.ui-image-uploader__dropzone--dragging {
+  border-color: var(--color-oceanBlue, #0369A1);
+  background-color: var(--color-oceanBlueLight, #F0F9FF);
+}
+
 .ui-image-uploader__icon-box {
   width: 2.5rem;
   height: 2.5rem;
@@ -86,4 +109,20 @@
   justify-content: center;
   color: #64748B;
   margin-bottom: 0.5rem;
+}
+
+/* Đang thay ảnh: phủ lên ảnh cũ */
+.ui-image-uploader__uploading {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgb(15 23 42 / 0.45);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
 }

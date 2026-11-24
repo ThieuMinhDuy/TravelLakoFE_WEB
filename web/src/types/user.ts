@@ -13,15 +13,21 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
+  /** Ảnh bìa trang cá nhân (backend đang bổ sung) */
+  coverImage?: string;
   phone?: string;
   gender?: Gender;
   dateOfBirth?: string | null;
   travelPreferences?: string[];
   favoriteBudget?: FavoriteBudget;
   authType?: 'local' | 'google';
+  /** Tài khoản đã có mật khẩu chưa (tài khoản Google có thể chưa có) — từ GET /auth/profile */
+  hasPassword?: boolean;
   googleId?: string | null;
   isVerified?: boolean;
   isAdmin?: boolean;
+  /** Dự phòng nếu API chuyển sang phân quyền dạng role — luôn kiểm tra qua isAdminUser() */
+  role?: string;
   isBlocked?: boolean;
   stats?: UserStats;
   createdAt?: string;
@@ -45,5 +51,5 @@ export interface UpdateProfileDTO {
   dateOfBirth?: string | null;
   travelPreferences?: string[];
   favoriteBudget?: FavoriteBudget;
-  password?: string;
+  // Không có `password`: PUT /auth/profile kèm password trả 400 — đổi mật khẩu dùng /auth/change-password
 }

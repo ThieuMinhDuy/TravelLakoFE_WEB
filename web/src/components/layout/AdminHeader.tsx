@@ -1,73 +1,77 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { ChevronRight, Home, LogOut, Menu } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { useUIStore } from '../../store/useUIStore';
-import { Menu, LogOut, Home } from 'lucide-react';
+import { useLogout } from '../../features/auth/hooks/useLogout';
+import { findAdminNavItem } from '../../features/admin/config/adminNav';
+import { Avatar } from '../common/Avatar';
 import './css/AdminHeader.css';
 
-export const AdminHeader: React.FC = () => {
-  const { user, logout } = useAuthStore();
-  const { toggleAdminSidebar } = useUIStore();
-  const navigate = useNavigate();
+interface AdminHeaderProps {
+  /** Nút ☰: thu gọn sidebar (desktop) hoặc mở drawer menu (màn nhỏ) — do AdminLayout quyết định */
+  onMenuClick: () => void;
+}
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+export const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuClick }) => {
+  const user = useAuthStore((s) => s.user);
+  const logout = useLogout();
+  const { pathname } = useLocation();
+  const current = findAdminNavItem(pathname);
 
   return (
-    <header className="admin-header">
-      {/* Left: Sidebar Toggle & Page Title */}
+    <header className="admin-header glass glass--lens">
       <div className="admin-header__left">
         <button
-          onClick={toggleAdminSidebar}
-          className="admin-header__toggle-btn"
-          title="Thu gọn / Mở rộng Sidebar"
           type="button"
+          onClick={onMenuClick}
+          className="admin-header__icon-btn"
+          aria-label="Mở / thu gọn menu quản trị"
+          title="Menu quản trị"
         >
-          <Menu className="w-5 h-5" />
+          <Menu aria-hidden="true" />
         </button>
-        <div className="admin-header__breadcrumb">
-          <span className="admin-header__breadcrumb-parent">Admin Portal</span>
-          <span className="admin-header__breadcrumb-separator">/</span>
-          <span className="admin-header__breadcrumb-current">Bảng điều khiển quản trị</span>
-        </div>
+
+        <nav aria-label="Breadcrumb" className="admin-header__breadcrumb">
+          <ol>
+            <li>
+              <Link to="/admin" className="admin-header__crumb-link">
+                Quản trị
+              </Link>
+            </li>
+            {current && (
+              <li aria-current="page" className="admin-header__crumb-current">
+                <ChevronRight aria-hidden="true" />
+                {current.title}
+              </li>
+            )}
+          </ol>
+        </nav>
       </div>
 
-      {/* Right: Quick actions & Profile */}
       <div className="admin-header__right">
-        <Link to="/" className="admin-header__home-link">
-          <Home className="w-4 h-4 text-slate-500" />
-          <span>Về trang chủ</span>
+        <Link to="/" className="admin-header__home">
+          <Home aria-hidden="true" />
+          <span>Trang chủ</span>
         </Link>
 
         {user && (
           <div className="admin-header__user">
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="admin-header__avatar"
-              />
-            ) : (
-              <div className="admin-header__avatar-fallback">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <div className="admin-header__user-info">
-              <p className="admin-header__user-name">{user.name}</p>
-              <p className="admin-header__user-role">Quản trị viên</p>
-            </div>
+            <Avatar src={user.avatar} name={user.name} size="sm" />
+            <span className="admin-header__user-text">
+              <span className="admin-header__user-name">{user.name}</span>
+              <span className="admin-header__user-role">Quản trị viên</span>
+            </span>
           </div>
         )}
 
         <button
-          onClick={handleLogout}
-          className="admin-header__logout-btn"
-          title="Đăng xuất"
           type="button"
+          onClick={logout}
+          className="admin-header__icon-btn admin-header__icon-btn--danger"
+          aria-label="Đăng xuất"
+          title="Đăng xuất"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut aria-hidden="true" />
         </button>
       </div>
     </header>

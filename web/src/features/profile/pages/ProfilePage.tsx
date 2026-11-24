@@ -1,113 +1,114 @@
-import React from 'react';
-import { Card } from '../../../components/common/Card';
-import { Button } from '../../../components/common/Button';
-import { Input } from '../../../components/common/Input';
+import React, { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { CalendarDays, Heart, ImageIcon, MessageSquare, Settings } from 'lucide-react';
+import { Tabs } from '../../../components/compound/Tabs';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
+import { queryKeys } from '../../../lib/queryKeys';
 import { useAuthStore } from '../../../store/useAuthStore';
-import { User, Mail, Phone, Calendar, Heart, MapPin, MessageSquare } from 'lucide-react';
+import { countTrips } from '../../../utils/trip';
+import { authService } from '../../auth/services/authService';
+import { ProfileHeader } from '../components/ProfileHeader';
+import { FavoritesTab } from '../components/tabs/FavoritesTab';
+import { MemoriesTab } from '../components/tabs/MemoriesTab';
+import { ReviewsTab } from '../components/tabs/ReviewsTab';
+import { SettingsTab } from '../components/tabs/SettingsTab';
+import { TripsTab } from '../components/tabs/TripsTab';
+import { PlanWithAiBanner } from '../components/sections/PlanWithAiBanner';
+import { PopularCitiesSection } from '../components/sections/PopularCitiesSection';
+import { RecommendedSection } from '../components/sections/RecommendedSection';
+import { useMyFavorites, useMyReviews, useMyTrips } from '../hooks/useProfileData';
+import { useProfileTab, type ProfileTab } from '../hooks/useProfileTab';
 import './css/ProfilePage.css';
 
+const TAB_LABELS: Record<ProfileTab, string> = {
+  trips: 'Chuyến đi',
+  favorites: 'Yêu thích',
+  reviews: 'Đánh giá',
+  memories: 'Kỷ niệm',
+  settings: 'Cài đặt tài khoản',
+};
+
 export const ProfilePage: React.FC = () => {
-  const { user } = useAuthStore();
+  const [tab, setTab] = useProfileTab();
+  useDocumentTitle(`${TAB_LABELS[tab]} · Hồ sơ cá nhân`);
+
+  const user = useAuthStore((s) => s.user);
+  const updateUser = useAuthStore((s) => s.updateUser);
+
+  // Luôn lấy profile mới nhất (kèm thống kê) khi vào trang
+  const profileQuery = useQuery({ queryKey: queryKeys.profile, queryFn: authService.getProfile });
+  useEffect(() => {
+    if (profileQuery.data) updateUser(profileQuery.data);
+  }, [profileQuery.data, updateUser]);
+
+  const trips = useMyTrips();
+  const favorites = useMyFavorites();
+  const reviews = useMyReviews();
+
+  if (!user) return null; // ProtectedRoute đảm bảo đã đăng nhập
+
+  // Ưu tiên số liệu từ dữ liệu đã tải (cập nhật ngay sau khi bỏ yêu thích), fallback về user.stats
+  const stats = {
+    trips: trips.data ? countTrips(trips.data) : (user.stats?.trips ?? 0),
+    favorites: favorites.data ? favorites.data.favorites.length : (user.stats?.favorites ?? 0),
+    reviews: reviews.data ? reviews.data.reviews.length : (user.stats?.reviews ?? 0),
+  };
 
   return (
     <div className="profile-page">
-      {/* Page Header */}
-      <div>
-        <h1 className="profile-page__title">Hồ sơ cá nhân & Cài đặt</h1>
-        <p className="profile-page__subtitle">
-          Quản lý thông tin tài khoản, sở thích du lịch và cá nhân hóa trải nghiệm AI
-        </p>
-      </div>
+      <ProfileHeader user={user} stats={stats} onEditProfile={() => setTab('settings')} />
 
-      {/* User Stats Card */}
-      <div className="profile-stats">
-        <Card className="profile-stat-card">
-          <div className="profile-stat-card__icon profile-stat-card__icon--blue">
-            <MapPin className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="profile-stat-card__label">Chuyến đi đã tạo</p>
-            <p className="profile-stat-card__value">{user?.stats?.trips || 0}</p>
-          </div>
-        </Card>
+      <Tabs value={tab} onValueChange={setTab} variant="pills" className="profile-tabs">
+        <Tabs.List aria-label="Mục trong hồ sơ">
+          <Tabs.Tab value="trips" badge={stats.trips}>
+            <CalendarDays className="w-4 h-4" aria-hidden="true" />
+            Chuyến đi
+          </Tabs.Tab>
+          <Tabs.Tab value="favorites" badge={stats.favorites}>
+            <Heart className="w-4 h-4" aria-hidden="true" />
+            Yêu thích
+          </Tabs.Tab>
+          <Tabs.Tab value="reviews" badge={stats.reviews}>
+            <MessageSquare className="w-4 h-4" aria-hidden="true" />
+            Đánh giá
+          </Tabs.Tab>
+          <Tabs.Tab value="memories">
+            <ImageIcon className="w-4 h-4" aria-hidden="true" />
+            Kỷ niệm
+          </Tabs.Tab>
+          <Tabs.Tab value="settings">
+            <Settings className="w-4 h-4" aria-hidden="true" />
+            <span>
+              Cài đặt<span className="profile-tabs__long-label"> tài khoản</span>
+            </span>
+          </Tabs.Tab>
+        </Tabs.List>
 
-        <Card className="profile-stat-card">
-          <div className="profile-stat-card__icon profile-stat-card__icon--amber">
-            <Heart className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="profile-stat-card__label">Địa điểm yêu thích</p>
-            <p className="profile-stat-card__value">{user?.stats?.favorites || 0}</p>
-          </div>
-        </Card>
+        <Tabs.Panel value="trips">
+          <TripsTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="favorites">
+          <FavoritesTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="reviews">
+          <ReviewsTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="memories">
+          <MemoriesTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="settings">
+          <SettingsTab user={user} />
+        </Tabs.Panel>
+      </Tabs>
 
-        <Card className="profile-stat-card">
-          <div className="profile-stat-card__icon profile-stat-card__icon--teal">
-            <MessageSquare className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="profile-stat-card__label">Đánh giá đã viết</p>
-            <p className="profile-stat-card__value">{user?.stats?.reviews || 0}</p>
-          </div>
-        </Card>
-      </div>
-
-      {/* Profile Form Card */}
-      <Card className="profile-form-card">
-        <div className="profile-user-header">
-          <div className="profile-avatar">
-            {user?.avatar ? (
-              <img src={user.avatar} alt={user.name} className="profile-avatar__img" />
-            ) : (
-              user?.name?.charAt(0).toUpperCase() || 'U'
-            )}
-          </div>
-          <div>
-            <h3 className="profile-user-name">{user?.name || 'Tên người dùng'}</h3>
-            <p className="profile-user-email">{user?.email || 'email@example.com'}</p>
-            <Button variant="outline" size="sm" style={{ marginTop: '0.625rem' }}>
-              Đổi ảnh đại diện
-            </Button>
-          </div>
-        </div>
-
-        <form onSubmit={(e) => e.preventDefault()} className="profile-form">
-          <div className="profile-form__grid">
-            <Input
-              label="Họ và tên"
-              defaultValue={user?.name}
-              leftIcon={<User className="w-4 h-4" />}
-            />
-            <Input
-              label="Địa chỉ Email"
-              defaultValue={user?.email}
-              disabled
-              leftIcon={<Mail className="w-4 h-4" />}
-            />
-          </div>
-
-          <div className="profile-form__grid">
-            <Input
-              label="Số điện thoại"
-              defaultValue={user?.phone}
-              placeholder="0987654321"
-              leftIcon={<Phone className="w-4 h-4" />}
-            />
-            <Input
-              label="Ngày sinh"
-              type="date"
-              defaultValue={user?.dateOfBirth ? user.dateOfBirth.slice(0, 10) : ''}
-              leftIcon={<Calendar className="w-4 h-4" />}
-            />
-          </div>
-
-          <div className="profile-form__actions">
-            <Button variant="primary" size="md">
-              Lưu thay đổi
-            </Button>
-          </div>
-        </form>
-      </Card>
+      {/* Khối khám phá — ẩn ở tab Cài đặt cho gọn */}
+      {tab !== 'settings' && (
+        <>
+          <RecommendedSection user={user} onSetPreferences={() => setTab('settings')} />
+          <PopularCitiesSection />
+          <PlanWithAiBanner />
+        </>
+      )}
     </div>
   );
 };

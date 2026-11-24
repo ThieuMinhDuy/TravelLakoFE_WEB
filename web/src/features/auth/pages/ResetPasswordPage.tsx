@@ -1,48 +1,319 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card } from '../../../components/common/Card';
+import React, { useState } from 'react';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
+import { Navigate, useSearchParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowLeft, KeyRound, MailCheck } from 'lucide-react';
 import { Button } from '../../../components/common/Button';
-import { Input } from '../../../components/common/Input';
-import { Lock, KeyRound } from 'lucide-react';
-import './css/AuthPages.css';
+import {
+  AuthHeader,
+  AuthItem,
+  BackToLogin,
+  FormAlert,
+  SlowServerHint,
+  SuccessCheck,
+} from '../components/AuthUI';
+import { useAuthModal } from '../components/AuthModalContext';
+import { OtpInput } from '../components/OtpInput';
+import { PasswordChecklist } from '../../../components/common/PasswordChecklist';
+import { PasswordInput } from '../../../components/common/PasswordInput';
+import { ResendOtp } from '../components/ResendOtp';
+import { slideVariants } from '../components/motion';
+import { useAuthNavigation } from '../hooks/useAuthNavigation';
+import { hasErrorCode } from '../../../services/apiError';
+import { useCooldown } from '../../../hooks/useCooldown';
+import { OTP_RESEND_SECONDS, useOtpResend } from '../hooks/useOtpResend';
+import { useSlowHint } from '../hooks/useSlowHint';
+import { newPasswordSchema, type NewPasswordValues } from '../schemas';
+import { authService, isOtpRenewRequired, isResetOtpError } from '../services/authService';
 
+type Step = 'otp' | 'password' | 'success';
+
+/**
+ * Luồng đặt lại mật khẩu gồm 3 bước trong cùng một màn:
+ * Kiểm tra email (nhập OTP) → Đặt mật khẩu mới → Thành công.
+ *
+ * Backend không có API kiểm tra riêng OTP quên mật khẩu — mã chỉ được xác minh khi gửi
+ * kèm mật khẩu mới. Nếu mã sai/hết hạn, quay lại bước OTP và hiển thị lỗi.
+ */
 export const ResetPasswordPage: React.FC = () => {
+  useDocumentTitle('Đặt lại mật khẩu');
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get('email') ?? '';
+  const { goTo, buildHref, state } = useAuthNavigation();
+  const { shake } = useAuthModal();
+
+  const [step, setStep] = useState<Step>('otp');
+  const [direction, setDirection] = useState(1);
+  const [otp, setOtp] = useState('');
+  const [otpError, setOtpError] = useState<string | null>(null);
+  // Mã cũ hết hạn / bị hủy sau 5 lần sai → làm nổi bật nút gửi mã mới
+  const [renewRequired, setRenewRequired] = useState(false);
+  // Đặt ở cha: quay lại bước OTP không làm bộ đếm gửi lại mã chạy lại từ đầu
+  const cooldown = useCooldown(OTP_RESEND_SECONDS);
+  const resend = useOtpResend(() => authService.forgotPassword(email), cooldown, () => {
+    setOtp('');
+    setOtpError(null);
+    setRenewRequired(false);
+  });
+
+  const goToStep = (next: Step, dir = 1) => {
+    setDirection(dir);
+    setStep(next);
+  };
+
+  const reset = useMutation({
+    mutationFn: authService.resetPassword,
+    onSuccess: () => goToStep('success'),
+    onError: (err) => {
+      shake();
+      // Chỉ lỗi của mã OTP mới quay về bước nhập mã; WEAK_PASSWORD hiện ngay ở ô mật khẩu mới
+      if (isResetOtpError(err)) {
+        setOtpError(err.message);
+        setRenewRequired(isOtpRenewRequired(err));
+        setOtp('');
+        goToStep('otp', -1);
+      }
+    },
+  });
+
+  if (!email) return <Navigate to={buildHref('/forgot-password')} replace state={state} />;
+
   return (
-    <Card className="auth-card">
-      <div className="auth-card__header">
-        <h2 className="auth-card__title">Đặt lại mật khẩu</h2>
-        <p className="auth-card__subtitle">
-          Nhập mã OTP và thiết lập mật khẩu mới cho tài khoản của bạn
-        </p>
-      </div>
+    <AnimatePresence mode="wait" custom={direction} initial={false}>
+      <motion.div
+        key={step}
+        className="auth-centered"
+        custom={direction}
+        variants={slideVariants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+      >
+        {step === 'otp' && (
+          <OtpStep
+            email={email}
+            otp={otp}
+            error={otpError}
+            onChange={(v) => {
+              setOtp(v);
+              setOtpError(null);
+            }}
+            onNext={() => goToStep('password')}
+            onInvalid={shake}
+            resendSecondsLeft={cooldown.secondsLeft}
+            onResend={() => resend.mutate()}
+            resendPending={resend.isPending}
+            renewRequired={renewRequired}
+          />
+        )}
 
-      <form onSubmit={(e) => e.preventDefault()} className="auth-card__form">
-        <Input
-          label="Mã xác thực OTP (6 chữ số)"
-          type="text"
-          placeholder="123456"
-          leftIcon={<KeyRound className="w-4 h-4" />}
-          required
-        />
+        {step === 'password' && (
+          <PasswordStep
+            isPending={reset.isPending}
+            error={
+              reset.error && !isResetOtpError(reset.error) && !hasErrorCode(reset.error, 'WEAK_PASSWORD')
+                ? reset.error.message
+                : null
+            }
+            passwordError={hasErrorCode(reset.error, 'WEAK_PASSWORD') ? reset.error?.message : undefined}
+            onSubmit={(newPassword) => reset.mutate({ email, otp, newPassword })}
+            onBack={() => goToStep('otp', -1)}
+            onInvalid={shake}
+          />
+        )}
 
-        <Input
-          label="Mật khẩu mới"
-          type="password"
-          placeholder="Tối thiểu 6 ký tự, 1 hoa, 1 thường, 1 số"
-          leftIcon={<Lock className="w-4 h-4" />}
-          required
-        />
+        {step === 'success' && (
+          <>
+            <AuthHeader
+              centered
+              badge={<SuccessCheck />}
+              title="Đặt lại mật khẩu thành công"
+              subtitle="Mật khẩu của bạn đã được cập nhật. Nhấn bên dưới để đăng nhập ngay."
+            />
+            <AuthItem>
+              <Button type="button" className="auth-btn" onClick={() => goTo('/login', { email })}>
+                Tiếp tục đăng nhập
+              </Button>
+            </AuthItem>
+          </>
+        )}
+      </motion.div>
+    </AnimatePresence>
+  );
+};
 
-        <Button variant="primary" className="w-full" size="md">
-          Lưu mật khẩu mới
-        </Button>
+/* -------------------------------------------------------------------------- */
+
+interface OtpStepProps {
+  email: string;
+  otp: string;
+  error: string | null;
+  onChange: (value: string) => void;
+  onNext: () => void;
+  onInvalid: () => void;
+  resendSecondsLeft: number;
+  onResend: () => void;
+  resendPending: boolean;
+  renewRequired: boolean;
+}
+
+const OtpStep: React.FC<OtpStepProps> = ({
+  email,
+  otp,
+  error,
+  onChange,
+  onNext,
+  onInvalid,
+  resendSecondsLeft,
+  onResend,
+  resendPending,
+  renewRequired,
+}) => {
+  const next = () => (otp.length === 6 ? onNext() : onInvalid());
+
+  return (
+    <>
+      <AuthHeader
+        centered
+        icon={MailCheck}
+        title="Kiểm tra email"
+        subtitle={
+          <>
+            Chúng tôi đã gửi mã đặt lại mật khẩu tới
+            <br />
+            <strong>{email}</strong>
+          </>
+        }
+      />
+
+      <form
+        className="auth-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          next();
+        }}
+      >
+        <AuthItem>
+          <OtpInput value={otp} onChange={onChange} onComplete={onNext} error={!!error} />
+        </AuthItem>
+
+        <FormAlert message={error} />
+
+        <AuthItem>
+          <Button type="submit" className="auth-btn" disabled={otp.length < 6}>
+            Tiếp tục
+          </Button>
+        </AuthItem>
       </form>
 
-      <div className="auth-card__footer">
-        <Link to="/login" className="auth-card__back-link">
-          ← Quay lại Đăng nhập
-        </Link>
-      </div>
-    </Card>
+      <AuthItem>
+        <a
+          className="auth-open-mail"
+          href="https://mail.google.com/mail/u/0/#inbox"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Mở Gmail
+        </a>
+        <ResendOtp
+          onResend={onResend}
+          isPending={resendPending}
+          secondsLeft={resendSecondsLeft}
+          highlight={renewRequired}
+        />
+      </AuthItem>
+
+      <BackToLogin email={email} />
+    </>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+
+interface PasswordStepProps {
+  isPending: boolean;
+  error: string | null;
+  /** Lỗi của backend gắn vào ô mật khẩu mới (WEAK_PASSWORD) */
+  passwordError?: string;
+  onSubmit: (newPassword: string) => void;
+  onBack: () => void;
+  onInvalid: () => void;
+}
+
+const PasswordStep: React.FC<PasswordStepProps> = ({
+  isPending,
+  error,
+  passwordError,
+  onSubmit,
+  onBack,
+  onInvalid,
+}) => {
+  const slow = useSlowHint(isPending);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<NewPasswordValues>({
+    resolver: zodResolver(newPasswordSchema),
+    defaultValues: { newPassword: '', confirmPassword: '' },
+  });
+
+  return (
+    <>
+      <AuthHeader
+        centered
+        icon={KeyRound}
+        title="Đặt mật khẩu mới"
+        subtitle="Mật khẩu mới nên khác với mật khẩu bạn đã sử dụng trước đó."
+      />
+
+      <form
+        className="auth-form"
+        onSubmit={handleSubmit(({ newPassword }) => onSubmit(newPassword), onInvalid)}
+        noValidate
+      >
+        <AuthItem>
+          <PasswordInput
+            label="Mật khẩu mới"
+            placeholder="Nhập mật khẩu mới"
+            autoComplete="new-password"
+            autoFocus
+            error={errors.newPassword?.message ?? passwordError}
+            {...register('newPassword')}
+          />
+          <PasswordChecklist password={watch('newPassword')} />
+        </AuthItem>
+
+        <AuthItem>
+          <PasswordInput
+            label="Nhập lại mật khẩu"
+            placeholder="Nhập lại mật khẩu mới"
+            autoComplete="new-password"
+            error={errors.confirmPassword?.message}
+            {...register('confirmPassword')}
+          />
+        </AuthItem>
+
+        <FormAlert message={error} />
+
+        <AuthItem>
+          <Button type="submit" className="auth-btn" isLoading={isPending}>
+            {isPending ? 'Đang cập nhật…' : 'Đặt lại mật khẩu'}
+          </Button>
+          <SlowServerHint show={slow} />
+        </AuthItem>
+      </form>
+
+      <AuthItem className="auth-back">
+        <button type="button" className="auth-back__link" onClick={onBack}>
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Nhập lại mã OTP
+        </button>
+      </AuthItem>
+    </>
   );
 };
