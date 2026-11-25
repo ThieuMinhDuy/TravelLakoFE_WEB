@@ -5,12 +5,12 @@ import { useLocale } from '../../contexts/locale/LocaleContext';
 import { cn } from '../../utils/cn';
 import { getCityName, isPopulatedCity } from '../../utils/place';
 import { TRIP_STATUS_LABELS, getTripDays, getTripPlaceCount } from '../../utils/trip';
-import type { Trip, TripStatus } from '../../types/trip';
+import type { TripStatus, TripWithCity } from '../../types/trip';
 import { CardImage } from './CardImage';
 import './css/Cards.css';
 
 export interface TripCardProps {
-  trip: Trip;
+  trip: TripWithCity;
   status: TripStatus;
   /** Đường dẫn khi bấm thẻ (mặc định: trang chi tiết chuyến đi) */
   to?: string;

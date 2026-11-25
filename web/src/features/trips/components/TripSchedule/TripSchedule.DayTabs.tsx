@@ -54,7 +54,7 @@ export const TripScheduleDayTabs = memo(function TripScheduleDayTabs({
                 : 'text-zinc-400 dark:text-zinc-500'
             )}
           >
-            {formatDate(day.date, 'dd/MM')}
+            {formatDate(day.date, undefined, 'dd/MM')}
           </span>
         </button>
       ))}

@@ -41,7 +41,7 @@ export const TripScheduleHeader = memo(function TripScheduleHeader({
           <div className="flex items-center gap-4 text-xs md:text-sm text-blue-100 flex-wrap">
             <span className="flex items-center gap-1.5">
               <Calendar className="w-4 h-4" />
-              {formatDate(trip.startDate, 'dd/MM/yyyy')} — {formatDate(trip.endDate, 'dd/MM/yyyy')}
+              {formatDate(trip.startDate, undefined, 'dd/MM/yyyy')} — {formatDate(trip.endDate, undefined, 'dd/MM/yyyy')}
             </span>
             <span>•</span>
             <span>{trip.schedule.length} ngày khám phá</span>

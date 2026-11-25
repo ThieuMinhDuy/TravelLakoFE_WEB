@@ -9,7 +9,8 @@ export default mergeConfig(
       environment: 'jsdom',
       globals: true,
       setupFiles: ['./tests/setup.ts'],
-      include: ['tests/**/*.test.{ts,tsx}'],
+      // tests/: test của codebase, auth, profile, admin, trips · src/**/__tests__: test đặt cạnh feature (explore)
+      include: ['tests/**/*.test.{ts,tsx}', 'src/**/__tests__/**/*.test.{ts,tsx}'],
       css: false,
       restoreMocks: true,
       coverage: {

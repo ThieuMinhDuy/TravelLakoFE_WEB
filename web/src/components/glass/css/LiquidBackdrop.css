@@ -4,7 +4,7 @@
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
-  background: linear-gradient(180deg, var(--color-brand-soft), var(--color-bgApp) 45%);
+  background: linear-gradient(180deg, #eef2f6 0%, #e8edf3 100%);
 }
 
 .liquid-backdrop__blob {
@@ -20,7 +20,7 @@
 /* Vầng sáng tông màu nhấn, rất nhạt */
 .liquid-backdrop__blob--primary {
   --size: 60vmax;
-  --color: rgb(var(--brand-rgb) / 0.1);
+  --color: rgb(3 105 161 / 0.1);
   --duration: 40s;
   top: -22vmax;
   left: -14vmax;

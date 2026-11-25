@@ -31,7 +31,7 @@ Mục này liệt kê các tiêu chuẩn kỹ thuật **dự án phải đạt**
 | Xử lý lỗi | ✅ `ErrorBoundary` cấp app và cấp layout, tự tải lại khi lỗi tải chunk |
 | Responsive | ✅ Menu mobile (drawer) cho trang chính và trang Admin |
 | Lazy Loading | ✅ Admin, Hồ sơ, popup xác thực |
-| Kiểm thử Vitest + RTL | ✅ 109 test (unit, tương tác người dùng, bất đồng bộ có mock API). Coverage thư mục logic: 75% dòng, 85% nhánh, 63% hàm; ngưỡng tối thiểu 50% được kiểm tra tự động khi chạy `npm run test:coverage` |
+| Kiểm thử Vitest + RTL | ✅ 137 test (unit, tương tác người dùng, bất đồng bộ có mock API), gồm cả test của trips và explore. Coverage thư mục logic: 67% dòng, 84% nhánh, 63% hàm; ngưỡng tối thiểu 50% được kiểm tra tự động khi chạy `npm run test:coverage` |
 
 Chi tiết từng yêu cầu:
 

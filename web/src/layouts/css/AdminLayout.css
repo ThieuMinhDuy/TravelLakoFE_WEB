@@ -23,7 +23,7 @@
 .admin-layout__content {
   flex: 1;
   width: 100%;
-  max-width: var(--layout-content-width);
+  max-width: 88rem;
   margin: 0 auto;
   padding: 1.25rem 0.75rem 2.5rem;
 }

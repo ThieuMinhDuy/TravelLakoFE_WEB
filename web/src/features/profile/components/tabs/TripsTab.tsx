@@ -9,7 +9,7 @@ import { Pagination } from '../../../../components/common/Pagination';
 import { buttonVariants } from '../../../../components/common/buttonVariants';
 import { usePagination } from '../../../../hooks/usePagination';
 import { TRIP_STATUSES, TRIP_STATUS_LABELS } from '../../../../utils/trip';
-import type { Trip, TripStatus } from '../../../../types/trip';
+import type { TripStatus, TripWithCity } from '../../../../types/trip';
 import { useMyTrips } from '../../hooks/useProfileData';
 import { TabError } from './TabError';
 
@@ -21,7 +21,7 @@ const EMPTY_TEXT: Record<TripStatus, string> = {
   past: 'Bạn chưa hoàn thành chuyến đi nào.',
 };
 
-const TripGrid: React.FC<{ trips: Trip[]; status: TripStatus }> = ({ trips, status }) => {
+const TripGrid: React.FC<{ trips: TripWithCity[]; status: TripStatus }> = ({ trips, status }) => {
   const pagination = usePagination(trips, { pageSize: PAGE_SIZE });
 
   if (trips.length === 0) {

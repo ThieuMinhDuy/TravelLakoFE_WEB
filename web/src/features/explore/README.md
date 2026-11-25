@@ -44,13 +44,13 @@ Không có trường giờ mở cửa, tiện ích hay cờ nổi bật trong sc
 Từ thư mục `web`:
 
 ```powershell
-npm run test:all
+npm test
 npm run build
 ```
 
 Chạy giao diện bằng `npm run dev` và mở `http://localhost:5173`. Backend hiện cho phép CORS của origin này, nhưng không trả `Access-Control-Allow-Origin` cho `http://127.0.0.1:5173`. Không sửa Axios hoặc nới bảo mật backend để che khác biệt này.
 
-`npm run test:all` chạy cả test chung và test Explore. Config/setup/test của Explore vẫn riêng, không sửa file test/setup chung. Fixture chỉ được dùng trong test. Test kiểm tra debounce, URL/Back, tham số giá, phân trang, phân biệt dữ liệu rỗng/lỗi, redirect đăng nhập, ID favorite và validation/gửi review.
+`npm test` chạy cả test chung và test Explore (cùng config `vitest.config.ts`, setup `tests/setup.ts`). Fixture chỉ được dùng trong test. Test kiểm tra debounce, URL/Back, tham số giá, phân trang, phân biệt dữ liệu rỗng/lỗi, redirect đăng nhập, ID favorite và validation/gửi review.
 
 Các thao tác ghi dữ liệu thật và tài khoản Admin cần kiểm tra tích hợp với phiên đăng nhập hợp lệ; không tự tạo tài khoản hoặc ghi dữ liệu lên server production khi kiểm tra giao diện.
 

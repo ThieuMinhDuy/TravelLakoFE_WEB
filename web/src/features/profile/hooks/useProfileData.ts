@@ -6,13 +6,13 @@ import { cityService } from '../../../services/cityService';
 import { favoriteService } from '../../../services/favoriteService';
 import { placeService } from '../../../services/placeService';
 import { reviewService } from '../../../services/reviewService';
-import { tripService } from '../../../services/tripService';
+import { getMyTrips } from '../../../services/tripService';
 import type { FavoriteListResponse } from '../../../types/favorite';
 import type { MyReviewListResponse } from '../../../types/review';
 
 /** Chuyến đi của tôi (backend chia sẵn upcoming / ongoing / past) */
 export const useMyTrips = () =>
-  useQuery({ queryKey: queryKeys.trips.mine(), queryFn: tripService.getMyTrips });
+  useQuery({ queryKey: queryKeys.trips.mine(), queryFn: () => getMyTrips() });
 
 /** Danh sách yêu thích của tôi */
 export const useMyFavorites = () =>

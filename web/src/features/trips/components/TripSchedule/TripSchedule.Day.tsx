@@ -54,7 +54,7 @@ export const TripScheduleDay = memo(function TripScheduleDay({
               Ngày {day.day}
               <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400 flex items-center gap-1 ml-1">
                 <Calendar className="w-3.5 h-3.5" />
-                {formatDate(day.date, 'EEEE, dd/MM/yyyy')}
+                {formatDate(day.date, undefined, 'EEEE, dd/MM/yyyy')}
               </span>
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">

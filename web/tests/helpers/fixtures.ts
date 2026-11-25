@@ -1,7 +1,7 @@
 import type { City } from '@/types/city';
 import type { Favorite } from '@/types/favorite';
 import type { Attraction, Cafe, Hotel, Restaurant } from '@/types/place';
-import type { Trip } from '@/types/trip';
+import type { TripWithCity } from '@/types/trip';
 
 const coords = { lat: 16.05, lng: 108.2 };
 
@@ -59,7 +59,7 @@ export const makeCafe = (overrides: Partial<Cafe> = {}): Cafe => ({
   ...overrides,
 });
 
-export const makeTrip = (overrides: Partial<Trip> = {}): Trip => ({
+export const makeTrip = (overrides: Partial<TripWithCity> = {}): TripWithCity => ({
   _id: 'trip-1',
   user: 'user-1',
   title: 'Đà Nẵng mùa hè',
@@ -68,10 +68,17 @@ export const makeTrip = (overrides: Partial<Trip> = {}): Trip => ({
   endDate: '2026-12-03T00:00:00.000Z',
   budget: 5_000_000,
   schedule: [
-    { day: 1, date: '2026-12-01T00:00:00.000Z', places: [{ _id: 's1', placeType: 'Hotel', placeId: 'hotel-1', order: 0 }] },
-    { day: 2, date: '2026-12-02T00:00:00.000Z', places: [] },
+    {
+      _id: 'd1',
+      day: 1,
+      date: '2026-12-01T00:00:00.000Z',
+      places: [{ _id: 's1', placeType: 'Hotel', placeId: 'hotel-1', order: 0, note: '', visited: false }],
+    },
+    { _id: 'd2', day: 2, date: '2026-12-02T00:00:00.000Z', places: [] },
   ],
   diary: { notes: '', photos: [] },
+  createdAt: '2026-11-01T00:00:00.000Z',
+  updatedAt: '2026-11-01T00:00:00.000Z',
   ...overrides,
 });
 

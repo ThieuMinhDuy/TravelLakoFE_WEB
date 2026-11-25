@@ -72,16 +72,16 @@ Chạy tại thư mục `web`:
 
 ```powershell
 npm ci
-npm run test:all
+npm test
 npm run build
 ```
 
-`test:all` chạy bộ test chung trong `tests/` và bộ Explore trong `src/features/explore/__tests__/`, mỗi bộ có config/setup riêng. `npm test` tiếp tục chỉ chạy bộ chung để giữ tương thích.
+`npm test` chạy toàn bộ test: thư mục `tests/` và test đặt cạnh feature trong `src/**/__tests__/` (Explore), dùng chung một config và file setup.
 
-Nghiệp vụ riêng đặt trong `features/<tên>/`; API tài nguyên, hook generic và quy ước cache dùng chung đặt trong `services/`, `hooks/`, `lib/`. Giữ import công khai ổn định khi tích hợp, không sao chép service/store để tránh conflict. Trips/diary hiện còn route placeholder; chưa có feature tương ứng trong bản này.
+Nghiệp vụ riêng đặt trong `features/<tên>/`; API tài nguyên, hook generic và quy ước cache dùng chung đặt trong `services/`, `hooks/`, `lib/`. Giữ import công khai ổn định khi tích hợp, không sao chép service/store để tránh conflict. Trips đã có Redux store, TripSchedule và AI Assistant nhưng chưa gắn vào route; diary còn route placeholder.
 
 ## Quy ước giao diện
 
-Màu thương hiệu và kích thước chung nằm ở `src/index.css`: cam `--color-brand`, màu chữ nhấn `--color-brand-text`, nền dịu `--color-brand-soft`, khung nội dung `--layout-content-width`, lề `--layout-gutter`, chiều cao/bo góc control và card. Trang công khai, Profile, Auth và Admin dùng các biến này; tránh thêm bảng màu thương hiệu riêng trong feature.
+Màu thương hiệu và kích thước chung nằm ở `src/index.css`: cam `--color-brand`, màu chữ nhấn `--color-brand-text`, nền dịu `--color-brand-soft`, khung nội dung `--layout-content-width`, lề `--layout-gutter`, chiều cao/bo góc control và card. Trang công khai, Profile và Auth dùng các biến này; tránh thêm bảng màu thương hiệu riêng trong feature. Riêng khu Admin giữ màu xanh `#0369a1` và hiệu ứng Liquid Glass: các token trên được đặt lại dưới `:root[data-surface="admin"]` trong `layouts/css/AdminSkin.css`.
 
 Tên màu Tailwind cũ `oceanBlue`/`sunsetOrange` được giữ làm alias tương thích cho các nhánh đang phát triển; code mới dùng `brand`. Màu báo lỗi, thành công và biểu đồ nhiều nhóm dữ liệu vẫn theo ý nghĩa riêng. Admin giữ sidebar/bảng và mật độ thông tin phù hợp; khung nội dung, màu nhấn và form dùng cùng chuẩn với trang người dùng. Các nút biểu tượng, badge và CTA điều hướng có thể dùng dạng tròn theo chức năng.

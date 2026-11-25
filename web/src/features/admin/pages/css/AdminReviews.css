@@ -18,10 +18,10 @@
 }
 
 .admin-review--selected {
-  border-color: rgb(var(--brand-rgb) / 0.45);
+  border-color: rgb(3 105 161 / 0.45);
   box-shadow:
     var(--glass-inner),
-    0 0 0 2px rgb(var(--brand-rgb) / 0.18),
+    0 0 0 2px rgb(3 105 161 / 0.18),
     var(--glass-shadow);
 }
 

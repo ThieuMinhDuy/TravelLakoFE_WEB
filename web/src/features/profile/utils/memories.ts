@@ -1,9 +1,9 @@
 import { TRIP_STATUSES } from '../../../utils/trip';
-import type { Trip, TripGroups } from '../../../types/trip';
+import type { TripGroups, TripWithCity } from '../../../types/trip';
 
 export interface Memory {
   url: string;
-  trip: Trip;
+  trip: TripWithCity;
 }
 
 /** Gom ảnh nhật ký của mọi chuyến đi (cả 3 nhóm), chuyến bắt đầu gần nhất xếp trước */

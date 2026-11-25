@@ -27,5 +27,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  /* Test đặt cạnh feature được kiểm tra bằng tsconfig.test.json (có kiểu vitest + jest-dom) */
+  "exclude": ["src/**/__tests__"]
 }

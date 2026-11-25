@@ -9,4 +9,6 @@ afterEach(() => {
   cleanup();
   localStorage.clear();
   sessionStorage.clear();
+  // Test dùng fake timer quên trả lại không làm hỏng test sau
+  vi.useRealTimers();
 });

@@ -9,7 +9,7 @@ import {
   Trash2,
   ChevronRight,
 } from 'lucide-react';
-import { useTripUIStoreApi, useTripUIContext, AITabType } from '../../../../store/tripUIStore';
+import { useTripUIStoreApi, useTripUIContext } from '../../../../store/tripUIStore';
 import { useAISuggestion } from '../../../../hooks/useAISuggestion';
 import { TripDetail } from '../../../../types';
 import { AIChatBubble, AITypingIndicator } from './AIChatBubble';

@@ -61,7 +61,7 @@ export const AIChatBubble = memo(function AIChatBubble({ message }: AIChatBubble
               isUser ? 'text-blue-200' : 'text-zinc-400 dark:text-zinc-500'
             )}
           >
-            {formatDate(message.timestamp, 'HH:mm')}
+            {formatDate(message.timestamp, undefined, 'HH:mm')}
           </div>
         )}
       </div>

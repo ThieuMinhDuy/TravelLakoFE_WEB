@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { DropResult, DragStart } from '@hello-pangea/dnd';
+import { DropResult } from '@hello-pangea/dnd';
 import { toast } from 'sonner';
 import { useAppDispatch } from '../store/reduxStore';
 import {
@@ -31,7 +31,7 @@ export function useTripScheduleDnd({ trip }: UseTripScheduleDndProps) {
 
   /** Bắt đầu kéo card địa điểm */
   const onDragStart = useCallback(
-    (_start: DragStart) => {
+    () => {
       dispatch(saveDndSnapshot());
       uiStore.getState().setIsDragging(true);
     },

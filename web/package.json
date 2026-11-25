@@ -9,8 +9,6 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:explore": "vitest run --config vitest.explore.config.ts",
-    "test:all": "npm run test && npm run test:explore",
     "test:watch": "vitest",
     "test:coverage": "node scripts/coverage.mjs"
   },

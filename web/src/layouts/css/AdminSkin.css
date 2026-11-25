@@ -5,13 +5,29 @@
    Selector có 2 lớp (0,2,0) để thắng style gốc (0,1,0) bất kể thứ tự nạp CSS.
    ========================================================================== */
 
+/* ------------------------------ Màu thương hiệu ----------------------------- */
+/*
+ * Trang người dùng dùng màu cam (--color-brand trong index.css). Khu quản trị giữ màu xanh #0369a1:
+ * đặt lại token ngay trên <html data-surface="admin"> → mọi component dùng chung (Button, Input,
+ * Badge, Tabs...) và class Tailwind oceanBlue / sunsetOrange đều đổi theo khi ở trong admin.
+ */
+:root[data-surface='admin'] {
+  --color-brand: #0369a1;
+  --color-brand-hover: #075985;
+  --color-brand-text: #075985;
+  --color-brand-soft: #f0f9ff;
+  --color-brand-border: #bae6fd;
+  --brand-rgb: 3 105 161;
+  --focus-ring: 0 0 0 3px rgb(3 105 161 / 0.25);
+}
+
 /* ---------------------------------- Card --------------------------------- */
 /* Card dùng kính dày (nhiều chữ). Trang mới nên dùng class .glass trực tiếp. */
 
 [data-surface='admin'] .ui-card {
   border: 1px solid var(--glass-border);
   border-radius: var(--glass-radius);
-  background: var(--glass-regular);
+  background: rgb(255 255 255 / 0.55);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow: var(--glass-inner), var(--glass-shadow);
@@ -20,7 +36,7 @@
 /* --------------------------------- Button -------------------------------- */
 
 [data-surface='admin'] .ui-button {
-  border-radius: var(--radius-control);
+  border-radius: 9999px;
   transition:
     transform 0.35s var(--glass-spring),
     background 0.2s ease,
@@ -37,11 +53,11 @@
   border-color: transparent;
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.2),
-    0 2px 6px -2px rgb(var(--brand-rgb) / 0.4);
+    0 2px 6px -2px rgb(3 105 161 / 0.4);
 }
 
 [data-surface='admin'] .ui-button--primary:hover:not(:disabled) {
-  background: var(--color-brand-hover);
+  background: #075985;
 }
 
 [data-surface='admin'] .ui-button--danger {
@@ -54,7 +70,7 @@
 [data-surface='admin'] .ui-button--outline,
 [data-surface='admin'] .ui-button--secondary {
   border: 1px solid rgb(255 255 255 / 0.75);
-  background: var(--glass-regular);
+  background: rgb(255 255 255 / 0.55);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
   backdrop-filter: blur(12px) saturate(160%);
   color: var(--glass-text);
@@ -70,7 +86,7 @@
 }
 
 [data-surface='admin'] .ui-button--ghost:hover:not(:disabled) {
-  background: var(--glass-regular);
+  background: rgb(255 255 255 / 0.55);
 }
 
 [data-surface='admin'] .ui-button:focus-visible {
@@ -84,7 +100,7 @@
 [data-surface='admin'] .ui-textarea,
 [data-surface='admin'] .ui-data-table__search-input {
   border: 1px solid rgb(15 23 42 / 0.1);
-  border-radius: var(--radius-control);
+  border-radius: 0.9rem;
   background: rgb(255 255 255 / 0.72);
   box-shadow: inset 0 1px 2px rgb(15 23 42 / 0.05);
   color: var(--glass-text);
@@ -94,7 +110,7 @@
 [data-surface='admin'] .ui-select:focus,
 [data-surface='admin'] .ui-textarea:focus,
 [data-surface='admin'] .ui-data-table__search-input:focus {
-  border-color: rgb(var(--brand-rgb) / 0.55);
+  border-color: rgb(3 105 161 / 0.55);
   background: rgb(255 255 255 / 0.95);
   box-shadow: var(--glass-focus);
 }
@@ -130,7 +146,7 @@
 }
 
 [data-surface='admin'] .ui-badge--primary {
-  background: var(--color-brand-soft);
+  background: rgb(224 242 254 / 0.85);
 }
 
 [data-surface='admin'] .ui-badge--success {
@@ -151,7 +167,7 @@
 
 [data-surface='admin'] .ui-data-table__container {
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-card);
+  border-radius: 1.25rem;
   background: rgb(255 255 255 / 0.62);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
 }
@@ -162,7 +178,7 @@
 }
 
 [data-surface='admin'] .ui-data-table__thead {
-  background: var(--glass-regular);
+  background: rgb(255 255 255 / 0.55);
   border-bottom: 1px solid rgb(15 23 42 / 0.07);
   color: var(--glass-text-muted);
 }
@@ -187,7 +203,7 @@
 }
 
 [data-surface='admin'] .ui-data-table__pagination-btn {
-  border-radius: var(--radius-control);
+  border-radius: 9999px;
   border-color: rgb(255 255 255 / 0.8);
   background: rgb(255 255 255 / 0.6);
   padding: 0.35rem;
@@ -203,7 +219,7 @@
 
 [data-surface='admin'] .ui-modal__dialog {
   border: 1px solid rgb(255 255 255 / 0.7);
-  border-radius: var(--radius-card);
+  border-radius: 1.75rem;
   background: rgb(255 255 255 / 0.82);
   -webkit-backdrop-filter: blur(30px) saturate(190%);
   backdrop-filter: blur(30px) saturate(190%);
@@ -230,7 +246,7 @@
   top: 0.75rem;
   bottom: 0.75rem;
   border: 1px solid rgb(255 255 255 / 0.7);
-  border-radius: var(--radius-card);
+  border-radius: 1.75rem;
   overflow: hidden;
   background: rgb(255 255 255 / 0.8);
   -webkit-backdrop-filter: blur(30px) saturate(190%);

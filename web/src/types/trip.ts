@@ -129,3 +129,10 @@ export function extractPlaceCost(
   }
 }
 
+
+// ─── Nhóm chuyến đi (trang Hồ sơ, TripCard) ──────────────────────────────────
+/** Trạng thái chuyến đi theo cách backend phân nhóm (so với ngày hiện tại) */
+export type TripStatus = keyof MyTripsResponse;
+
+/** GET /api/trips — backend chia sẵn 3 nhóm (tên dùng ở trang Hồ sơ) */
+export type TripGroups = MyTripsResponse;
