@@ -250,11 +250,11 @@
   font-size: 11px;
 }
 .explore-hero-copy h1 {
-  font-family: 'Caveat', cursive;
+  /* Caveat không có bộ dấu tiếng Việt (ậ, ở, ắ bị rơi sang font khác) → dùng Dancing Script */
+  font-family: var(--font-script);
   font-size: clamp(43px, 6vw, 76px);
-  line-height: 1.15;
+  line-height: 1.25;
   font-weight: 700;
-  letter-spacing: -0.02em;
 }
 .explore-hero-copy > p:last-child {
   margin-top: 18px;

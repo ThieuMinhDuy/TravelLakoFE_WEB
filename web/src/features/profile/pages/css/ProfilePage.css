@@ -421,6 +421,8 @@
   flex-direction: column;
   gap: 1.25rem;
   max-width: 52rem;
+  /* Căn giữa trong vùng tab (các tab khác rộng full, tab Cài đặt hẹp hơn) */
+  margin-inline: auto;
 }
 
 .settings__form {

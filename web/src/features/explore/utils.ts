@@ -54,8 +54,11 @@ export function priceLabel(place: ExplorePlace): string {
     maximumFractionDigits: 0,
   }).format(price);
 }
-export const priceUnit = (kind: PlaceType) =>
-  kind === 'hotel' ? '/ đêm' : kind === 'attraction' ? '/ vé' : 'tham khảo';
+/** Đơn vị đi kèm giá; giá 0 ("Miễn phí") không có đơn vị nên trả về chuỗi rỗng */
+export const priceUnit = (kind: PlaceType, place?: ExplorePlace) =>
+  place && getPrice(place) === 0
+    ? ''
+    : kind === 'hotel' ? '/ đêm' : kind === 'attraction' ? '/ vé' : 'tham khảo';
 export function validCoordinates(
   value: unknown,
 ): value is { lat: number; lng: number } {

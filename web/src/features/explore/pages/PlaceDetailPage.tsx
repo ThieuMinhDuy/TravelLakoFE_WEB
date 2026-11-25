@@ -131,7 +131,7 @@ export function PlaceDetailPage() {
                     : 'Chi phí tham khảo'}
               </span>
               <strong>{priceLabel(place)}</strong>
-              <small>{priceUnit(kind)}</small>
+              {priceUnit(kind, place) && <small>{priceUnit(kind, place)}</small>}
               <p>
                 Mức giá tham khảo do địa điểm cung cấp. Chi phí thực tế có thể
                 thay đổi.

@@ -141,141 +141,6 @@
   flex-shrink: 0;
 }
 
-/* Global Search Input */
-.main-header__search-form {
-  position: relative;
-  display: none;
-  align-items: center;
-}
-
-@media (min-width: 640px) {
-  .main-header__search-form {
-    display: flex;
-  }
-}
-
-.main-header__search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 13rem;
-  transition: width 0.25s ease-in-out;
-}
-
-@media (min-width: 1100px) {
-  .main-header__search-wrapper {
-    width: 16rem;
-  }
-}
-
-.main-header__search-wrapper:focus-within {
-  width: 18rem;
-}
-
-.main-header__search-icon-btn {
-  position: absolute;
-  left: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.75);
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.15s ease-in-out;
-}
-
-.main-header__search-icon-btn:hover {
-  color: #FFFFFF;
-}
-
-.main-header__search-input {
-  width: 100%;
-  height: 2.25rem;
-  padding-left: 2.25rem;
-  padding-right: 2rem;
-  border-radius: 9999px;
-  font-size: 0.8125rem;
-  color: #FFFFFF;
-  background-color: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  outline: none;
-  transition: all 0.2s ease-in-out;
-}
-
-.main-header__search-input::placeholder {
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.main-header__search-input:focus {
-  background-color: rgba(255, 255, 255, 0.25);
-  border-color: var(--color-brand);
-  box-shadow: 0 0 0 2px rgba(250, 139, 2, 0.3);
-}
-
-.main-header__search-clear-btn {
-  position: absolute;
-  right: 0.625rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  border-radius: 9999px;
-  width: 1.125rem;
-  height: 1.125rem;
-  color: #FFFFFF;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.15s ease-in-out;
-}
-
-.main-header__search-clear-btn:hover {
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-/* Favorites Button (Heart Icon - Only when logged in) */
-.main-header__fav-link {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 9999px;
-  background-color: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #FFFFFF;
-  text-decoration: none;
-  transition: all 0.2s ease-in-out;
-}
-
-.main-header__fav-link:hover {
-  background-color: rgba(255, 255, 255, 0.25);
-  color: #F87171;
-  transform: scale(1.05);
-}
-
-.main-header__fav-badge {
-  position: absolute;
-  top: -0.25rem;
-  right: -0.25rem;
-  width: 1.125rem;
-  height: 1.125rem;
-  border-radius: 9999px;
-  background-color: #EF4444;
-  color: #FFFFFF;
-  font-size: 0.625rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid #0F172A;
-}
-
 /* Guest Actions */
 .main-header__guest-actions {
   display: flex;
@@ -500,19 +365,8 @@
     gap: 0.75rem;
   }
 
-  .main-header__search-wrapper,
-  .main-header__search-wrapper:focus-within {
-    width: 14rem;
-  }
-
   .main-header__user-name {
     max-width: 6rem;
-  }
-}
-
-@media (min-width: 1440px) {
-  .main-header__search-wrapper:focus-within {
-    width: 16rem;
   }
 }
 
@@ -550,46 +404,11 @@
   }
 }
 
-.mobile-nav__search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin: 1rem 1.25rem 0.5rem;
-}
-
-.mobile-nav__search-icon {
-  position: absolute;
-  left: 0.875rem;
-  width: 1rem;
-  height: 1rem;
-  color: #94A3B8;
-  pointer-events: none;
-}
-
-.mobile-nav__search-input {
-  width: 100%;
-  padding: 0.625rem 0.875rem 0.625rem 2.5rem;
-  border: 1px solid var(--color-borderGray, #E2E8F0);
-  border-radius: 0.75rem;
-  background-color: var(--color-bgSubtle, #F1F5F9);
-  font: inherit;
-  font-size: 16px; /* tránh iOS tự zoom khi focus */
-  color: #0F172A;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
-}
-
-.mobile-nav__search-input:focus {
-  border-color: var(--color-brand);
-  background-color: #FFFFFF;
-  box-shadow: var(--focus-ring);
-}
-
 .mobile-nav__list {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  padding: 0.5rem 0.75rem 1.5rem;
+  padding: 1rem 0.75rem 1.5rem;
 }
 
 .mobile-nav__link {

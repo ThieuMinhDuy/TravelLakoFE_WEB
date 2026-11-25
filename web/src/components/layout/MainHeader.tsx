@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { cn } from '../../utils/cn';
 import { isAdminUser } from '../../utils/auth';
 import {
-  Search,
-  X,
   Heart,
   User as UserIcon,
   Compass,
@@ -36,10 +34,7 @@ export const MainHeader: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const location = useLocation();
 
   const isHome = location.pathname === '/';
@@ -76,21 +71,6 @@ export const MainHeader: React.FC = () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [dropdownOpen]);
-
-  // Xử lý submit tìm kiếm Global
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setMobileMenuOpen(false);
-      navigate(`/cities?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-
-  // Xóa nhanh text tìm kiếm
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    searchInputRef.current?.focus();
-  };
 
   const handleLogout = () => {
     setDropdownOpen(false);
@@ -155,60 +135,9 @@ export const MainHeader: React.FC = () => {
 
         {/* ==================================================================
             3. BÊN PHẢI: Actions & User Controls
-            - Global Search với nút xóa nhanh
-            - Yêu thích (/favorites - chỉ hiện khi đăng nhập)
             - Auth State: Guest (Đăng nhập / Đăng ký) hoặc Authenticated Dropdown
             ================================================================== */}
         <div className="main-header__right">
-          {/* Thanh tìm kiếm (Global Search) */}
-          <form onSubmit={handleSearchSubmit} className="main-header__search-form">
-            <div className="main-header__search-wrapper">
-              <button
-                type="submit"
-                className="main-header__search-icon-btn"
-                title="Tìm kiếm"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tìm kiếm điểm đến..."
-                className="main-header__search-input"
-              />
-
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={handleClearSearch}
-                  className="main-header__search-clear-btn"
-                  title="Xóa tìm kiếm"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          </form>
-
-          {/* Nút Yêu thích (/favorites) - Chỉ hiển thị khi đã đăng nhập */}
-          {isAuthenticated && user && (
-            <Link
-              to="/favorites"
-              className="main-header__fav-link"
-              title="Địa điểm đã lưu (Yêu thích)"
-            >
-              <Heart className="w-4 h-4 fill-current text-white/90 hover:text-red-400" />
-              {user.stats && user.stats.favorites > 0 && (
-                <span className="main-header__fav-badge">
-                  {user.stats.favorites > 99 ? '99+' : user.stats.favorites}
-                </span>
-              )}
-            </Link>
-          )}
-
           {/* Khu vực Tài khoản (Auth State) */}
           {isAuthenticated && user ? (
             <div className="relative" ref={dropdownRef}>
@@ -322,18 +251,6 @@ export const MainHeader: React.FC = () => {
         side="left"
         title="Menu"
       >
-        <form onSubmit={handleSearchSubmit} className="mobile-nav__search" role="search">
-          <Search className="mobile-nav__search-icon" aria-hidden="true" />
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tìm kiếm điểm đến..."
-            className="mobile-nav__search-input"
-            aria-label="Tìm kiếm điểm đến"
-          />
-        </form>
-
         <nav className="mobile-nav__list" aria-label="Điều hướng chính">
           <NavLink
             to="/"

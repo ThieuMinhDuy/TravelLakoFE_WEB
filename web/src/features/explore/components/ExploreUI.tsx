@@ -166,7 +166,7 @@ export function PlaceCard({ place }: { place: ExplorePlace }) {
         <div className="explore-place-price">
           <div>
             <strong>{priceLabel(place)}</strong>
-            <small>{priceUnit(place.kind)}</small>
+            {priceUnit(place.kind, place) && <small>{priceUnit(place.kind, place)}</small>}
           </div>
           <Link
             to={`/places/${place.kind}/${encodeURIComponent(place._id)}`}

@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../../assets/logo.png';
 import { MapPin, Phone, Mail } from 'lucide-react';
-import { LocaleSwitcher } from './LocaleSwitcher';
 import './css/MainFooter.css';
 
 export const MainFooter: React.FC = () => {
@@ -101,7 +100,6 @@ export const MainFooter: React.FC = () => {
         {/* Bottom Line */}
         <div className="main-footer__bottom">
           <p>© {new Date().getFullYear()} TripMate. All rights reserved.</p>
-          <LocaleSwitcher />
           <p>Thiết kế tinh tế theo chuẩn Modern Natural Travel.</p>
         </div>
       </div>
