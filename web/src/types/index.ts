@@ -6,3 +6,4 @@ export * from './review';
 export * from './admin';
 export * from './trip';
 export * from './favorite';
+export * from './ai';

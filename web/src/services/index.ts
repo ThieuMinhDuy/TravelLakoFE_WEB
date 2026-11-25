@@ -6,3 +6,5 @@ export * from './favoriteService';
 export * from './cityService';
 export * from './placeService';
 export * from './reviewService';
+export * from './tripService';
+export * from './aiService';
