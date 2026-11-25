@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Modal } from '../../../components/common/Modal';
 import { Input } from '../../../components/common/Input';
+import { MoneyInput } from '../../../components/common/MoneyInput';
 import { Select } from '../../../components/common/Select';
 import { Button } from '../../../components/common/Button';
 import { cityService } from '../../../services/cityService';
@@ -43,7 +44,7 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
   const [city, setCity] = useState('');
   const [startDate, setStartDate] = useState(defaults.startDate);
   const [endDate, setEndDate] = useState(defaults.endDate);
-  const [budget, setBudget] = useState('3000000');
+  const [budget, setBudget] = useState<number | undefined>(3_000_000);
   const [formError, setFormError] = useState<string | null>(null);
 
   const citiesQuery = useQuery({
@@ -67,6 +68,7 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
       toast.success('Đã tạo chuyến đi mới!');
       setTitle('');
       setCity('');
+      setBudget(3_000_000);
       setFormError(null);
       onClose();
       onCreated?.(created._id);
@@ -97,8 +99,7 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
       return;
     }
 
-    const parsedBudget = budget.trim() ? Number(budget) : undefined;
-    if (parsedBudget !== undefined && (Number.isNaN(parsedBudget) || parsedBudget < 0)) {
+    if (budget !== undefined && (Number.isNaN(budget) || budget < 0)) {
       setFormError('Ngân sách không hợp lệ.');
       return;
     }
@@ -108,7 +109,7 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
       city,
       startDate,
       endDate,
-      budget: parsedBudget,
+      budget,
     });
   };
 
@@ -167,15 +168,12 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
           />
         </div>
 
-        <Input
-          label="Ngân sách dự kiến (VNĐ)"
+        <MoneyInput
+          label="Ngân sách dự kiến"
           name="budget"
-          type="number"
-          min="0"
-          step="100000"
           value={budget}
-          onChange={(e) => setBudget(e.target.value)}
-          placeholder="3000000"
+          onChange={setBudget}
+          placeholder="3.000.000"
         />
 
         <div className="flex justify-end gap-2 pt-2">
@@ -200,4 +198,3 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
     </Modal>
   );
 };
-

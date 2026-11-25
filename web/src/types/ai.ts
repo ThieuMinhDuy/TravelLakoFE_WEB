@@ -26,12 +26,16 @@ export interface ChatResponseDTO {
 }
 
 // ─── AI Suggestion (POST /api/ai/suggest) ────────────────────────────────────
+export type AIBudgetTier = 'Tiết kiệm' | 'Trung bình' | 'Sang trọng';
+
 export interface AISuggestRequestDTO {
-  cityId: string;
-  days: number;
-  budget?: number;
-  preferences?: string[];   // e.g. ['ẩm thực', 'văn hóa']
+  cityId?: string;
+  startDate?: string;
+  endDate?: string;
+  budget?: AIBudgetTier | number | string;
+  preferences?: string | string[];
   notes?: string;
+  isParse?: boolean;
 }
 
 export interface AISuggestionResponse {
@@ -49,7 +53,7 @@ export interface AISuggestionResponse {
 // ─── AI Optimize (POST /api/ai/optimize/:tripId) ─────────────────────────────
 export interface AIOptimizeRequestDTO {
   notes?: string;
-  preview?: boolean;              // true = chỉ preview, false = lưu DB
+  preview?: boolean;                 // true = chỉ preview, false = lưu DB
   optimizedSchedule?: DaySchedule[]; // gửi kèm nếu dùng cached preview
 }
 
@@ -60,4 +64,3 @@ export interface AIOptimizeResponse {
   schedule: DaySchedule[];
   preview?: boolean;
 }
-

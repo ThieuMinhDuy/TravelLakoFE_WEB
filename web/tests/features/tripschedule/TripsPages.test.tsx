@@ -135,6 +135,9 @@ describe('Pages: TripsPage (/trips) & TripDetailPage (/trips/:id)', () => {
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /Tạo chuyến đi mới/i }));
+    const createBudgetInput = screen.getByLabelText(/Ngân sách dự kiến/i) as HTMLInputElement;
+    expect(createBudgetInput.value).toBe('3.000.000');
+
     await user.type(screen.getByLabelText(/Tên chuyến đi/i), 'Hà Nội cuối tuần');
     await user.selectOptions(
       await screen.findByLabelText(/Thành phố điểm đến/i),
@@ -163,6 +166,11 @@ describe('Pages: TripsPage (/trips) & TripDetailPage (/trips/:id)', () => {
 
     vi.mocked(tripService.getTripById).mockResolvedValue(mockTripDetail);
     vi.mocked(tripService.addPlaceToSchedule).mockResolvedValue(mockTripDetail);
+    vi.mocked(tripService.updateTripMetadata).mockResolvedValue({
+      ...mockTripDetail,
+      city: 'city_hanoi_1',
+      budget: 30000000,
+    } as unknown as import('@/types/trip').Trip);
 
     renderRoute('/trips/trip_123');
 
@@ -170,6 +178,23 @@ describe('Pages: TripsPage (/trips) & TripDetailPage (/trips/:id)', () => {
       await screen.findByText('Khám phá Hà Nội 2 ngày 1 đêm')
     ).toBeInTheDocument();
     expect(screen.getByText('Hồ Hoàn Kiếm')).toBeInTheDocument();
+
+    // Kiểm tra EditTripModal định dạng tiền tệ kiểu 2.000.000 đ / 30.000.000 đ
+    await user.click(screen.getByRole('button', { name: /Chỉnh sửa/i }));
+    const editBudgetInput = screen.getByLabelText(/Ngân sách dự kiến/i) as HTMLInputElement;
+    expect(editBudgetInput.value).toBe('2.000.000');
+    await user.clear(editBudgetInput);
+    await user.type(editBudgetInput, '30000000');
+    expect(editBudgetInput.value).toBe('30.000.000');
+    await user.click(screen.getByRole('button', { name: /Lưu thay đổi/i }));
+
+    await waitFor(() => {
+      expect(tripService.updateTripMetadata).toHaveBeenCalledWith(
+        'trip_123',
+        expect.objectContaining({ budget: 30000000 })
+      );
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole('button', { name: /Trợ lý AI gợi ý/i }));
     expect(globalAIChatStore.getState().isAIPanelOpen).toBe(true);

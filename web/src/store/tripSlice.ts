@@ -13,6 +13,7 @@ import * as tripService from '../services/tripService';
  */
 function mergePopulatedTrip(prev: TripDetail | null, next: TripDetail): TripDetail {
   if (!prev) return next;
+  if (!Array.isArray(next.schedule)) return prev;
 
   const populatedPlaces = new Map<string, PopulatedPlaceInSchedule['placeId']>();
   for (const day of prev.schedule) {

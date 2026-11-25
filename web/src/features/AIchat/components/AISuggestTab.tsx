@@ -1,19 +1,17 @@
 import { useState, memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Sparkles, Compass, Check, Calendar, ArrowRight } from 'lucide-react';
-import { AISuggestionResponse } from '../../../types';
+import {
+  AIBudgetTier,
+  AISuggestRequestDTO,
+  AISuggestionResponse,
+} from '../../../types';
 import { formatCurrencyVND } from '../../../utils/formatters';
 import { cityService } from '../../../services/cityService';
 import { queryKeys } from '../../../lib/queryKeys';
 
 export interface AISuggestTabProps {
-  onGenerateSuggestion: (data: {
-    cityId: string;
-    days: number;
-    budget?: number;
-    preferences?: string[];
-    notes?: string;
-  }) => void;
+  onGenerateSuggestion: (data: AISuggestRequestDTO) => void;
   isLoading: boolean;
   suggestedResult?: AISuggestionResponse | null;
   onApplySchedule?: (result: AISuggestionResponse) => void;
@@ -31,6 +29,8 @@ const PREFERENCE_OPTIONS = [
   'Hoạt động mạo hiểm',
 ];
 
+const BUDGET_TIERS: AIBudgetTier[] = ['Tiết kiệm', 'Trung bình', 'Sang trọng'];
+
 /**
  * Tab: Gợi ý toàn bộ lịch trình chuyến đi thông minh bằng Gemini Flash Lite.
  */
@@ -43,7 +43,7 @@ export const AISuggestTab = memo(function AISuggestTab({
 }: AISuggestTabProps) {
   const [cityId, setCityId] = useState('');
   const [days, setDays] = useState<number>(3);
-  const [budget, setBudget] = useState<string>('3000000');
+  const [budget, setBudget] = useState<AIBudgetTier>('Trung bình');
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([
     'Ẩm thực địa phương',
     'Văn hóa & Lịch sử',
@@ -67,12 +67,19 @@ export const AISuggestTab = memo(function AISuggestTab({
     e.preventDefault();
     if (!cityId.trim()) return;
 
+    const totalDays = Math.max(1, Number(days) || 1);
+    const start = new Date();
+    const end = new Date(start);
+    end.setDate(end.getDate() + totalDays - 1);
+
     onGenerateSuggestion({
       cityId: cityId.trim(),
-      days: Number(days),
-      budget: budget ? Number(budget) : undefined,
-      preferences: selectedPreferences,
+      startDate: start.toISOString().slice(0, 10),
+      endDate: end.toISOString().slice(0, 10),
+      budget,
+      preferences: selectedPreferences.join(', ') || undefined,
       notes: notes.trim() || undefined,
+      isParse: false,
     });
   };
 
@@ -129,7 +136,7 @@ export const AISuggestTab = memo(function AISuggestTab({
           )}
         </div>
 
-        {/* Số ngày & Ngân sách */}
+        {/* Số ngày & Mức ngân sách */}
         <div className="grid grid-cols-2 gap-2.5">
           <div>
             <label
@@ -157,18 +164,20 @@ export const AISuggestTab = memo(function AISuggestTab({
               htmlFor="ai-suggest-budget"
               className="block text-xs font-semibold text-zinc-700 mb-1"
             >
-              Ngân sách dự kiến (VNĐ)
+              Mức ngân sách
             </label>
-            <input
+            <select
               id="ai-suggest-budget"
-              type="number"
-              step="500000"
-              min="0"
               value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              placeholder="3.000.000"
+              onChange={(e) => setBudget(e.target.value as AIBudgetTier)}
               className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 bg-white text-zinc-900 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-            />
+            >
+              {BUDGET_TIERS.map((tier) => (
+                <option key={tier} value={tier}>
+                  {tier}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -252,7 +261,7 @@ export const AISuggestTab = memo(function AISuggestTab({
           <div className="space-y-2 text-xs text-zinc-700">
             {suggestedResult.schedule.map((day) => (
               <div
-                key={day.day}
+                key={day._id || day.day}
                 className="p-2.5 rounded-xl bg-white border border-emerald-100"
               >
                 <p className="font-bold text-zinc-900 flex items-center gap-1 mb-1">

@@ -126,6 +126,13 @@ describe('Feature: AIchat (<AIAssistantFAB> & <AIAssistantPanel>)', () => {
     await user.click(screen.getByRole('button', { name: /Tạo gợi ý lịch trình thông minh/i }));
 
     await waitFor(() => {
+      expect(aiService.generateAISuggestion).toHaveBeenCalledWith(
+        expect.objectContaining({
+          cityId: 'city-dn',
+          budget: 'Trung bình',
+          isParse: false,
+        })
+      );
       expect(screen.getByText('Đà Nẵng 3 ngày cực chill')).toBeInTheDocument();
     });
     // Không tự động áp dụng trước khi user bấm nút

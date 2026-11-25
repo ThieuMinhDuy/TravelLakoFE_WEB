@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Modal } from '../../../components/common/Modal';
 import { Input } from '../../../components/common/Input';
+import { MoneyInput } from '../../../components/common/MoneyInput';
 import { Button } from '../../../components/common/Button';
 import { updateTripMetadata } from '../../../services/tripService';
 import { queryKeys } from '../../../lib/queryKeys';
@@ -28,7 +29,7 @@ export const EditTripModal: React.FC<EditTripModalProps> = ({
   const [title, setTitle] = useState(trip.title);
   const [startDate, setStartDate] = useState(toDateInputValue(trip.startDate));
   const [endDate, setEndDate] = useState(toDateInputValue(trip.endDate));
-  const [budget, setBudget] = useState(String(trip.budget ?? 0));
+  const [budget, setBudget] = useState<number | undefined>(trip.budget);
   const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export const EditTripModal: React.FC<EditTripModalProps> = ({
       setTitle(trip.title);
       setStartDate(toDateInputValue(trip.startDate));
       setEndDate(toDateInputValue(trip.endDate));
-      setBudget(String(trip.budget ?? 0));
+      setBudget(trip.budget);
       setFormError(null);
     }
   }, [isOpen, trip]);
@@ -47,7 +48,7 @@ export const EditTripModal: React.FC<EditTripModalProps> = ({
         title: title.trim(),
         startDate,
         endDate,
-        budget: budget.trim() ? Number(budget) : 0,
+        budget: budget ?? 0,
       }),
     onSuccess: async () => {
       await Promise.all([
@@ -74,8 +75,7 @@ export const EditTripModal: React.FC<EditTripModalProps> = ({
       setFormError('Ngày kết thúc phải sau hoặc bằng ngày bắt đầu.');
       return;
     }
-    const parsedBudget = budget.trim() ? Number(budget) : 0;
-    if (Number.isNaN(parsedBudget) || parsedBudget < 0) {
+    if (budget !== undefined && (Number.isNaN(budget) || budget < 0)) {
       setFormError('Ngân sách không hợp lệ.');
       return;
     }
@@ -124,14 +124,12 @@ export const EditTripModal: React.FC<EditTripModalProps> = ({
           />
         </div>
 
-        <Input
-          label="Ngân sách dự kiến (VNĐ)"
+        <MoneyInput
+          label="Ngân sách dự kiến"
           name="editBudget"
-          type="number"
-          min="0"
-          step="100000"
           value={budget}
-          onChange={(e) => setBudget(e.target.value)}
+          onChange={setBudget}
+          placeholder="30.000.000"
         />
 
         <div className="flex justify-end gap-2 pt-2">
@@ -156,4 +154,3 @@ export const EditTripModal: React.FC<EditTripModalProps> = ({
     </Modal>
   );
 };
-
