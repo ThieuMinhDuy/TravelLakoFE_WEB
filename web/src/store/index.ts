@@ -4,3 +4,4 @@ export * from './reduxStore';
 export * from './tripSlice';
 export * from './tripSelectors';
 export * from './tripUIStore';
+export * from './aiChatStore';

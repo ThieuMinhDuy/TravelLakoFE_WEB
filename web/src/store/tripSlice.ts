@@ -8,6 +8,42 @@ import {
 } from '../types/trip';
 import * as tripService from '../services/tripService';
 
+/**
+ * Giữ lại dữ liệu đã populate của `city` và `placeId` nếu API trả về dạng chưa populate (string ID).
+ */
+function mergePopulatedTrip(prev: TripDetail | null, next: TripDetail): TripDetail {
+  if (!prev) return next;
+
+  const populatedPlaces = new Map<string, PopulatedPlaceInSchedule['placeId']>();
+  for (const day of prev.schedule) {
+    for (const item of day.places) {
+      if (typeof item.placeId === 'object' && item.placeId !== null) {
+        populatedPlaces.set(item.placeId._id, item.placeId);
+      }
+    }
+  }
+
+  const nextCity =
+    typeof next.city === 'string' && typeof prev.city === 'object' && prev.city?._id === next.city
+      ? prev.city
+      : next.city;
+
+  return {
+    ...next,
+    city: nextCity,
+    schedule: next.schedule.map((day) => ({
+      ...day,
+      places: day.places.map((item) => {
+        if (typeof item.placeId === 'string') {
+          const matched = populatedPlaces.get(item.placeId);
+          if (matched) return { ...item, placeId: matched };
+        }
+        return item;
+      }),
+    })),
+  };
+}
+
 // ─── Kiểu dữ liệu State của Trip Slice ───────────────────────────────────────
 export interface TripState {
   // Danh sách chuyến đi được gom nhóm
@@ -333,7 +369,7 @@ export const tripSlice = createSlice({
     });
     builder.addCase(reorderScheduleThunk.fulfilled, (state, action) => {
       state.reorderLoading = false;
-      state.currentTrip = action.payload;
+      state.currentTrip = mergePopulatedTrip(state.currentTrip, action.payload);
     });
     builder.addCase(reorderScheduleThunk.rejected, (state, action) => {
       state.reorderLoading = false;
@@ -342,17 +378,17 @@ export const tripSlice = createSlice({
 
     // addPlaceThunk
     builder.addCase(addPlaceThunk.fulfilled, (state, action) => {
-      state.currentTrip = action.payload;
+      state.currentTrip = mergePopulatedTrip(state.currentTrip, action.payload);
     });
 
     // removePlaceThunk
     builder.addCase(removePlaceThunk.fulfilled, (state, action) => {
-      state.currentTrip = action.payload;
+      state.currentTrip = mergePopulatedTrip(state.currentTrip, action.payload);
     });
 
     // checkInPlaceThunk
     builder.addCase(checkInPlaceThunk.fulfilled, (state, action) => {
-      state.currentTrip = action.payload;
+      state.currentTrip = mergePopulatedTrip(state.currentTrip, action.payload);
     });
   },
 });

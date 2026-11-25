@@ -30,6 +30,8 @@ const loadAuthModal = () => import('../features/auth/AuthModalHost');
 const AuthModalHost = lazyNamed(loadAuthModal, 'AuthModalHost');
 
 const AdminLayout = lazyNamed(() => import('../layouts/AdminLayout'), 'AdminLayout');
+const TripsPage = lazyNamed(() => import('../features/tripschedule/pages/TripsPage'), 'TripsPage');
+const TripDetailPage = lazyNamed(() => import('../features/tripschedule/pages/TripDetailPage'), 'TripDetailPage');
 const ProfilePage = lazyNamed(() => import('../features/profile/pages/ProfilePage'), 'ProfilePage');
 const AdminDashboardPage = lazyNamed(() => import('../features/admin/pages/AdminDashboardPage'), 'AdminDashboardPage');
 const AdminUsersPage = lazyNamed(() => import('../features/admin/pages/AdminUsersPage'), 'AdminUsersPage');
@@ -119,12 +121,7 @@ export const AppRoutes: React.FC = () => {
         />
         <Route
           path="/trips"
-          element={
-            <PlaceholderPage
-              title="Chuyến đi của tôi (My Trips)"
-              desc="Màn 5 & 6: Quản lý danh sách chuyến đi và giao diện kéo thả timeline lịch trình thông minh."
-            />
-          }
+          element={withSuspense(<TripsPage />)}
         />
         <Route
           path="/diary"
@@ -141,10 +138,7 @@ export const AppRoutes: React.FC = () => {
           path="/trips/:id"
           element={
             <ProtectedRoute>
-              <PlaceholderPage
-                title="Chi tiết chuyến đi"
-                desc="Màn 6: Lịch trình theo từng ngày, kéo thả sắp xếp địa điểm và bản đồ lộ trình."
-              />
+              {withSuspense(<TripDetailPage />)}
             </ProtectedRoute>
           }
         />

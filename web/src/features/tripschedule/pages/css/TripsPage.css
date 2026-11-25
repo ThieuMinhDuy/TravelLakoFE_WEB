@@ -1,0 +1,117 @@
+/* ==========================================================================
+   Trang Lịch trình & Chi tiết chuyến đi (TripsPage & TripDetailPage)
+   ========================================================================== */
+
+.trips-page {
+  max-width: var(--layout-content-width);
+  margin: 0 auto;
+  padding: 2rem var(--layout-gutter) 4rem;
+}
+
+.trips-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .trips-page__header {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.trips-page__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-textMain);
+  letter-spacing: -0.02em;
+}
+
+.trips-page__subtitle {
+  margin: 0.375rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--color-textSub);
+}
+
+.trips-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.trips-page__tabs > .ui-tabs__panel {
+  padding-top: 1.5rem;
+}
+
+.trips-page__pagination {
+  margin-top: 1.75rem;
+}
+
+.trips-card-wrap {
+  position: relative;
+}
+
+.trips-card-wrap__delete {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.92);
+  color: #64748B;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: color 0.15s, background-color 0.15s, transform 0.15s;
+}
+
+.trips-card-wrap__delete:hover {
+  color: #DC2626;
+  background-color: #FFFFFF;
+  transform: scale(1.06);
+}
+
+.trip-detail-page {
+  max-width: var(--layout-content-width);
+  margin: 0 auto;
+  padding: 1.5rem var(--layout-gutter) 4rem;
+}
+
+.trip-detail-page__topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.trip-detail-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-textSub);
+  text-decoration: none;
+}
+
+.trip-detail-page__back:hover {
+  color: var(--color-brand-text);
+}
+
+.trip-detail-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
