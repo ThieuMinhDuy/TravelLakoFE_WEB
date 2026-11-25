@@ -9,33 +9,40 @@ import {
   UpdateTripMetadataDTO,
 } from '../types/trip';
 
-const BASE = '/trips';
+// ─── Cấu hình URL gọi Backend từ biến môi trường VITE_API_URL ──────────────
+const rawApiUrl = (
+  import.meta.env.VITE_API_URL || 'https://travellako-backend.onrender.com/api'
+).replace(/\/+$/, '');
+
+// Chuẩn hóa: Đảm bảo có đuôi /api nếu người dùng cấu hình domain gốc
+const API_BASE = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
+const TRIPS_API = `${API_BASE}/trips`;
 
 // ─── GET /api/trips ───────────────────────────────────────────────────────────
 /** Lấy danh sách trips của user (phân nhóm upcoming / ongoing / past) */
 export async function getMyTrips(): Promise<MyTripsResponse> {
-  const res = await apiClient.get<MyTripsResponse>(BASE);
+  const res = await apiClient.get<MyTripsResponse>(TRIPS_API);
   return res.data;
 }
 
 // ─── GET /api/trips/:id ───────────────────────────────────────────────────────
 /** Lấy chi tiết trip, populate city + places */
 export async function getTripById(id: string): Promise<TripDetail> {
-  const res = await apiClient.get<TripDetail>(`${BASE}/${id}`);
+  const res = await apiClient.get<TripDetail>(`${TRIPS_API}/${id}`);
   return res.data;
 }
 
 // ─── POST /api/trips ──────────────────────────────────────────────────────────
 /** Tạo trip mới (BE tự sinh schedule days) */
 export async function createTrip(data: CreateTripDTO): Promise<Trip> {
-  const res = await apiClient.post<Trip>(BASE, data);
+  const res = await apiClient.post<Trip>(TRIPS_API, data);
   return res.data;
 }
 
 // ─── DELETE /api/trips/:id ────────────────────────────────────────────────────
 /** Xóa trip */
 export async function deleteTrip(id: string): Promise<{ message: string }> {
-  const res = await apiClient.delete<{ message: string }>(`${BASE}/${id}`);
+  const res = await apiClient.delete<{ message: string }>(`${TRIPS_API}/${id}`);
   return res.data;
 }
 
@@ -45,7 +52,7 @@ export async function updateTripMetadata(
   id: string,
   data: UpdateTripMetadataDTO
 ): Promise<Trip> {
-  const res = await apiClient.put<Trip>(`${BASE}/${id}`, data);
+  const res = await apiClient.put<Trip>(`${TRIPS_API}/${id}`, data);
   return res.data;
 }
 
@@ -55,7 +62,7 @@ export async function addPlaceToSchedule(
   tripId: string,
   data: AddPlaceToScheduleDTO
 ): Promise<TripDetail> {
-  const res = await apiClient.post<TripDetail>(`${BASE}/${tripId}/schedule`, data);
+  const res = await apiClient.post<TripDetail>(`${TRIPS_API}/${tripId}/schedule`, data);
   return res.data;
 }
 
@@ -66,7 +73,7 @@ export async function removePlaceFromSchedule(
   subId: string
 ): Promise<TripDetail> {
   const res = await apiClient.delete<TripDetail>(
-    `${BASE}/${tripId}/schedule/places/${subId}`
+    `${TRIPS_API}/${tripId}/schedule/places/${subId}`
   );
   return res.data;
 }
@@ -83,7 +90,7 @@ export async function reorderSchedule(
   data: ReorderScheduleDTO
 ): Promise<TripDetail> {
   const res = await apiClient.put<TripDetail>(
-    `${BASE}/${tripId}/schedule/reorder`,
+    `${TRIPS_API}/${tripId}/schedule/reorder`,
     data
   );
   return res.data;
@@ -97,7 +104,7 @@ export async function checkInPlace(
   visited: boolean
 ): Promise<TripDetail> {
   const res = await apiClient.patch<TripDetail>(
-    `${BASE}/${tripId}/schedule/places/${subId}/check-in`,
+    `${TRIPS_API}/${tripId}/schedule/places/${subId}/check-in`,
     { visited }
   );
   return res.data;
@@ -109,7 +116,6 @@ export async function updateTripDiary(
   tripId: string,
   data: { notes?: string; photos?: string[] }
 ): Promise<Trip> {
-  const res = await apiClient.put<Trip>(`${BASE}/${tripId}/diary`, data);
+  const res = await apiClient.put<Trip>(`${TRIPS_API}/${tripId}/diary`, data);
   return res.data;
 }
-
