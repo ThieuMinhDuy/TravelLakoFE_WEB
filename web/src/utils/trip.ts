@@ -14,7 +14,9 @@ export const getTripDays = (trip: Pick<Trip, 'startDate' | 'endDate'>): number =
   Math.max(1, differenceInCalendarDays(parseISO(trip.endDate), parseISO(trip.startDate)) + 1);
 
 /** Tổng số điểm đến trong toàn bộ lịch trình */
-export const getTripPlaceCount = (trip: Pick<Trip, 'schedule'>): number =>
+export const getTripPlaceCount = (
+  trip: { schedule?: ReadonlyArray<{ places: readonly unknown[] }> }
+): number =>
   trip.schedule?.reduce((sum, day) => sum + day.places.length, 0) ?? 0;
 
 /** Tổng số chuyến đi ở cả 3 nhóm */
