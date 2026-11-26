@@ -32,6 +32,8 @@ const AuthModalHost = lazyNamed(loadAuthModal, 'AuthModalHost');
 const AdminLayout = lazyNamed(() => import('../layouts/AdminLayout'), 'AdminLayout');
 const TripsPage = lazyNamed(() => import('../features/tripschedule/pages/TripsPage'), 'TripsPage');
 const TripDetailPage = lazyNamed(() => import('../features/tripschedule/pages/TripDetailPage'), 'TripDetailPage');
+const DiaryListPage = lazyNamed(() => import('../features/diary/pages/DiaryListPage'), 'DiaryListPage');
+const TripDiaryPage = lazyNamed(() => import('../features/diary/pages/TripDiaryPage'), 'TripDiaryPage');
 const ProfilePage = lazyNamed(() => import('../features/profile/pages/ProfilePage'), 'ProfilePage');
 const AdminDashboardPage = lazyNamed(() => import('../features/admin/pages/AdminDashboardPage'), 'AdminDashboardPage');
 const AdminUsersPage = lazyNamed(() => import('../features/admin/pages/AdminUsersPage'), 'AdminUsersPage');
@@ -127,10 +129,7 @@ export const AppRoutes: React.FC = () => {
           path="/diary"
           element={
             <ProtectedRoute>
-              <PlaceholderPage
-                title="Nhật ký Chuyến đi (Trip Diary)"
-                desc="Màn 7: Ghi lại khoảnh khắc, cảm xúc và hình ảnh trong hành trình của bạn."
-              />
+              {withSuspense(<DiaryListPage />)}
             </ProtectedRoute>
           }
         />
@@ -146,10 +145,7 @@ export const AppRoutes: React.FC = () => {
           path="/trips/:id/diary"
           element={
             <ProtectedRoute>
-              <PlaceholderPage
-                title="Nhật ký Chuyến đi"
-                desc="Màn 7: Ghi lại khoảnh khắc, cảm xúc và hình ảnh trong hành trình của bạn."
-              />
+              {withSuspense(<TripDiaryPage />)}
             </ProtectedRoute>
           }
         />

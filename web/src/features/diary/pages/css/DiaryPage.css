@@ -419,3 +419,252 @@
   font-style: italic;
 }
 
+/* ==========================================================================
+   Trang danh sách Nhật ký (/diary) & Thẻ DiaryTripCard
+   ========================================================================== */
+
+.diary-list__header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .diary-list__header {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.diary-list__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-textMain);
+  letter-spacing: -0.02em;
+}
+
+.diary-list__subtitle {
+  margin: 0.375rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--color-textSub);
+}
+
+.diary-list__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.diary-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-borderGray);
+  background-color: var(--color-surfaceWhite);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-textMain);
+}
+
+.diary-prompt-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-brand-border);
+  background: linear-gradient(135deg, #fffaf3 0%, #fff1dc 100%);
+}
+
+@media (min-width: 768px) {
+  .diary-prompt-banner {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.diary-prompt-banner__content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.diary-prompt-banner__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-surfaceWhite);
+  border: 1px solid var(--color-brand-border);
+  color: var(--color-brand);
+}
+
+.diary-prompt-banner__title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-textMain);
+}
+
+.diary-prompt-banner__desc {
+  margin: 0.25rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-textSub);
+}
+
+.diary-list__toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .diary-list__toolbar {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.diary-list__search {
+  width: 100%;
+  max-width: 22rem;
+}
+
+.diary-list__clear-btn {
+  display: grid;
+  place-items: center;
+  padding: 0.2rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--color-textSub);
+  cursor: pointer;
+}
+
+.diary-list__clear-btn:hover {
+  color: var(--color-textMain);
+  background-color: var(--color-bgSubtle);
+}
+
+.diary-list__pagination {
+  margin-top: 1.75rem;
+}
+
+/* --- Thẻ DiaryTripCard --- */
+.diary-card__status--written {
+  color: #0f766e;
+}
+
+.diary-card__status--empty {
+  color: var(--color-brand-text);
+}
+
+.diary-card__photo-badge {
+  position: absolute;
+  right: 0.75rem;
+  top: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background-color: rgba(15, 23, 42, 0.72);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+}
+
+.diary-card__title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.diary-card__title-link:hover {
+  color: var(--color-brand-text);
+  text-decoration: underline;
+}
+
+.diary-card__excerpt {
+  margin: 0.25rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-textMain);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.diary-card__excerpt--empty {
+  color: var(--color-textSub);
+  font-style: italic;
+}
+
+.diary-card__thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.375rem;
+  margin-top: 0.375rem;
+}
+
+.diary-card__thumb {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: var(--color-bgSubtle);
+}
+
+.diary-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.diary-card__thumb-more {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background-color: rgba(15, 23, 42, 0.6);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.diary-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-borderGray);
+}
+
+.diary-card__schedule-link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-textSub);
+  text-decoration: none;
+}
+
+.diary-card__schedule-link:hover {
+  color: var(--color-brand-text);
+  text-decoration: underline;
+}
+
