@@ -61,6 +61,50 @@ describe('Feature: AIchat (<AIAssistantFAB>, <AIAssistantPanel> & formatting)', 
     expect(isScheduleMessage('Bạn nên thử **Phở Thìn (60.000đ)** ở Hà Nội!')).toBe(false);
   });
 
+  it('nút FAB chỉ hiển thị logo web và hiện nhắc nhở khi đã đăng nhập nhưng chưa dùng AI chat', async () => {
+    const user = userEvent.setup();
+    renderAIChat(false);
+
+    expect(screen.queryByText('Trợ lý Du lịch Ảo AI')).not.toBeInTheDocument();
+    expect(screen.queryByText(/GEMINI/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Bạn chưa thử Trợ lý AI/i)).not.toBeInTheDocument();
+    expect(screen.getByAltText('Logo TripMate')).toBeInTheDocument();
+
+    // Đăng nhập với lịch sử chat trống -> hiện câu nhắc nhở
+    useAuthStore.getState().setAuth(
+      { _id: 'u-fresh', name: 'An', email: 'an@gmail.com' },
+      'token-abc',
+      true
+    );
+    expect(await screen.findByText(/Bạn chưa thử Trợ lý AI!/i)).toBeInTheDocument();
+
+    // Bấm vào câu nhắc nhở -> mở Panel và ẩn nhắc nhở
+    await user.click(screen.getByText(/Bạn chưa thử Trợ lý AI!/i));
+    expect(screen.getByText('Trợ lý Du lịch Ảo AI')).toBeInTheDocument();
+    expect(screen.queryByText(/Bạn chưa thử Trợ lý AI!/i)).not.toBeInTheDocument();
+  });
+
+  it('không hiện nhắc nhở nếu người dùng đã từng sử dụng AI chat trước đó', async () => {
+    vi.mocked(aiService.getChatHistory).mockResolvedValue({
+      messages: [
+        { role: 'user', content: 'Gợi ý Đà Lạt' },
+        { role: 'model', content: 'Bạn có thể đi Hồ Xuân Hương (0đ).' },
+      ],
+    });
+    useAuthStore.getState().setAuth(
+      { _id: 'u-used', name: 'Bình', email: 'binh@gmail.com' },
+      'token-xyz',
+      true
+    );
+
+    renderAIChat(false);
+
+    await waitFor(() => {
+      expect(aiService.getChatHistory).toHaveBeenCalledTimes(1);
+    });
+    expect(screen.queryByText(/Bạn chưa thử Trợ lý AI!/i)).not.toBeInTheDocument();
+  });
+
   it('hoạt động độc lập ngoài Redux Provider và bật/tắt Panel qua FAB (chỉ còn 2 tab)', async () => {
     const user = userEvent.setup();
     renderAIChat(false);

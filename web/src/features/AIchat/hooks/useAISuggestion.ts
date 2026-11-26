@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ReactReduxContext } from 'react-redux';
 import { toast } from 'sonner';
@@ -29,6 +29,20 @@ function getAIErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
 }
 
+/** Query lấy lịch sử chat theo user đang đăng nhập (dùng chung cho FAB và Panel) */
+export function useAIChatHistoryQuery() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const userId = useAuthStore((s) => s.user?._id ?? 'anon');
+
+  return useQuery({
+    queryKey: ['ai-chat-history', userId],
+    queryFn: () => aiService.getChatHistory(),
+    enabled: isAuthenticated,
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+}
+
 /**
  * Hook kết nối các tính năng AI Assistant của Gemini qua TanStack Query & Zustand:
  * 1. Chat với Trợ lý AI (hỏi đáp du lịch, địa điểm, thời tiết).
@@ -43,25 +57,18 @@ export function useAISuggestion({
 }: UseAISuggestionProps = {}) {
   const queryClient = useQueryClient();
   const chatStore = useAIChatStoreApi();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   // Truy cập Redux store tùy chọn để không crash khi AIchat dùng độc lập ngoài Redux Provider
   const reduxContext = useContext(ReactReduxContext);
   const resolvedTripId = tripId || currentTrip?._id;
 
   // ─── 1. Query lấy lịch sử chat (chỉ gọi khi đã đăng nhập) ────────────────
-  const chatHistoryQuery = useQuery({
-    queryKey: ['ai-chat-history'],
-    queryFn: async () => {
-      const data = await aiService.getChatHistory();
-      if (data && data.messages && data.messages.length > 0) {
-        chatStore.getState().setChatMessages(data.messages);
-      }
-      return data;
-    },
-    enabled: isAuthenticated,
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-  });
+  const chatHistoryQuery = useAIChatHistoryQuery();
+
+  useEffect(() => {
+    if (chatHistoryQuery.data?.messages && chatHistoryQuery.data.messages.length > 0) {
+      chatStore.getState().setChatMessages(chatHistoryQuery.data.messages);
+    }
+  }, [chatHistoryQuery.data, chatStore]);
 
   // ─── 2. Mutation gửi tin nhắn Chat ─────────────────────────────────────────
   const sendChatMutation = useMutation({

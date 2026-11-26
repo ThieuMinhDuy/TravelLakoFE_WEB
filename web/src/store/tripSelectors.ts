@@ -31,7 +31,7 @@ export interface BudgetSummary {
 /**
  * Memoized Selector tính toán toàn bộ tổng quan ngân sách của chuyến đi.
  * Tự động trích xuất chi phí dựa theo từng loại hình:
- * - Hotel: pricePerNight * số ngày
+ * - Hotel: pricePerNight * số đêm (tối thiểu 1 đêm)
  * - Attraction: admissionFee
  * - Restaurant / Cafe: price
  * Chỉ chạy lại tính toán khi currentTrip thay đổi (memoized bằng createSelector).

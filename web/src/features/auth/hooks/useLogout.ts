@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../../contexts/toast/ToastContext';
 import { queryClient } from '../../../lib/queryClient';
+import { globalAIChatStore } from '../../../store/aiChatStore';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { authService } from '../services/authService';
 
@@ -15,6 +16,7 @@ export function useLogout() {
     authService.logout().catch(() => undefined);
 
     useAuthStore.getState().logout();
+    globalAIChatStore.getState().resetConversation();
     // Tránh dữ liệu cache của user cũ hiện ra cho người đăng nhập sau
     queryClient.clear();
 

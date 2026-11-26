@@ -79,21 +79,21 @@ describe('Compound Component: <TripSchedule>', () => {
 
   // ─── TC-08: Test Component Budget hiển thị % và cảnh báo vượt ngân sách ────
   it('TC-08: TripSchedule.Budget hiển thị chính xác % thanh tiến trình và cảnh báo khi vượt ngân sách', () => {
-    // 1. Trường hợp bình thường (ngân sách 2.000.000đ, dự tính 1.345.000đ -> 67%)
+    // 1. Trường hợp bình thường (ngân sách 2.000.000đ, dự tính 745.000đ theo 1 đêm -> 37%)
     const { unmount } = renderWithProviders(mockTripDetail, 2000000);
 
     const progressBar = screen.getByRole('progressbar');
-    expect(progressBar).toHaveAttribute('aria-valuenow', '67');
+    expect(progressBar).toHaveAttribute('aria-valuenow', '37');
     expect(screen.getByText('Trong tầm kiểm soát')).toBeInTheDocument();
     unmount();
 
-    // 2. Trường hợp vượt ngân sách (ngân sách 1.000.000đ, dự tính 1.345.000đ)
-    renderWithProviders(mockTripDetail, 1000000);
+    // 2. Trường hợp vượt ngân sách (ngân sách 500.000đ, dự tính 745.000đ)
+    renderWithProviders(mockTripDetail, 500000);
 
     // Phải hiển thị badge cảnh báo "Vượt ngân sách"
     expect(screen.getByText(/Vượt ngân sách/i)).toBeInTheDocument();
     // Phải hiển thị chi phí dự tính vượt ngân sách
-    expect(screen.getByText(/1.345.000/i)).toBeInTheDocument();
+    expect(screen.getByText(/745.000/i)).toBeInTheDocument();
   });
 
   // ─── TC-09: Test TripSchedule tách độc lập khỏi AIchat ──────────────────────

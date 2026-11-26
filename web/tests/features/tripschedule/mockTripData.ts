@@ -61,7 +61,7 @@ export const mockTripDetail: TripDetail = {
       places: [
         createMockPlace('p1', 'Hồ Hoàn Kiếm', 'Attraction', 0, 0, true), // visited, 0đ
         createMockPlace('p2', 'Phở Gia Truyền Bát Đàn', 'Restaurant', 1, 70000, true), // visited, 70k
-        createMockPlace('p3', 'Khách sạn Silk Path', 'Hotel', 2, 600000, false), // hotel: 600k * 2 ngày = 1.200k
+        createMockPlace('p3', 'Khách sạn Silk Path', 'Hotel', 2, 600000, false), // hotel: 600k * 1 đêm (2 ngày 1 đêm) = 600k
       ],
     },
     {

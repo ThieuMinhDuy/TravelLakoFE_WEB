@@ -105,10 +105,16 @@ export interface UpdateTripMetadataDTO {
   endDate?: string;
 }
 
+/** Số đêm lưu trú dùng để tính tiền khách sạn (2 ngày 1 đêm -> 1 đêm, tối thiểu 1 đêm) */
+export function getHotelNights(tripDays: number): number {
+  return Math.max(1, tripDays - 1);
+}
+
 // ─── Helper: trích cost từ populated place ───────────────────────────────────
 /**
  * Tính chi phí ước tính của 1 place trong schedule.
  * Dùng trong selectBudgetSummary (tripSelectors).
+ * - Hotel: pricePerNight * số đêm (tối thiểu 1 đêm)
  */
 export function extractPlaceCost(
   place: PopulatedPlaceInSchedule,
@@ -117,7 +123,7 @@ export function extractPlaceCost(
   const p = place.placeId as PlaceUnion;
   switch (place.placeType) {
     case 'Hotel':
-      return ((p as Hotel).pricePerNight ?? 0) * tripDays;
+      return ((p as Hotel).pricePerNight ?? 0) * getHotelNights(tripDays);
     case 'Attraction':
       return (p as Attraction).admissionFee ?? 0;
     case 'Restaurant':

@@ -24,6 +24,7 @@ export interface AIChatState {
   setChatMessages: (msgs: ChatMessage[]) => void;
   setIsAITyping: (isTyping: boolean) => void;
   clearChatMessages: () => void;
+  resetConversation: () => void;
   resetAIChat: () => void;
 }
 
@@ -57,6 +58,13 @@ export const createAIChatStore = (initialProps?: Partial<AIChatState>) => {
         setChatMessages: (msgs) => set({ aiChatMessages: msgs }),
         setIsAITyping: (isTyping) => set({ isAITyping: isTyping }),
         clearChatMessages: () => set({ aiChatMessages: [] }),
+        resetConversation: () =>
+          set({
+            isAIPanelOpen: false,
+            activeAITab: 'chat',
+            aiChatMessages: DEFAULT_WELCOME_MESSAGES,
+            isAITyping: false,
+          }),
         resetAIChat: () =>
           set({
             isAIPanelOpen: false,
