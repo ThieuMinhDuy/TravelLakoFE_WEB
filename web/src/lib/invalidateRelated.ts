@@ -23,4 +23,6 @@ export const invalidateRelated = {
   afterImport: (client: QueryClient) => invalidate(client, [
     keys.cities.all, keys.places.all, keys.admin.cities(), keys.admin.placesAll(), keys.admin.stats(),
   ]),
+  afterTripDiary: (client: QueryClient, tripId: string) =>
+    invalidate(client, [keys.trips.detail(tripId), keys.trips.mine(), keys.profile]),
 };
