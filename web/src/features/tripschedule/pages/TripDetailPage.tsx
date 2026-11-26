@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, ExternalLink, MapPin, Pencil, Star, Trash2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, ExternalLink, MapPin, Pencil, Sparkles, Star, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '../../../components/common/Button';
 import { Modal } from '../../../components/common/Modal';
 import { Spinner } from '../../../components/common/Spinner';
 import { StatusView } from '../../../components/common/StatusView';
+import { buttonVariants } from '../../../components/common/buttonVariants';
 import { ConfirmDialog } from '../../../components/compound/ConfirmDialog';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { queryKeys } from '../../../lib/queryKeys';
@@ -19,6 +20,7 @@ import type { City } from '../../../types/city';
 import { extractPlaceCost, type PopulatedPlaceInSchedule } from '../../../types/trip';
 import { formatCurrencyVND } from '../../../utils/formatters';
 import { toPlaceType } from '../../../utils/place';
+import { hasTripDiary, isTripEnded } from '../../../utils/trip';
 import { AddPlaceModal } from '../components/AddPlaceModal';
 import { EditTripModal } from '../components/EditTripModal';
 import { TripSchedule } from '../components/TripSchedule';
@@ -123,6 +125,8 @@ export const TripDetailPage: React.FC = () => {
     selectedPlace && typeof selectedPlace.placeId === 'object' && selectedPlace.placeId !== null
       ? selectedPlace.placeId
       : null;
+  const tripEnded = isTripEnded(trip);
+  const diaryWritten = hasTripDiary(trip);
 
   return (
     <div className="trip-detail-page">
@@ -133,6 +137,16 @@ export const TripDetailPage: React.FC = () => {
         </Link>
 
         <div className="trip-detail-page__actions">
+          <Link
+            to={`/trips/${trip._id}/diary`}
+            className={buttonVariants({
+              variant: tripEnded && !diaryWritten ? 'primary' : 'outline',
+              size: 'sm',
+            })}
+          >
+            <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
+            {diaryWritten ? 'Xem nhật ký' : 'Viết nhật ký'}
+          </Link>
           <Button
             variant="outline"
             size="sm"
@@ -151,6 +165,23 @@ export const TripDetailPage: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {tripEnded && !diaryWritten && (
+        <section className="trip-detail-page__diary-banner" aria-label="Gợi ý viết nhật ký hậu chuyến đi">
+          <div className="trip-detail-page__diary-banner-content">
+            <Sparkles className="w-4 h-4 shrink-0 text-[#FA8B02]" aria-hidden="true" />
+            <span>
+              Chuyến đi của bạn đã kết thúc — hãy ghi lại cảm xúc và tải lên tối đa 10 bức ảnh kỷ niệm!
+            </span>
+          </div>
+          <Link
+            to={`/trips/${trip._id}/diary`}
+            className={buttonVariants({ variant: 'primary', size: 'sm' })}
+          >
+            Viết nhật ký ngay
+          </Link>
+        </section>
+      )}
 
       <TripSchedule
         trip={trip}

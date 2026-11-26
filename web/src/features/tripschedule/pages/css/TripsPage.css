@@ -115,3 +115,32 @@
   gap: 0.5rem;
 }
 
+.trip-detail-page__diary-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.875rem 1.125rem;
+  margin-bottom: 1.25rem;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-brand-border);
+  background: linear-gradient(135deg, #fffaf3 0%, #fff1dc 100%);
+}
+
+@media (min-width: 768px) {
+  .trip-detail-page__diary-banner {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.trip-detail-page__diary-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-textMain);
+}
+

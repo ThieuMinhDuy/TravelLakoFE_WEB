@@ -1,5 +1,6 @@
 import type { Trip, TripDiary, TripGroups, TripWithCity } from '../../../types/trip';
 import { getCityName } from '../../../utils/place';
+import { hasTripDiary, isTripEnded } from '../../../utils/trip';
 
 /** Số lượng ảnh tối đa trong nhật ký mỗi chuyến đi (theo đặc tả) */
 export const DIARY_MAX_PHOTOS = 10;
@@ -22,25 +23,13 @@ export interface DiaryStats {
 }
 
 /** Kiểm tra chuyến đi đã có nội dung nhật ký (ghi chú không rỗng hoặc có ít nhất 1 ảnh) */
-export const hasDiaryContent = (trip: Pick<Trip, 'diary'>): boolean =>
-  Boolean(trip.diary?.notes?.trim()) || (trip.diary?.photos?.length ?? 0) > 0;
+export const hasDiaryContent = hasTripDiary;
+
+export { isTripEnded };
 
 /** Tổng số ảnh đã lưu trong nhật ký chuyến đi */
 export const getDiaryPhotoCount = (trip: Pick<Trip, 'diary'>): number =>
   trip.diary?.photos?.length ?? 0;
-
-/**
- * Kiểm tra chuyến đi đã kết thúc (ngày hiện tại > ngày kết thúc theo lịch UTC),
- * đồng bộ cách backend nhóm chuyến đi sang `past` trong GET /api/trips.
- */
-export function isTripEnded(trip: Pick<Trip, 'endDate'>, now: Date = new Date()): boolean {
-  const end = new Date(trip.endDate);
-  if (Number.isNaN(end.getTime())) return false;
-
-  const todayUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-  const tripEndUtc = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate());
-  return todayUtc > tripEndUtc;
-}
 
 /** Sắp xếp chuyến đi mới nhất lên trước (theo ngày kết thúc, sau đó ngày bắt đầu) */
 export function sortTripsNewestFirst<T extends Pick<Trip, 'endDate' | 'startDate'>>(

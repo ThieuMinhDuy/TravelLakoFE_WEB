@@ -22,3 +22,20 @@ export const getTripPlaceCount = (
 /** Tổng số chuyến đi ở cả 3 nhóm */
 export const countTrips = (groups: TripGroups | undefined): number =>
   groups ? groups.upcoming.length + groups.ongoing.length + groups.past.length : 0;
+
+/** Kiểm tra chuyến đi đã có nội dung nhật ký (ghi chú hoặc ảnh kỷ niệm) */
+export const hasTripDiary = (trip: { diary?: Trip['diary'] | null }): boolean =>
+  Boolean(trip.diary?.notes?.trim()) || (trip.diary?.photos?.length ?? 0) > 0;
+
+/**
+ * Kiểm tra chuyến đi đã kết thúc (ngày hiện tại > ngày kết thúc theo lịch UTC),
+ * đồng bộ cách backend nhóm chuyến đi sang `past` trong GET /api/trips.
+ */
+export function isTripEnded(trip: Pick<Trip, 'endDate'>, now: Date = new Date()): boolean {
+  const end = new Date(trip.endDate);
+  if (Number.isNaN(end.getTime())) return false;
+
+  const todayUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const tripEndUtc = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate());
+  return todayUtc > tripEndUtc;
+}

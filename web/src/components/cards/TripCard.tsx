@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, MapPin, Map as MapIcon, Wallet } from 'lucide-react';
+import { BookOpen, CalendarDays, MapPin, Map as MapIcon, PenLine, Wallet } from 'lucide-react';
 import { useLocale } from '../../contexts/locale/LocaleContext';
 import { cn } from '../../utils/cn';
 import { getCityName, isPopulatedCity } from '../../utils/place';
-import { TRIP_STATUS_LABELS, getTripDays, getTripPlaceCount } from '../../utils/trip';
+import { TRIP_STATUS_LABELS, getTripDays, getTripPlaceCount, hasTripDiary } from '../../utils/trip';
 import type { TripStatus, TripWithCity } from '../../types/trip';
 import { CardImage } from './CardImage';
 import './css/Cards.css';
@@ -14,16 +14,26 @@ export interface TripCardProps {
   status: TripStatus;
   /** Đường dẫn khi bấm thẻ (mặc định: trang chi tiết chuyến đi) */
   to?: string;
+  /** Hiển thị trạng thái & nút mở nhanh Nhật ký (mặc định bật cho chuyến đã đi) */
+  showDiaryAction?: boolean;
   className?: string;
 }
 
 /** Thẻ chuyến đi: ảnh thành phố, trạng thái, thời gian, số điểm đến, ngân sách */
-export const TripCard: React.FC<TripCardProps> = ({ trip, status, to = `/trips/${trip._id}`, className }) => {
+export const TripCard: React.FC<TripCardProps> = ({
+  trip,
+  status,
+  to = `/trips/${trip._id}`,
+  showDiaryAction = status === 'past',
+  className,
+}) => {
   const { formatCurrency, formatDate } = useLocale();
   const cityName = getCityName(trip.city);
   const image = isPopulatedCity(trip.city) ? trip.city.image : undefined;
   const days = getTripDays(trip);
   const placeCount = getTripPlaceCount(trip);
+  const hasDiary = hasTripDiary(trip);
+  const photoCount = trip.diary?.photos?.length ?? 0;
 
   return (
     <article className={cn('card trip-card', className)}>
@@ -62,6 +72,27 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, status, to = `/trips/$
             </span>
           )}
         </div>
+
+        {showDiaryAction && (
+          <div className="trip-card__diary-row">
+            <span className={cn('trip-card__diary-badge', hasDiary && 'trip-card__diary-badge--written')}>
+              {hasDiary ? (photoCount > 0 ? `Đã viết · ${photoCount} ảnh` : 'Đã viết nhật ký') : 'Chưa viết nhật ký'}
+            </span>
+            <Link to={`/trips/${trip._id}/diary`} className="trip-card__diary-link">
+              {hasDiary ? (
+                <>
+                  <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
+                  Xem nhật ký
+                </>
+              ) : (
+                <>
+                  <PenLine className="w-3.5 h-3.5" aria-hidden="true" />
+                  Viết nhật ký
+                </>
+              )}
+            </Link>
+          </div>
+        )}
       </div>
     </article>
   );
