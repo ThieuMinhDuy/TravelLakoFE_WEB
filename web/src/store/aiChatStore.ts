@@ -57,7 +57,7 @@ export const createAIChatStore = (initialProps?: Partial<AIChatState>) => {
           set((state) => ({ aiChatMessages: [...state.aiChatMessages, msg] })),
         setChatMessages: (msgs) => set({ aiChatMessages: msgs }),
         setIsAITyping: (isTyping) => set({ isAITyping: isTyping }),
-        clearChatMessages: () => set({ aiChatMessages: [] }),
+        clearChatMessages: () => set({ aiChatMessages: DEFAULT_WELCOME_MESSAGES }),
         resetConversation: () =>
           set({
             isAIPanelOpen: false,

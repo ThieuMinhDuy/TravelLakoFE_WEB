@@ -55,6 +55,7 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
   const [savingMsgKey, setSavingMsgKey] = useState<string | null>(null);
   const [savedMsgKeys, setSavedMsgKeys] = useState<string[]>([]);
   const chatScrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const {
     sendMessage,
@@ -81,6 +82,18 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
     }
   }, [messages, isTyping, isOpen]);
+
+  // Tự động giãn chiều cao ô nhập theo nội dung văn bản (không hiện thanh cuộn thừa)
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    const maxHeight = 200;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`;
+    el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : 'hidden';
+  }, [inputMessage, activeTab, isOpen]);
+
+  const hasConversation = messages.some((m) => m.role === 'user') || messages.length > 1;
 
   const handleSend = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -161,7 +174,7 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
           </div>
 
           <div className="flex items-center gap-1">
-            {activeTab === 'chat' && messages.length > 0 && isAuthenticated && (
+            {activeTab === 'chat' && hasConversation && isAuthenticated && (
               <button
                 type="button"
                 onClick={() => {
@@ -277,20 +290,21 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
               </div>
 
               {/* Ô nhập tin nhắn */}
-              <form onSubmit={handleSend} className="pt-2 flex items-center gap-2">
+              <form onSubmit={handleSend} className="pt-2 flex items-end gap-2">
                 <textarea
+                  ref={textareaRef}
                   rows={1}
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Hỏi AI bất cứ điều gì về chuyến đi... (Enter để gửi)"
-                  className="flex-1 px-3 py-2 text-xs rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-900 focus:outline-hidden focus:ring-2 focus:ring-blue-500 resize-none max-h-24"
+                  className="flex-1 min-h-[38px] px-3 py-2 text-xs leading-relaxed rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-900 focus:outline-hidden focus:ring-2 focus:ring-blue-500 resize-none overflow-hidden break-words"
                 />
                 <button
                   type="submit"
                   disabled={!inputMessage.trim() || isChatSending}
                   aria-label="Gửi tin nhắn"
-                  className="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors disabled:opacity-40 cursor-pointer"
+                  className="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors disabled:opacity-40 cursor-pointer shrink-0"
                 >
                   <Send className="w-4 h-4" />
                 </button>

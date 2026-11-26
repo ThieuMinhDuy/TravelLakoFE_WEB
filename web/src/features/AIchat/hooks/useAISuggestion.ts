@@ -159,6 +159,8 @@ export function useAISuggestion({
   const clearChatMutation = useMutation({
     mutationFn: () => aiService.clearChatHistory(),
     onSuccess: () => {
+      const userId = useAuthStore.getState().user?._id ?? 'anon';
+      queryClient.setQueryData(['ai-chat-history', userId], { messages: [] });
       chatStore.getState().clearChatMessages();
       toast.success('Đã xóa toàn bộ lịch sử trò chuyện!');
     },
