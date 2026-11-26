@@ -6,21 +6,16 @@ import {
   AIChatProvider,
   AIAssistantFAB,
   AIAssistantPanel,
+  formatPlainChatText,
+  isScheduleMessage,
 } from '../../../src/features/AIchat';
 import * as aiService from '../../../src/services/aiService';
-import { cityService } from '../../../src/services/cityService';
 import { useAuthStore } from '../../../src/store/useAuthStore';
 import type { AISuggestionResponse } from '../../../src/types';
 
 vi.mock('../../../src/services/aiService');
-vi.mock('../../../src/services/cityService', () => ({
-  cityService: {
-    getCities: vi.fn(),
-    getCity: vi.fn(),
-  },
-}));
 
-describe('Feature: AIchat (<AIAssistantFAB> & <AIAssistantPanel>)', () => {
+describe('Feature: AIchat (<AIAssistantFAB>, <AIAssistantPanel> & formatting)', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
@@ -33,21 +28,11 @@ describe('Feature: AIchat (<AIAssistantFAB> & <AIAssistantPanel>)', () => {
       },
     });
     vi.mocked(aiService.getChatHistory).mockResolvedValue({ messages: [] });
-    vi.mocked(cityService.getCities).mockResolvedValue({
-      total: 1,
-      cities: [
-        {
-          _id: 'city-dn',
-          name: 'Đà Nẵng',
-          coordinates: { lat: 16.05, lng: 108.2 },
-        },
-      ],
-    });
   });
 
   const renderAIChat = (
     initialOpen = false,
-    onApplySchedule?: (result: AISuggestionResponse) => void
+    onApplySchedule?: (result: AISuggestionResponse) => Promise<void> | void
   ) => {
     return render(
       <QueryClientProvider client={queryClient}>
@@ -59,7 +44,24 @@ describe('Feature: AIchat (<AIAssistantFAB> & <AIAssistantPanel>)', () => {
     );
   };
 
-  it('hoạt động độc lập ngoài Redux Provider và bật/tắt Panel qua FAB', async () => {
+  it('chatFormatting loại bỏ ký tự Markdown thô và nhận diện đúng tin nhắn lịch trình', () => {
+    const rawSchedule = [
+      '### **Ngày 1: Khám phá Hà Nội**',
+      '* **Sáng:** Nghỉ ngơi tại **Somerset Grand Hanoi (2.500.000đ/đêm)**.',
+      '* **Chiều:** Ăn **Bánh Tôm Hồ Tây (120.000đ)**.',
+    ].join('\n');
+
+    const cleaned = formatPlainChatText(rawSchedule);
+    expect(cleaned).not.toContain('###');
+    expect(cleaned).not.toContain('**');
+    expect(cleaned).toContain('Ngày 1: Khám phá Hà Nội');
+    expect(cleaned).toContain('• Sáng: Nghỉ ngơi tại Somerset Grand Hanoi (2.500.000đ/đêm).');
+
+    expect(isScheduleMessage(rawSchedule)).toBe(true);
+    expect(isScheduleMessage('Bạn nên thử **Phở Thìn (60.000đ)** ở Hà Nội!')).toBe(false);
+  });
+
+  it('hoạt động độc lập ngoài Redux Provider và bật/tắt Panel qua FAB (chỉ còn 2 tab)', async () => {
     const user = userEvent.setup();
     renderAIChat(false);
 
@@ -67,37 +69,53 @@ describe('Feature: AIchat (<AIAssistantFAB> & <AIAssistantPanel>)', () => {
 
     await user.click(screen.getByRole('button', { name: /Mở Trợ lý Du lịch Ảo AI/i }));
     expect(screen.getByText('Trợ lý Du lịch Ảo AI')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Gợi ý mới/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Trò chuyện/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Tối ưu lộ trình/i })).toBeInTheDocument();
     expect(aiService.getChatHistory).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('button', { name: /Đóng Trợ lý AI/i }));
     expect(screen.queryByText('Trợ lý Du lịch Ảo AI')).not.toBeInTheDocument();
   });
 
-  it('cho phép chuyển tab, gửi tin nhắn chat và chọn thành phố gợi ý bằng AI', async () => {
+  it('format câu trả lời sạch ký tự đặc biệt và hiện nút Lưu lịch trình khi AI trả lịch trình cụ thể', async () => {
     const user = userEvent.setup();
-    const onApplySchedule = vi.fn();
+    const onApplySchedule = vi.fn().mockResolvedValue(undefined);
 
-    vi.mocked(aiService.sendChatMessage).mockResolvedValue({
-      reply: 'Bạn nên thử Phở Thìn và Bún Chả Hàng Mành!',
-      timestamp: '2026-11-25T15:00:00.000Z',
-    });
+    const scheduleMarkdown = [
+      '### **Ngày 1: Trải nghiệm Hà Nội**',
+      '* **Sáng:** Tham quan **Nhà 48 phố Hàng Ngang (0đ)**.',
+      '* **Chiều:** Thưởng thức **Bánh Tôm Hồ Tây (120.000đ)**.',
+      '* **Tối:** Dạo **Chợ Đêm Hàng Đào (0đ)**.',
+    ].join('\n');
+
+    vi.mocked(aiService.sendChatMessage)
+      .mockResolvedValueOnce({
+        reply: 'Bạn nên thử **Phở Thìn (60.000đ)** nhé!',
+        timestamp: '2026-11-26T10:00:00.000Z',
+      })
+      .mockResolvedValueOnce({
+        reply: scheduleMarkdown,
+        timestamp: '2026-11-26T10:01:00.000Z',
+      });
+
     vi.mocked(aiService.generateAISuggestion).mockResolvedValue({
       success: true,
-      city: { _id: 'city-dn', name: 'Đà Nẵng' },
-      suggestedTitle: 'Đà Nẵng 3 ngày cực chill',
-      estimatedTotalCost: 2500000,
+      city: { _id: 'city-hn', name: 'Hà Nội' },
+      suggestedTitle: 'Hà Nội 1 ngày trọn vẹn',
+      estimatedTotalCost: 500000,
       schedule: [
         {
           _id: 'd1',
           day: 1,
-          date: '2026-11-26',
+          date: '2026-11-27',
           places: [
             {
               _id: 'sp1',
               placeType: 'Attraction',
               placeId: 'p1',
               order: 0,
-              note: 'Bãi biển Mỹ Khê',
+              note: 'Nhà 48 phố Hàng Ngang',
               visited: false,
             },
           ],
@@ -107,40 +125,37 @@ describe('Feature: AIchat (<AIAssistantFAB> & <AIAssistantPanel>)', () => {
 
     renderAIChat(true, onApplySchedule);
 
+    // 1. Câu hỏi gợi ý đơn lẻ -> format sạch **, không hiện nút Lưu lịch trình
     const input = screen.getByPlaceholderText(/Hỏi AI bất cứ điều gì/i);
     await user.type(input, 'Gợi ý món ngon Hà Nội');
     await user.click(screen.getByRole('button', { name: /Gửi tin nhắn/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Gợi ý món ngon Hà Nội')).toBeInTheDocument();
-      expect(
-        screen.getByText('Bạn nên thử Phở Thìn và Bún Chả Hàng Mành!')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Phở Thìn (60.000đ)')).toBeInTheDocument();
     });
+    expect(screen.queryByText(/\*\*/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Lưu lịch trình/i })).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /Gợi ý mới/i }));
-    expect(screen.getByText('Sinh lịch trình du lịch tự động')).toBeInTheDocument();
+    // 2. Tin nhắn chứa lịch trình theo ngày -> không còn ### / ** và hiện nút Lưu lịch trình
+    await user.type(input, 'Lập lịch trình Hà Nội 1 ngày ngân sách 1 triệu');
+    await user.click(screen.getByRole('button', { name: /Gửi tin nhắn/i }));
 
-    const citySelect = await screen.findByLabelText(/Thành phố điểm đến/i);
-    await user.selectOptions(citySelect, 'city-dn');
-    await user.click(screen.getByRole('button', { name: /Tạo gợi ý lịch trình thông minh/i }));
+    const saveBtn = await screen.findByRole('button', { name: /Lưu lịch trình/i });
+    expect(screen.getByText('Ngày 1: Trải nghiệm Hà Nội')).toBeInTheDocument();
+    expect(screen.queryByText(/###|\*\*/)).not.toBeInTheDocument();
+
+    await user.click(saveBtn);
 
     await waitFor(() => {
-      expect(aiService.generateAISuggestion).toHaveBeenCalledWith(
-        expect.objectContaining({
-          cityId: 'city-dn',
-          budget: 'Trung bình',
-          isParse: false,
-        })
-      );
-      expect(screen.getByText('Đà Nẵng 3 ngày cực chill')).toBeInTheDocument();
+      expect(aiService.generateAISuggestion).toHaveBeenCalledWith({
+        isParse: true,
+        notes: scheduleMarkdown,
+      });
+      expect(onApplySchedule).toHaveBeenCalledTimes(1);
     });
-    // Không tự động áp dụng trước khi user bấm nút
-    expect(onApplySchedule).not.toHaveBeenCalled();
+    expect(await screen.findByRole('button', { name: /Đã lưu lịch trình/i })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /Áp dụng lịch trình này/i }));
-    expect(onApplySchedule).toHaveBeenCalledTimes(1);
-
+    // 3. Chuyển tab sang Tối ưu lộ trình vẫn hoạt động
     await user.click(screen.getByRole('button', { name: /Tối ưu lộ trình/i }));
     expect(
       screen.getByText(/Vui lòng mở một chuyến đi cụ thể/i)

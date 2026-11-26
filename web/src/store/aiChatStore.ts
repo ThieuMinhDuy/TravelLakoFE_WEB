@@ -4,7 +4,7 @@ import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { ChatMessage } from '../types/ai';
 
 // ─── Kiểu dữ liệu UI State cho AI Chat & Assistant ───────────────────────────
-export type AITabType = 'chat' | 'suggest' | 'optimize';
+export type AITabType = 'chat' | 'optimize';
 
 export interface AIChatState {
   // Trạng thái mở/đóng AI Panel dạng slide-in / FAB

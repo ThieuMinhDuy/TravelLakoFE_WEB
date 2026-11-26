@@ -136,7 +136,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <Suspense fallback={null}>
             <LazyAIAssistantPanel
               currentTrip={currentTrip}
-              onApplySchedule={(result) => void handleApplyAISchedule(result)}
+              onApplySchedule={(result) => handleApplyAISchedule(result)}
               isApplying={isApplyingSchedule}
             />
           </Suspense>

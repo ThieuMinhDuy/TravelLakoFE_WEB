@@ -97,14 +97,16 @@ export function useAISuggestion({
     },
   });
 
-  // ─── 3. Mutation sinh gợi ý lịch trình (chỉ preview, user bấm Áp dụng mới lưu) ─
+  // ─── 3. Mutation phân tích / sinh gợi ý lịch trình ─────────────────────────
   const suggestTripMutation = useMutation({
     mutationFn: (data: AISuggestRequestDTO) => aiService.generateAISuggestion(data),
-    onSuccess: () => {
-      toast.success('AI đã thiết kế xong lịch trình gợi ý!');
+    onSuccess: (_data, variables) => {
+      if (!variables.isParse) {
+        toast.success('AI đã thiết kế xong lịch trình gợi ý!');
+      }
     },
     onError: (error: unknown) => {
-      toast.error(getAIErrorMessage(error, 'Lỗi khi yêu cầu AI tạo lịch trình'));
+      toast.error(getAIErrorMessage(error, 'Lỗi khi phân tích lịch trình từ AI'));
     },
   });
 
@@ -174,6 +176,7 @@ export function useAISuggestion({
     isClearingChat: clearChatMutation.isPending,
 
     generateSuggestion: suggestTripMutation.mutate,
+    generateSuggestionAsync: suggestTripMutation.mutateAsync,
     isSuggesting: suggestTripMutation.isPending,
     suggestedData: suggestTripMutation.data,
 

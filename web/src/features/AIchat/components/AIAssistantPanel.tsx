@@ -4,38 +4,37 @@ import {
   Bot,
   X,
   Send,
-  Sparkles,
   Route,
   MessageSquare,
   Trash2,
   ChevronRight,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAIChatStoreApi, useAIChatContext } from '../../../store/aiChatStore';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useAISuggestion } from '../hooks/useAISuggestion';
 import { TripDetail, AIOptimizeResponse, AISuggestionResponse } from '../../../types';
 import { OpenAuthLink } from '../../auth/components/OpenAuthLink';
 import { AIChatBubble, AITypingIndicator } from './AIChatBubble';
-import { AISuggestTab } from './AISuggestTab';
 import { AIOptimizeTab } from './AIOptimizeTab';
 import { cn } from '../../../utils/cn';
 
 export interface AIAssistantPanelProps {
   currentTrip?: TripDetail | null;
-  onApplySchedule?: (suggestedTrip: AISuggestionResponse) => void;
+  onApplySchedule?: (suggestedTrip: AISuggestionResponse) => Promise<void> | void;
   onOptimizeApplied?: (optimizedTrip: AIOptimizeResponse) => void;
   isApplying?: boolean;
 }
 
 const QUICK_PROMPTS = [
   'Gợi ý 3 món ăn nổi tiếng nhất ở đây',
-  'Thời tiết mùa này đi đâu đẹp nhất?',
+  'Lên lịch trình du lịch Đà Nẵng 2 ngày ngân sách 4 triệu',
   'Chi phí 2 ngày 1 đêm khoảng bao nhiêu?',
 ];
 
 /**
  * Slide-in Panel Trợ lý AI du lịch:
- * Gồm 3 tabs: Chat tư vấn tự do, Gợi ý lịch trình hoàn chỉnh, Tối ưu lộ trình di chuyển.
+ * Gồm 2 tabs: Trò chuyện tư vấn (có nút Lưu lịch trình khi AI gợi ý lịch trình) và Tối ưu lộ trình.
  */
 export const AIAssistantPanel = memo(function AIAssistantPanel({
   currentTrip,
@@ -45,22 +44,24 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
 }: AIAssistantPanelProps) {
   const chatStore = useAIChatStoreApi();
   const isOpen = useAIChatContext((s) => s.isAIPanelOpen);
-  const activeTab = useAIChatContext((s) => s.activeAITab);
+  const rawActiveTab = useAIChatContext((s) => s.activeAITab);
+  const activeTab = rawActiveTab === 'optimize' ? 'optimize' : 'chat';
   const messages = useAIChatContext((s) => s.aiChatMessages);
   const isTyping = useAIChatContext((s) => s.isAITyping);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const inRouter = useInRouterContext();
 
   const [inputMessage, setInputMessage] = useState('');
+  const [savingMsgKey, setSavingMsgKey] = useState<string | null>(null);
+  const [savedMsgKeys, setSavedMsgKeys] = useState<string[]>([]);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
   const {
     sendMessage,
     isChatSending,
     clearChatHistory,
-    generateSuggestion,
+    generateSuggestionAsync,
     isSuggesting,
-    suggestedData,
     optimizeTrip,
     isOptimizing,
     optimizedData,
@@ -92,6 +93,33 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    }
+  };
+
+  const handleSaveScheduleFromChat = async (msgKey: string, content: string) => {
+    if (savingMsgKey !== null || isSuggesting || isApplying) return;
+
+    setSavingMsgKey(msgKey);
+    try {
+      const parsed = await generateSuggestionAsync({
+        isParse: true,
+        notes: content,
+      });
+
+      const hasPlaces = parsed.schedule?.some((day) => (day.places?.length ?? 0) > 0);
+      if (!parsed.city?._id || !hasPlaces) {
+        toast.error(
+          'Chưa trích xuất được địa điểm cụ thể từ lịch trình này. Hãy yêu cầu AI nêu rõ tên thành phố và địa điểm nhé!'
+        );
+        return;
+      }
+
+      await onApplySchedule?.(parsed);
+      setSavedMsgKeys((prev) => (prev.includes(msgKey) ? prev : [...prev, msgKey]));
+    } catch {
+      // Lỗi từ API đã được toast ở useAISuggestion / onApplySchedule
+    } finally {
+      setSavingMsgKey(null);
     }
   };
 
@@ -136,7 +164,10 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
             {activeTab === 'chat' && messages.length > 0 && isAuthenticated && (
               <button
                 type="button"
-                onClick={() => clearChatHistory()}
+                onClick={() => {
+                  setSavedMsgKeys([]);
+                  clearChatHistory();
+                }}
                 title="Xóa lịch sử chat"
                 className="p-2 rounded-xl text-zinc-400 hover:text-red-500 hover:bg-zinc-100 transition-colors cursor-pointer"
               >
@@ -169,7 +200,7 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
           </div>
         )}
 
-        {/* Tab Switcher: Chat, Gợi ý, Tối ưu */}
+        {/* Tab Switcher: Trò chuyện & Tối ưu lộ trình */}
         <div className="flex items-center p-2 border-b border-zinc-200 bg-zinc-50 gap-1 text-xs">
           <button
             type="button"
@@ -183,20 +214,6 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
           >
             <MessageSquare className="w-3.5 h-3.5" />
             Trò chuyện
-          </button>
-
-          <button
-            type="button"
-            onClick={() => chatStore.getState().setActiveAITab('suggest')}
-            className={cn(
-              'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl font-medium transition-colors cursor-pointer',
-              activeTab === 'suggest'
-                ? 'bg-white text-blue-600 shadow-xs font-bold'
-                : 'text-zinc-500 hover:text-zinc-800'
-            )}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Gợi ý mới
           </button>
 
           <button
@@ -220,9 +237,22 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
             <div className="flex flex-col h-full">
               {/* Danh sách tin nhắn cuộn */}
               <div ref={chatScrollRef} className="flex-1 overflow-y-auto space-y-2 pr-1">
-                {messages.map((msg, idx) => (
-                  <AIChatBubble key={idx} message={msg} />
-                ))}
+                {messages.map((msg, idx) => {
+                  const msgKey = msg._id || `${idx}-${msg.content.slice(0, 32)}`;
+                  return (
+                    <AIChatBubble
+                      key={msgKey}
+                      message={msg}
+                      onSaveSchedule={
+                        onApplySchedule
+                          ? (content) => void handleSaveScheduleFromChat(msgKey, content)
+                          : undefined
+                      }
+                      isSavingSchedule={savingMsgKey === msgKey}
+                      isScheduleSaved={savedMsgKeys.includes(msgKey)}
+                    />
+                  );
+                })}
                 {isTyping && <AITypingIndicator />}
               </div>
 
@@ -266,16 +296,6 @@ export const AIAssistantPanel = memo(function AIAssistantPanel({
                 </button>
               </form>
             </div>
-          )}
-
-          {activeTab === 'suggest' && (
-            <AISuggestTab
-              onGenerateSuggestion={generateSuggestion}
-              isLoading={isSuggesting}
-              suggestedResult={suggestedData}
-              onApplySchedule={onApplySchedule}
-              isApplying={isApplying}
-            />
           )}
 
           {activeTab === 'optimize' && (

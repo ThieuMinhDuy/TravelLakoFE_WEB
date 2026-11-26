@@ -121,7 +121,7 @@ export const TripsPage: React.FC = () => {
   });
 
   const handleOpenAISuggest = () => {
-    chatStore.getState().setActiveAITab('suggest');
+    chatStore.getState().setActiveAITab('chat');
     chatStore.getState().setAIPanelOpen(true);
   };
 
